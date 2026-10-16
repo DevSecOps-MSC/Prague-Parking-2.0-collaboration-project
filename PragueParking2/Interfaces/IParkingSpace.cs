@@ -6,5 +6,7 @@ public interface IParkingSpace
 {
     public int ID { get; set; }
     public List<IVehicle> ParkedVehicles { get; set; }
+
+    public bool IsEmpty { get; }
 }
 

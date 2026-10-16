@@ -47,3 +47,4 @@ Continue developing my technical knowledge, review the existing codebase, and gr
 ---
 
 #### Saturday, 17 October
+Troubleshooting of GitHub pushing issues (local). Will commit and push to check again that all works as it should.

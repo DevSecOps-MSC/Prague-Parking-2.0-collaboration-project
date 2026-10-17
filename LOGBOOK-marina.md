@@ -48,3 +48,4 @@ Continue developing my technical knowledge, review the existing codebase, and gr
 
 #### Saturday, 17 October
 Troubleshooting of GitHub pushing issues (local). Will commit and push to check again that all works as it should.
+I learnt a lot about Git and GitHub today. Troubleshooting was challenging, but I discovered that my push was blocked because I needed permission to access our organisation’s repository. Once that was resolved, the process felt more intuitive. Stig also helped me understand branches and merging.

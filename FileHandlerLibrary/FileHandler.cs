@@ -1,42 +1,25 @@
-﻿using System.Net.Mime;
-
+﻿
 namespace FileHandlerLibrary;
 
 public class FileHandler
 {
-    public FileHandler(string filename)
+    public static string Load(string path)
     {
-        Filename = filename;
+        return File.ReadAllText(path);
     }
 
-    public string Filename { get; }
-
-    public string ReadTextFile()
+    public static string[] LoadLines(string path)
     {
-        string contents = "";
-        
-        using var streamReader = new StreamReader(Filename);
-        {
-            contents = streamReader.ReadToEnd();
-        }
-        
-        return contents;
+        return File.ReadAllLines(path);
     }
 
-    public List<string> ReadTextFileLines()
+    public static void Save(string path, string contents)
     {
-        List<string> contents = [];
+        File.WriteAllText(path, contents);
+    }
 
-        using var streamReader = new StreamReader(Filename);
-        {
-            var line = streamReader.ReadLine();
-            while (line is not null)
-            {
-                contents.Add(line);
-                line = streamReader.ReadLine();
-            }
-        }
-
-        return contents;
+    public static void SaveLines(string path, string[] lines)
+    {
+        File.WriteAllLines(path, lines);
     }
 }

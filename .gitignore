@@ -426,3 +426,5 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+FileHandlerLibraryTest/Storage/test3.txt
+FileHandlerLibraryTest/Storage/test4.txt

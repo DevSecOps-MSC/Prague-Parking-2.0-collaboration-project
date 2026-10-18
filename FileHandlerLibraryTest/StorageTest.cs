@@ -5,38 +5,82 @@ namespace FileHandlerLibraryTest;
 [TestClass]
 public sealed class StorageTest
 {
-    static string path = "../../../Storage/";
+    static readonly string path = "../../../Storage/";
+    static readonly string testFile = path + "test.txt";
+    static readonly string testFile2 = path + "test2.txt";
+    static readonly string testFile3 = path + "test3.txt";
+    static readonly string testFile4 = path + "test4.txt";
+
+
+    static readonly string testString = "This is a test!";
+    static readonly string[] testLines = [
+        "This is a test line!",
+        "This is the second test line.",
+        "And this is the third...",
+        ];
+
+    [ClassInitialize]
+    public static void InitializeStorageTest(TestContext testContext)
+    {
+        File.WriteAllText(testFile, testString);
+        File.WriteAllLines(testFile2, testLines);
+        if (File.Exists(testFile3))
+            File.Delete(testFile3);
+        if (File.Exists(testFile4))
+            File.Delete(testFile4);
+    }
 
     [TestMethod]
-    public void TestReadTextFile()
+    public void TestLoad()
     {
-        var filename = "test.txt";
-        var fileHandler = new FileHandler(path + filename);
+        string expected = testString;
 
-        string expected = "This is a test!";
-
-        string actual = fileHandler.ReadTextFile();
+        string actual = FileHandler.Load(testFile);
 
         Assert.AreEqual(expected, actual);
     }
 
     [TestMethod]
-    public void TestReadTextFileLines()
+    public void TestLoadLines()
     {
-        var filename = "test2.txt";
-        var fileHandler = new FileHandler(path + filename);
+        string[] expected = testLines;
 
-        List<string> expectedLines = [
-            "This is a test line!",
-            "This is the second test line.",
-            "And this is the third...",
-            ];
+        string[] actual = FileHandler.LoadLines(testFile2);
 
-        List<string> actualLines = fileHandler.ReadTextFileLines();
-
-        for (int i = 0; i < expectedLines.Count; i++)
+        for (int i = 0; i < expected.Length; i++)
         {
-            Assert.AreEqual(expectedLines[i], actualLines[i]);
+            Assert.AreEqual(expected[i], actual[i]);
         }
     }
+
+    [TestMethod]
+    public void TestSave()
+    {
+        string expected = testString;
+
+        FileHandler.Save(testFile3, expected);
+
+        Assert.IsTrue(File.Exists(testFile3));
+
+        string actual = File.ReadAllText(testFile3);
+
+        Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void TestSaveLines()
+    {
+        string[] expected = testLines;
+
+        FileHandler.SaveLines(testFile4, expected);
+
+        Assert.IsTrue(File.Exists(testFile4));
+
+        string[] actual = FileHandler.LoadLines(testFile4);
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Assert.AreEqual(expected[i], actual[i]);
+        }
+    }
+
 }

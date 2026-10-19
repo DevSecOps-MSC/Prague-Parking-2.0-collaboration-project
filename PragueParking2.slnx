@@ -1,6 +1,5 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path="LOGBOOK-Carl-Henrik.md" />
-  </Folder>
+  <Project Path="FileHandlerLibrary/FileHandlerLibrary.csproj" />
+  <Project Path="FileHandlerLibraryTest/FileHandlerLibraryTest.csproj" />
   <Project Path="PragueParking2/PragueParking2.csproj" />
 </Solution>

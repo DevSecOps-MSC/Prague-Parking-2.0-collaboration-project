@@ -5,6 +5,6 @@ namespace PragueParking2.Classes;
 
 public class ParkingGarage
 {
-    public int Capacity { get; set; } = 100;
-    public List<IParkingSpace> ParkingSpaces { get; set; } = [];
+    public int Capacity { get; private set; }
+    public List<IParkingSpace> ParkingSpaces { get; private set; } = [];
 }

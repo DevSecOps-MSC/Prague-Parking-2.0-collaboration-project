@@ -119,3 +119,19 @@ FileHandler.Save(configFilePath, jsonString);
 
 ---
 
+## 2026-10-20
+
+Didn't get much done, but started re-writing my simple testing system. Thinking of removing `FileHandlerLibraryTest` because the `FileHandlerLibrary` turned out to be so much simpler than I thought it would be. Maybe turn `SimpleTest` into its own class library and use it like I did in `v1.1`?
+
+---
+
+## 2026-10-21
+
+Continuing the re-write of `SimpleTest` today. It's starting to look pretty good to me, and I think turning it into a proper class library might be a good idea.
+
+---
+
+Converting `SimpleTest` the project into a proper class library was super easy, barely an inconvenience. I am officially making it a part of the overall solution. And removing a bunch of chaff.
+
+---
+

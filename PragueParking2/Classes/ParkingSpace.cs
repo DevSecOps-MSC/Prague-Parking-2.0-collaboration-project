@@ -6,5 +6,13 @@ public class ParkingSpace : IParkingSpace
 {
     public int ID => throw new NotImplementedException();
 
-    public List<IVehicle> ParkedVehicles => throw new NotImplementedException();
+    public List<IVehicle> ParkedVehicles {get; } = [];
+
+    public bool IsEmpty
+    {
+        get
+        {
+            return  true;
+        }
+    }
 }

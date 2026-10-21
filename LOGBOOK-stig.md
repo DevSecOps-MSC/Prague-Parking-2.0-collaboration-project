@@ -131,3 +131,7 @@ Continuing the re-write of `SimpleTest` today. It's starting to look pretty good
 
 ---
 
+Converting `SimpleTest` the project into a proper class library was super easy, barely an inconvenience. I am officially making it a part of the overall solution. And removing a bunch of chaff.
+
+---
+

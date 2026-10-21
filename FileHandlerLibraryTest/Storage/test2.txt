@@ -1,3 +1,0 @@
-This is a test line!
-This is the second test line.
-And this is the third...

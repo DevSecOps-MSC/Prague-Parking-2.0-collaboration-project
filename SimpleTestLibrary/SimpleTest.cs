@@ -1,4 +1,4 @@
-namespace PragueParking2.SimpleTest;
+﻿namespace SimpleTestLibrary;
 
 public static class SimpleTest
 {
@@ -59,24 +59,5 @@ public static class SimpleTest
 
         DestroyTestEnvironment();
 
-    }
-
-    public static void WriteReport()
-    {
-        foreach (var testResult in TestResults)
-        {
-            if (testResult.IsPositive)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(testResult.Description + " → " + testResult.Result);
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(testResult.Description + " → " + testResult.Result);
-            }
-
-        }
-            Console.ResetColor();
     }
 }

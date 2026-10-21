@@ -1,4 +1,4 @@
-namespace PragueParking2.SimpleTest;
+namespace SimpleTestLibrary;
 
 public class Test(string description, Func<bool> testFunc)
 {

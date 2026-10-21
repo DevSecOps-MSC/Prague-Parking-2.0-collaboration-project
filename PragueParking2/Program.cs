@@ -1,6 +1,7 @@
 ﻿using FileHandlerLibrary;
 using PragueParking2.Classes;
-using PragueParking2.SimpleTest;
+using SimpleTestLibrary;
+
 
 // If available, load Configuration File into a [Config] object
 // var configFilePath = "../../../config.json";
@@ -22,52 +23,58 @@ using PragueParking2.SimpleTest;
 // }
 
 
-SimpleTest.AddNewTest(
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        SimpleTest.AddNewTest(
     new Test("This is a tiny test!", () => { return 2 + 2 == 4; }
 ));
 
-SimpleTest.AddNewTest(
-    new Test("This is a slightly bigger test!", () =>
-    {
-        var foo = true;
-        var bar = false;
+        SimpleTest.AddNewTest(
+            new Test("This is a slightly bigger test!", () =>
+            {
+                var foo = true;
+                var bar = false;
 
-        return foo || bar;
+                return foo || bar;
+            }
+        ));
+
+
+        SimpleTest.AddNewTest(
+            new Test("A Parking Garage has a Capacity", () =>
+            {
+                var expectedCapacity = 100;
+                var parkingGarage = new ParkingGarage(expectedCapacity);
+
+                return parkingGarage.Capacity == expectedCapacity;
+            }
+        ));
+
+
+        // SimpleTest.AddNewTest(
+        //     new Test("A Parking Space is empty by default", () =>
+        //     {
+        //         var parkingSpace = new ParkingSpace();
+
+        //         return parkingSpace.IsEmpty == true;
+        //     }
+        // ));
+
+        // SimpleTest.AddNewTest(
+        //     new Test("An empty Parking Space does not contain any vehicles", () =>
+        //     {
+        //         var parkingSpace = new ParkingSpace();
+
+        //         return parkingSpace.ParkedVehicles.Count == 0;
+        //     }
+        // ));
+
+
+
+        SimpleTest.RunAllTests();
+
+        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
     }
-));
-
-
-SimpleTest.AddNewTest(
-    new Test("A Parking Garage has a Capacity", () =>
-    {
-        var expectedCapacity = 100;
-        var parkingGarage = new ParkingGarage(expectedCapacity);
-
-        return parkingGarage.Capacity == expectedCapacity;
-    }
-));
-
-
-// SimpleTest.AddNewTest(
-//     new Test("A Parking Space is empty by default", () =>
-//     {
-//         var parkingSpace = new ParkingSpace();
-
-//         return parkingSpace.IsEmpty == true;
-//     }
-// ));
-
-// SimpleTest.AddNewTest(
-//     new Test("An empty Parking Space does not contain any vehicles", () =>
-//     {
-//         var parkingSpace = new ParkingSpace();
-
-//         return parkingSpace.ParkedVehicles.Count == 0;
-//     }
-// ));
-
-
-
-SimpleTest.RunAllTests();
-
-SimpleTest.WriteReport();
+}

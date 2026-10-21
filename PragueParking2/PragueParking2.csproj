@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../FileHandlerLibrary/FileHandlerLibrary.csproj" />
+    <ProjectReference Include="../SimpleTestLibrary/SimpleTestLibrary.csproj" />
   </ItemGroup>
 
 </Project>

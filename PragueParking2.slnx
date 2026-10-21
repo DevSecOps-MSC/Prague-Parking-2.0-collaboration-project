@@ -1,5 +1,5 @@
 <Solution>
   <Project Path="FileHandlerLibrary/FileHandlerLibrary.csproj" />
-  <Project Path="FileHandlerLibraryTest/FileHandlerLibraryTest.csproj" />
   <Project Path="PragueParking2/PragueParking2.csproj" />
+  <Project Path="SimpleTestLibrary/SimpleTestLibrary.csproj" />
 </Solution>

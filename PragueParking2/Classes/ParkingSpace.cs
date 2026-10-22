@@ -15,4 +15,6 @@ public class ParkingSpace : IParkingSpace
             return  true;
         }
     }
+
+    public bool IsNotEmpty { get; }
 }

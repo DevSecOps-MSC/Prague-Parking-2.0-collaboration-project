@@ -1,12 +1,32 @@
 ﻿using FileHandlerLibrary;
 using PragueParking2.Classes;
+using PragueParking2.Tests;
 using SimpleTestLibrary;
 
-
-// If available, load Configuration File into a [Config] object
-// var configFilePath = "../../../config.json";
-// var jsonString = FileHandler.Load(configFilePath);
-// var config = Config.FromJson(jsonString);
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        // If available, load Configuration File into a [Config] object
+        var configFilePath = "../../../config.json";
+        string jsonString;
+        if (File.Exists(configFilePath))
+        {
+            jsonString = FileHandler.Load(configFilePath);
+        }
+        else
+        {
+            try
+            {
+                jsonString = FileHandler.Load("config.json");            
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Configuration file not found. Loading default values.");
+                jsonString = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+            }
+        }
+        var config = Config.FromJson(jsonString);
 
 // System.Console.WriteLine($"Garage Capacity: {config.ParkingGarageCapacity}");
 // System.Console.WriteLine($"Parking Space Capacity: {config.ParkingSpaceCapacity}");
@@ -23,55 +43,9 @@ using SimpleTestLibrary;
 // }
 
 
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-        SimpleTest.AddNewTest(
-    new Test("This is a tiny test!", () => { return 2 + 2 == 4; }
-));
-
-        SimpleTest.AddNewTest(
-            new Test("This is a slightly bigger test!", () =>
-            {
-                var foo = true;
-                var bar = false;
-
-                return foo || bar;
-            }
-        ));
-
-
-        SimpleTest.AddNewTest(
-            new Test("A Parking Garage has a Capacity", () =>
-            {
-                var expectedCapacity = 100;
-                var parkingGarage = new ParkingGarage(expectedCapacity);
-
-                return parkingGarage.Capacity == expectedCapacity;
-            }
-        ));
-
-
-        // SimpleTest.AddNewTest(
-        //     new Test("A Parking Space is empty by default", () =>
-        //     {
-        //         var parkingSpace = new ParkingSpace();
-
-        //         return parkingSpace.IsEmpty == true;
-        //     }
-        // ));
-
-        // SimpleTest.AddNewTest(
-        //     new Test("An empty Parking Space does not contain any vehicles", () =>
-        //     {
-        //         var parkingSpace = new ParkingSpace();
-
-        //         return parkingSpace.ParkedVehicles.Count == 0;
-        //     }
-        // ));
-
-
+        ValidatorTests.AddTests(config);
+        RegisteredVehicleTests.AddTests(config);
+        ParkingSpaceTests.AddTests(config);
 
         SimpleTest.RunAllTests();
 

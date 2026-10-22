@@ -1,10 +1,9 @@
-using PragueParking2.Interfaces;
+using PragueParking2.Tests;
 
 namespace PragueParking2.Classes;
 
-public class Motorcycle : IVehicle
+public class Motorcycle : RegisteredVehicle
 {
-    public string Registration { get; set; } = "";
-
-    public int Size => throw new NotImplementedException();
+    public Motorcycle(string registration) : base(registration)
+    { }
 }

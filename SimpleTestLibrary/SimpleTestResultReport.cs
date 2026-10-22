@@ -10,6 +10,8 @@ public static class SimpleTestResultReport
     /// <param name="testResults"></param>
     public static void WriteReport(List<TestResult> testResults)
     {
+        Console.WriteLine("----------");
+
         foreach (var testResult in testResults)
         {
             if (testResult.IsPositive)
@@ -24,7 +26,8 @@ public static class SimpleTestResultReport
             }
 
         }
-            Console.ResetColor();
+        Console.ResetColor();
+        Console.WriteLine("----------");
     }
 
 }

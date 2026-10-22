@@ -135,3 +135,37 @@ Converting `SimpleTest` the project into a proper class library was super easy, 
 
 ---
 
+I must confess I'm feeling a bit lost in this project at the moment. The way I usually find my way back is by writing tests and making them pass, so that's what I am going to do. Except that I will try to write more tests than I solve myself, to help both me and my partners to focus and answer the "what's next?" question.
+
+---
+
+## 2026-10-22
+
+I've been wrestling with some of the data models, but now I think it's moving in the right direction. Here are my plans for the pseudo-TDD suggested above.
+
+---
+
+### Rules (actually, they're more *guidelines* than actual rules...)
+
+- A test should be made to pass by writing only the code needed to make it pass.
+- Tests go from general to more specific in scope, but our code should go from specific to more general.
+- There are several categories of tests.
+- Tests should be tackled *in order* within each category.
+
+### Workflow
+
+I suggest the following workflow for each test, no matter how small addition needed to make it pass:
+- Run all tests.
+- Pick the *first failing* test in any category.
+- Checkout a new branch in Git.
+- Make the test pass.
+    - Edit code
+    - Run all tests
+    - If test still fails (red), try again
+    - If test passes (turns green) continue below
+- Commit, with the name/description of the test as the Git commit message.
+- Push to GitHub.
+- Create Pull Request.
+- If there are no conflicts, merge into main branch and delete the extra branch.
+- Start over.
+

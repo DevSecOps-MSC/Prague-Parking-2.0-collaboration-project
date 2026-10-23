@@ -10,6 +10,7 @@ public static class ParkingSpaceTests
         int carSize = config.VehicleSizes[VehicleType.Car];
         int spaceCap = config.ParkingSpaceCapacity;
         Car testCar = new("_", carSize);
+        Motorcycle testMc = new("_", config.VehicleSizes[VehicleType.Motorcycle]);
 
         SimpleTest.AddNewTest(
             new Test("A Parking Space Is Empty by default", () =>
@@ -109,15 +110,16 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("An non-empty Parking Space has Available Space equal to its Capacity minus total Sizes of its Parked Vehicles", () =>
+            new Test("A non-empty Parking Space has Available Space equal to its Capacity minus total Sizes of its Parked Vehicles", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
-                var mc = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]);
+                parkingSpace.Park(testMc);
                 var expectedAvailableSpace = parkingSpace.Capacity - config.VehicleSizes[VehicleType.Motorcycle];
 
                 return parkingSpace.AvailableSpace == expectedAvailableSpace;
             }
         ));
+
 
 
     }

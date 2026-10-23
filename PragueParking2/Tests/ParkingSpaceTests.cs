@@ -8,9 +8,10 @@ public static class ParkingSpaceTests
     public static void AddTests(Config config)
     {
         int carSize = config.VehicleSizes[VehicleType.Car];
+        int motorcycleSize = config.VehicleSizes[VehicleType.Motorcycle];
         int spaceCap = config.ParkingSpaceCapacity;
         Car testCar = new("_", carSize);
-        Motorcycle testMc = new("_", config.VehicleSizes[VehicleType.Motorcycle]);
+        Motorcycle testMotorcycle = new("_", motorcycleSize);
 
         SimpleTest.AddNewTest(
             new Test("A Parking Space Is Empty by default", () =>
@@ -113,10 +114,55 @@ public static class ParkingSpaceTests
             new Test("A non-empty Parking Space has Available Space equal to its Capacity minus total Sizes of its Parked Vehicles", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
-                parkingSpace.Park(testMc);
+                parkingSpace.Park(testMotorcycle);
                 var expectedAvailableSpace = parkingSpace.Capacity - config.VehicleSizes[VehicleType.Motorcycle];
 
                 return parkingSpace.AvailableSpace == expectedAvailableSpace;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Parking Space Is Full if it has no Available Space", () =>
+            {
+                var testSize = 4;
+                var parkingSpace = new ParkingSpace(testSize);
+                var car = new Car("_", testSize);
+
+                parkingSpace.Park(car);
+
+                return parkingSpace.IsFull == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Parking Space can hold more than one Vehicle if there is enough Available Space", () =>
+            {
+                var testSize = 4;
+                var parkingSpace = new ParkingSpace(testSize);
+
+                var motorcycleOne = new Motorcycle("M1", testSize / 2);
+                var motorcycleTwo = new Motorcycle("M2", testSize / 2);
+
+                parkingSpace.Park(motorcycleOne);
+
+                return parkingSpace.Park(motorcycleTwo) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Vehicle can only be Parked in a Parking Space if there is enough Available Space", () =>
+            {
+                var testSize = 4;
+                var parkingSpace = new ParkingSpace(testSize);
+
+                var motorcycleOne = new Motorcycle("M1", testSize / 2);
+                var motorcycleTwo = new Motorcycle("M2", testSize / 2);
+                var motorcycleThree = new Motorcycle("M3", testSize / 2);
+
+                parkingSpace.Park(motorcycleOne);
+                parkingSpace.Park(motorcycleTwo);
+
+                return parkingSpace.Park(motorcycleThree) == false;
             }
         ));
 

@@ -4,6 +4,7 @@ namespace PragueParking2.Classes;
 
 public class ParkingSpace : IParkingSpace
 {
+
     public ParkingSpace(int capacity)
     {
         Capacity = capacity;
@@ -24,6 +25,7 @@ public class ParkingSpace : IParkingSpace
         }
     }
     
+    public bool IsFull => false;
 
     public bool Park(IVehicle vehicle)
     {

@@ -1,25 +1,26 @@
-using System;
 using PragueParking2.Interfaces;
 
 namespace PragueParking2.Classes;
 
 public class ParkingGarage
 {
-    private int _capacity;
+    public List<IParkingSpace> ParkingSpaces { get; private set; } = [];
 
-    public ParkingGarage(int capacity)
+    public int Capacity { get; private set; }
+
+    public ParkingGarage(int capacity, int parkingSpaceCapacity)
     {
-        _capacity=capacity;
+        Capacity = capacity;
+        InitializeParkingSpaces(parkingSpaceCapacity);
     }
 
-    public int Capacity
+    internal void InitializeParkingSpaces(int parkingSpaceCapacity)
     {
-        get
+        ParkingSpaces = [];
+
+        for (int i = 0; i < Capacity; i++)
         {
-            return _capacity;
+            ParkingSpaces.Add(new ParkingSpace(parkingSpaceCapacity));
         }
     }
-
-    // public int Capacity { get; private set; }
-    // public List<IParkingSpace> ParkingSpaces { get; private set; } = [];
 }

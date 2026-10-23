@@ -5,4 +5,5 @@ namespace PragueParking2.Interfaces;
 public interface IVehicle
 {
     public string Registration { get; }
+    public int Size { get; }
 }

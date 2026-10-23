@@ -5,11 +5,13 @@ namespace PragueParking2.Tests;
 
 public static class ParkingSpaceTests
 {
-    public static void AddTests(object Configuration)
+    public static void AddTests(Config config)
     {
+        int carSize = config.VehicleSizes[VehicleType.Car];
+        Car testCar = new("_", carSize);
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space is empty by default", () =>
+            new Test("A Parking Space Is Empty by default", () =>
             {
                 var parkingSpace = new ParkingSpace();
 
@@ -18,20 +20,20 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space with a parked Vehicle is not empty", () =>
+            new Test("A Parking Space with a Parked Vehicle Is Not Empty", () =>
             {
                 var parkingSpace = new ParkingSpace();
-                parkingSpace.ParkedVehicles.Add(new Car("_"));
+                parkingSpace.ParkedVehicles.Add(testCar);
 
                 return parkingSpace.IsEmpty == false;
             }
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space that is not empty is not empty", () =>
+            new Test("A Parking Space that is not Empty Is Not Empty", () =>
             {
                 var parkingSpace = new ParkingSpace();
-                parkingSpace.ParkedVehicles.Add(new Car("_"));
+                parkingSpace.ParkedVehicles.Add(testCar);
 
                 return parkingSpace.IsNotEmpty == true;
             }
@@ -51,7 +53,7 @@ public static class ParkingSpaceTests
             {
                 var parkingSpace = new ParkingSpace();
 
-                return parkingSpace.Park(new Car("_")) == true;
+                return parkingSpace.Park(testCar) == true;
             }
         ));
 
@@ -59,7 +61,7 @@ public static class ParkingSpaceTests
             new Test("After Parking a Vehicle in a Parking Space, the Parking Space is not empty", () =>
             {
                 var parkingSpace = new ParkingSpace();
-                parkingSpace.Park(new Car("_"));
+                parkingSpace.Park(testCar);
 
                 return parkingSpace.IsNotEmpty == true;
             }
@@ -69,10 +71,9 @@ public static class ParkingSpaceTests
             new Test("After Parking a Vehicle in a Parking Space, the Parking Space Contains the Parked Vehicle", () =>
             {
                 var parkingSpace = new ParkingSpace();
-                var car = new Car("_");
-                parkingSpace.Park(car);
+                parkingSpace.Park(testCar);
 
-                return parkingSpace.Contains(car) == true;
+                return parkingSpace.Contains(testCar) == true;
             }
         ));
 
@@ -80,10 +81,9 @@ public static class ParkingSpaceTests
             new Test("A Vehicle can be Collected from a Parking Space", () =>
             {
                 var parkingSpace = new ParkingSpace();
-                var car = new Car("_");
-                parkingSpace.Park(car);
+                parkingSpace.Park(testCar);
 
-                return parkingSpace.Collect(car) == true;
+                return parkingSpace.Collect(testCar) == true;
             }
         ));
 
@@ -91,11 +91,10 @@ public static class ParkingSpaceTests
             new Test("After Collecting a Vehicle from a Parking Space, the Parking Space does not Contain the Vehicle", () =>
             {
                 var parkingSpace = new ParkingSpace();
-                var car = new Car("_");
-                parkingSpace.Park(car);
-                parkingSpace.Collect(car);
+                parkingSpace.Park(testCar);
+                parkingSpace.Collect(testCar);
 
-                return parkingSpace.Contains(car) == false;
+                return parkingSpace.Contains(testCar) == false;
             }
         ));
 

@@ -99,6 +99,27 @@ public static class ParkingSpaceTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("An Empty Parking Space has Available Space equal to its Capacity", () =>
+            {
+                var parkingSpace = new ParkingSpace(spaceCap);
+
+                return parkingSpace.AvailableSpace == parkingSpace.Capacity;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("An non-empty Parking Space has Available Space equal to its Capacity minus total Sizes of its Parked Vehicles", () =>
+            {
+                var parkingSpace = new ParkingSpace(spaceCap);
+                var mc = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]);
+                var expectedAvailableSpace = parkingSpace.Capacity - config.VehicleSizes[VehicleType.Motorcycle];
+
+                return parkingSpace.AvailableSpace == expectedAvailableSpace;
+            }
+        ));
+
+
     }
 
 }

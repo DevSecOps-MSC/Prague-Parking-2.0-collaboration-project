@@ -18,6 +18,7 @@ public class ParkingSpace : IParkingSpace
 
     public bool Collect(IVehicle vehicle)
     {
+        ParkedVehicles.Remove(vehicle);
         return true;
     }
 

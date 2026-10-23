@@ -87,16 +87,17 @@ public static class ParkingSpaceTests
             }
         ));
 
-        // SimpleTest.AddNewTest(
-        //     new Test("After Collecting a Vehicle from a Parking Space", () =>
-        //     {
-        //         var parkingSpace = new ParkingSpace();
-        //         var car = new Car("_");
-        //         parkingSpace.Park(car);
+        SimpleTest.AddNewTest(
+            new Test("After Collecting a Vehicle from a Parking Space, the Parking Space does not Contain the Vehicle", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                var car = new Car("_");
+                parkingSpace.Park(car);
+                parkingSpace.Collect(car);
 
-        //         return parkingSpace.Collect(car) == true;
-        //     }
-        // ));
+                return parkingSpace.Contains(car) == false;
+            }
+        ));
 
     }
 

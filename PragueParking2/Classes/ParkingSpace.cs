@@ -4,11 +4,18 @@ namespace PragueParking2.Classes;
 
 public class ParkingSpace : IParkingSpace
 {
+    public ParkingSpace(int capacity)
+    {
+        Capacity = capacity;
+    }
+
     public List<IVehicle> ParkedVehicles { get; } = new List<IVehicle>();
+    public int Capacity { get; }
 
     public bool IsEmpty => ParkedVehicles.Count == 0;
 
     public bool IsNotEmpty => !IsEmpty;
+
 
     public bool Park(IVehicle vehicle)
     {

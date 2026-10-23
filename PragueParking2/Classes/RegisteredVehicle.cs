@@ -7,7 +7,9 @@ public class RegisteredVehicle : IVehicle
 {
     public string Registration { get; }
 
-    public RegisteredVehicle(string registration)
+    public int Size { get; }
+
+    public RegisteredVehicle(string registration, int size = 0)
     {
         Registration = Validator.SanitizeVehicleRegistration(registration);
     }

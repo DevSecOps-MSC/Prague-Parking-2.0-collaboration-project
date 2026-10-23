@@ -66,6 +66,17 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
+            new Test("After Parking a Vehicle in a Parking Space, the Parking Space Contains the Parked Vehicle", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                var car = new Car("_");
+                parkingSpace.Park(car);
+
+                return parkingSpace.Contains(car) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
             new Test("A Vehicle can be Collected from a Parking Space", () =>
             {
                 var parkingSpace = new ParkingSpace();
@@ -75,6 +86,17 @@ public static class ParkingSpaceTests
                 return parkingSpace.Collect(car) == true;
             }
         ));
+
+        // SimpleTest.AddNewTest(
+        //     new Test("After Collecting a Vehicle from a Parking Space", () =>
+        //     {
+        //         var parkingSpace = new ParkingSpace();
+        //         var car = new Car("_");
+        //         parkingSpace.Park(car);
+
+        //         return parkingSpace.Collect(car) == true;
+        //     }
+        // ));
 
     }
 

@@ -20,4 +20,9 @@ public class ParkingSpace : IParkingSpace
     {
         return true;
     }
+
+    public bool Contains(IVehicle vehicle)
+    {
+        return ParkedVehicles.Contains(vehicle);
+    }
 }

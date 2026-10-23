@@ -16,7 +16,14 @@ public class ParkingSpace : IParkingSpace
 
     public bool IsNotEmpty => !IsEmpty;
 
-    public int AvailableSpace { get; }
+    public int AvailableSpace
+    {
+        get
+        {
+            return Capacity;
+        }
+    }
+    
 
     public bool Park(IVehicle vehicle)
     {

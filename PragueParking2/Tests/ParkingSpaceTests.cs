@@ -65,6 +65,17 @@ public static class ParkingSpaceTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("A Vehicle can be Collected from a Parking Space", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                var car = new Car("_");
+                parkingSpace.Park(car);
+
+                return parkingSpace.Collect(car) == true;
+            }
+        ));
+
     }
 
 }

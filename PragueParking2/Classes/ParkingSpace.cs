@@ -15,4 +15,9 @@ public class ParkingSpace : IParkingSpace
         ParkedVehicles.Add(vehicle);
         return true;
     }
+
+    public bool Collect(IVehicle vehicle)
+    {
+        return true;
+    }
 }

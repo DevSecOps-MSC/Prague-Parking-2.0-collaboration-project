@@ -37,6 +37,68 @@ public static class ParkingSpaceTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("A Parking Space has a List of Parked Vehicles", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+
+                return parkingSpace.ParkedVehicles is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Vehicle can be Parked in a Parking Space", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+
+                return parkingSpace.Park(new Car("_")) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("After Parking a Vehicle in a Parking Space, the Parking Space is not empty", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                parkingSpace.Park(new Car("_"));
+
+                return parkingSpace.IsNotEmpty == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("After Parking a Vehicle in a Parking Space, the Parking Space Contains the Parked Vehicle", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                var car = new Car("_");
+                parkingSpace.Park(car);
+
+                return parkingSpace.Contains(car) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Vehicle can be Collected from a Parking Space", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                var car = new Car("_");
+                parkingSpace.Park(car);
+
+                return parkingSpace.Collect(car) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("After Collecting a Vehicle from a Parking Space, the Parking Space does not Contain the Vehicle", () =>
+            {
+                var parkingSpace = new ParkingSpace();
+                var car = new Car("_");
+                parkingSpace.Park(car);
+                parkingSpace.Collect(car);
+
+                return parkingSpace.Contains(car) == false;
+            }
+        ));
+
     }
 
 }

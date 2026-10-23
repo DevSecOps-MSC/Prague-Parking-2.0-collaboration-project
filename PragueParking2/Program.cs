@@ -46,6 +46,7 @@ internal class Program
         ValidatorTests.AddTests(config);
         RegisteredVehicleTests.AddTests(config);
         ParkingSpaceTests.AddTests(config);
+        ParkingGarageTests.AddTests(config);
 
         SimpleTest.RunAllTests();
 

@@ -12,5 +12,6 @@ public class RegisteredVehicle : IVehicle
     public RegisteredVehicle(string registration, int size = 0)
     {
         Registration = Validator.SanitizeVehicleRegistration(registration);
+        Size = size;
     }
 }

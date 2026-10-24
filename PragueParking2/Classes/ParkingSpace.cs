@@ -21,7 +21,14 @@ public class ParkingSpace : IParkingSpace
     {
         get
         {
-            return Capacity;
+            int occupiedSpace = 0;
+
+            foreach (IVehicle vehicle in ParkedVehicles)
+            {
+                occupiedSpace = occupiedSpace + vehicle.Size;
+            }
+
+            return Capacity - occupiedSpace;
         }
     }
     

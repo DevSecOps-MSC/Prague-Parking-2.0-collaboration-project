@@ -166,6 +166,15 @@ public static class ParkingSpaceTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("A Parking Space has an ID", () =>
+            {
+                var expectedID = 3;
+                var parkingSpace = new ParkingSpace(expectedID, spaceCap);
+
+                return parkingSpace.ID == expectedID;
+            }
+        ));
 
 
     }

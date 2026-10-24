@@ -10,6 +10,13 @@ public class ParkingSpace : IParkingSpace
         Capacity = capacity;
     }
 
+    public ParkingSpace(int id, int capacity) : this(capacity)
+    {
+        
+    }
+
+    public int ID { get; }
+
     public List<IVehicle> ParkedVehicles { get; } = new List<IVehicle>();
     public int Capacity { get; }
 

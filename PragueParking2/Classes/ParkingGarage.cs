@@ -23,4 +23,19 @@ public class ParkingGarage
             ParkingSpaces.Add(new ParkingSpace(parkingSpaceCapacity));
         }
     }
+
+    public int FirstEmptySpace()
+    {
+        return -1;
+    }
+
+    internal int FirstAvailableSpace(IVehicle vehicle)
+    {
+        return -1;
+    }
+
+    public IParkingSpace this[int index]
+    {
+        get => ParkingSpaces[index + 1];
+    }
 }

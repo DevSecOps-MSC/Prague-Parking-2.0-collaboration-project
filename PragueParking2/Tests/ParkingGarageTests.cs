@@ -10,6 +10,8 @@ public class ParkingGarageTests
         int garageCap = config.ParkingGarageCapacity;
         int spaceCap = config.ParkingSpaceCapacity;
         var testGarage = new ParkingGarage(garageCap, spaceCap);
+        var testCar = new Car("_", config.VehicleSizes[VehicleType.Car]);
+        var testMotorcycle = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]);
 
         SimpleTest.AddNewTest(
             new Test("A Parking Garage has a Capacity", () =>
@@ -56,15 +58,55 @@ public class ParkingGarageTests
             }
         ));
 
-        // SimpleTest.AddNewTest(
-        //     new Test("A Parking Garage can find the first available Empty Parking Space", () =>
-        //     {
-        //         var expectedCapacity = 10;
-        //         var parkingGarage = new ParkingGarage(expectedCapacity);
+        SimpleTest.AddNewTest(
+            new Test("A Parking Garage has Parking Spaces numbered 1 to [Capacity]", () =>
+            {
+                var capacity = 10;
+                var parkingGarage = new ParkingGarage(capacity, spaceCap);
 
-        //         return parkingGarage.Capacity == expectedCapacity;
-        //     }
-        // ));
+                return parkingGarage.ParkingSpaces.First().ID == 1
+                    && parkingGarage.ParkingSpaces.Last().ID == capacity;
+            }
+        ));
 
+        SimpleTest.AddNewTest(
+            new Test("A Parking Garage can access every Parking Space by ID", () =>
+            {
+                var parkingGarage = new ParkingGarage(10, spaceCap);
+                var parkingSpace = parkingGarage[3];
+                var spaceId = 3;
+
+                return parkingGarage.FirstEmptySpace() == spaceId;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Parking Garage can find the first available Empty Parking Space", () =>
+            {
+                var parkingGarage = new ParkingGarage(10, spaceCap);
+                parkingGarage.ParkingSpaces.First().Park(testMotorcycle);
+                var expectedSpaceId = 2;
+
+                return parkingGarage.FirstEmptySpace() == expectedSpaceId;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Parking Garage can find the first available Parking Space with enough room", () =>
+            {
+                var testSize = 4;
+                var parkingGarage = new ParkingGarage(10, testSize);
+                var car = new Car("C", testSize);
+                var motorcycleOne = new Motorcycle("M1", testSize/2);
+                var motorcycleTwo = new Motorcycle("M2", testSize/2);
+
+                parkingGarage.ParkingSpaces[0].Park(car);
+                parkingGarage.ParkingSpaces[1].Park(motorcycleOne);
+
+                var expectedSpaceId = 2;
+
+                return parkingGarage.FirstAvailableSpace(motorcycleTwo) == expectedSpaceId;
+            }
+        ));
     }
 }

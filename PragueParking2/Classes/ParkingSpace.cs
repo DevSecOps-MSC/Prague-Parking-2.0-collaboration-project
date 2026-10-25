@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using PragueParking2.Interfaces;
 
 namespace PragueParking2.Classes;
@@ -10,20 +11,27 @@ public class ParkingSpace : IParkingSpace
         Capacity = capacity;
     }
 
+    public ParkingSpace() { }
     public ParkingSpace(int id, int capacity) : this(capacity)
     {
         
     }
 
+    [JsonInclude]
     public int ID { get; }
 
+    [JsonInclude]
     public List<IVehicle> ParkedVehicles { get; } = new List<IVehicle>();
+    [JsonInclude]
     public int Capacity { get; }
 
+    [JsonIgnore]
     public bool IsEmpty => ParkedVehicles.Count == 0;
 
+    [JsonIgnore]
     public bool IsNotEmpty => !IsEmpty;
 
+    [JsonIgnore]
     public int AvailableSpace
     {
         get
@@ -39,6 +47,7 @@ public class ParkingSpace : IParkingSpace
         }
     }
     
+    [JsonIgnore]
     public bool IsFull => AvailableSpace == 0;
 
     public bool Park(IVehicle vehicle)

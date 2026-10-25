@@ -1,25 +1,15 @@
 ﻿
 namespace FileHandlerLibrary;
 
-public class FileHandler
+public class FileHandler(string path)
 {
-    public static string Load(string path)
-    {
-        return File.ReadAllText(path);
-    }
+    public string Path { get; } = path;
 
-    public static string[] LoadLines(string path)
-    {
-        return File.ReadAllLines(path);
-    }
+    public string Load(string filename)
+        => File.ReadAllText($"{Path}/{filename}")
+            ?? throw new Exception();
 
-    public static void Save(string path, string contents)
-    {
-        File.WriteAllText(path, contents);
-    }
+    public void Save(string filename, string contents)
+        => File.WriteAllText($"{Path}/{filename}", contents);
 
-    public static void SaveLines(string path, string[] lines)
-    {
-        File.WriteAllLines(path, lines);
-    }
 }

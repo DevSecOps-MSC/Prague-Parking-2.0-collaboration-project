@@ -5,43 +5,62 @@ using SimpleTestLibrary;
 
 internal class Program
 {
+    static readonly string defaultConfigJson = "{\"ParkingGarageCapacity\": 5,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+    static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/pp2";
+    static FileHandler fileHandler = new(path);
+    static string configFilename = "config.json";
+    static string garageFilename = "garage.json";
+    static Config? config;
+    static ParkingGarage? parkingGarage;
+
+
     private static void Main(string[] args)
     {
-        // If available, load Configuration File into a [Config] object
-        var configFilePath = "../../../config.json";
-        string jsonString;
-        if (File.Exists(configFilePath))
+        if (Directory.Exists(path))
         {
-            jsonString = FileHandler.Load(configFilePath);
+            Console.WriteLine($"Directory [{path}] already exists. Attempting to load configuration.");
         }
         else
         {
+            DirectoryInfo di;
             try
             {
-                jsonString = FileHandler.Load("config.json");            
+                di = Directory.CreateDirectory(path);
+                Console.WriteLine($"Directory [{path}] was created successfully!");
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException e)
             {
-                Console.WriteLine("Configuration file not found. Loading default values.");
-                jsonString = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+                Console.WriteLine($"It appears the the user does not have the required permission to create directory [{path}]");
+                Console.WriteLine(e.Message);
             }
         }
-        var config = Config.FromJson(jsonString);
 
-// System.Console.WriteLine($"Garage Capacity: {config.ParkingGarageCapacity}");
-// System.Console.WriteLine($"Parking Space Capacity: {config.ParkingSpaceCapacity}");
-// System.Console.WriteLine($"Free Minutes: {config.FreeMinutes}");
-// System.Console.WriteLine("Vehicle Size Chart:");
-// foreach (var vehicleSize in config.VehicleSizes)
-// {
-//     System.Console.WriteLine($"- {vehicleSize.Key}: {vehicleSize.Value}");
-// }
-// System.Console.WriteLine("Current Rates:");
-// foreach (var rate in config.Rates)
-// {
-//     System.Console.WriteLine($"- {rate.Key}: {rate.Value:F2} / hour");
-// }
+        try
+        {
+            config = Config.FromFile(fileHandler, configFilename);
+            Console.WriteLine("Configuration loaded!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Could not load configuration. Loading default values.");
+            config = Config.FromJson(defaultConfigJson);
+        }
 
+        try
+        {
+            parkingGarage = ParkingGarage.FromFile(fileHandler, garageFilename);
+            Console.WriteLine("Parking garage loaded!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Could not load parking garage data. Building new garage from configuration.");
+            parkingGarage = ParkingGarage.FromConfig(config);
+        }
+
+        // config.SaveToFile(fileHandler, configFilename);
+        // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
         ValidatorTests.AddTests(config);
         RegisteredVehicleTests.AddTests(config);
@@ -51,5 +70,6 @@ internal class Program
         SimpleTest.RunAllTests();
 
         SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+
     }
 }

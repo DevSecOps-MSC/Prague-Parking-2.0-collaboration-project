@@ -169,3 +169,42 @@ I suggest the following workflow for each test, no matter how small addition nee
 - If there are no conflicts, merge into main branch and delete the extra branch.
 - Start over.
 
+---
+
+## 2026-10-23
+
+Writing more tests, and continuing to develop the different data models.
+
+---
+
+## 2026-10-24
+
+`ParkingGarage` and `ParkingSpace` classes are both starting to resemble their final forms, me thinks. As I had hoped, getting started was the difficult bit. Our rate of progress has increased dramatically in just a couple of days.
+
+---
+
+## 2026-10-25
+
+Started work on saving and loading `ParkingGarage` state to disk. There was a problem with deserialization of the parking spaces. `List<IParkingSpace>` had to be changed to `List<ParkingSpace` as
+
+> Deserialization of interface or abstract types is not supported.
+
+Makes sense, really.
+
+Seems to work now.
+
+---
+
+Now I need to figure out a solution for the filepath problem. We need a place to store files, with an absolute path instead of a relative one. That is, `../../../` only really works when running the program inside of VisualStudio. When running in a separate terminal window, the path needs to be `./` to stay in the same folder.
+
+---
+
+The solution seems to be `Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)`!
+
+---
+
+
+
+
+
+

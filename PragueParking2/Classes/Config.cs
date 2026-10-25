@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FileHandlerLibrary;
 
 namespace PragueParking2.Classes;
 
@@ -44,12 +45,12 @@ public class Config
     }
 
     public static Config FromJson(string jsonString)
-    {
-        Config? loadedConfig = JsonSerializer.Deserialize<Config>(jsonString);
-        if (loadedConfig is null)
-        {
-            throw new NullReferenceException("Error! Could not parse configuration file.");
-        }
-        return loadedConfig;
-    }
+        => JsonSerializer.Deserialize<Config>(jsonString)
+            ?? throw new Exception();
+
+    public static Config FromFile(FileHandler fileHandler, string filename)
+        => FromJson(fileHandler.Load(filename));
+
+    public void SaveToFile(FileHandler fileHandler, string filename)
+        => fileHandler.Save(filename, ToJson());
 }

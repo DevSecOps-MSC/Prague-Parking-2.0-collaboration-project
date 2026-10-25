@@ -25,10 +25,13 @@ public class ParkingSpace : IParkingSpace
     [JsonInclude]
     public int Capacity { get; }
 
+    [JsonIgnore]
     public bool IsEmpty => ParkedVehicles.Count == 0;
 
+    [JsonIgnore]
     public bool IsNotEmpty => !IsEmpty;
 
+    [JsonIgnore]
     public int AvailableSpace
     {
         get
@@ -44,6 +47,7 @@ public class ParkingSpace : IParkingSpace
         }
     }
     
+    [JsonIgnore]
     public bool IsFull => false;
 
     public bool Park(IVehicle vehicle)

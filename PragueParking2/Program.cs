@@ -5,10 +5,14 @@ using SimpleTestLibrary;
 
 internal class Program
 {
-    static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/pp2";
     static readonly string defaultConfigJson = "{\"ParkingGarageCapacity\": 5,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
-    static Config config = Config.FromJson(defaultConfigJson);
-    static ParkingGarage parkingGarage = ParkingGarage.FromConfiguration(config);
+    static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/pp2";
+    static FileHandler fileHandler = new(path);
+    static string configFilename = "config.json";
+    static string garageFilename = "garage.json";
+    static Config? config;
+    static ParkingGarage? parkingGarage;
+
 
     private static void Main(string[] args)
     {
@@ -19,7 +23,6 @@ internal class Program
         else
         {
             DirectoryInfo di;
-
             try
             {
                 di = Directory.CreateDirectory(path);
@@ -32,69 +35,32 @@ internal class Program
             }
         }
 
-        var configFilePath = path + "/config.json";
-        string configJson;
         try
         {
-            configJson = FileHandler.Load(configFilePath);
-            Console.WriteLine("Configuration file loaded!");
+            config = Config.FromFile(fileHandler, configFilename);
+            Console.WriteLine("Configuration loaded!");
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            Console.WriteLine("Configuration file not found, or it could not be parsed properly. Loading default values.");
-            configJson = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+            Console.WriteLine("Could not load configuration. Loading default values.");
+            config = Config.FromJson(defaultConfigJson);
         }
 
         try
         {
-            config = Config.FromJson(configJson);
+            parkingGarage = ParkingGarage.FromFile(fileHandler, garageFilename);
+            Console.WriteLine("Parking garage loaded!");
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
-            Console.WriteLine("Warning: Problem parsing configuration file!");
+            Console.WriteLine("Could not load parking garage data. Building new garage from configuration.");
+            parkingGarage = ParkingGarage.FromConfig(config);
         }
 
-        if (File.Exists(configFilePath) is not true)
-        {
-
-            try
-            {
-                FileHandler.Save(configFilePath, config.ToJson());
-                Console.WriteLine($"New configuration file saved at: {configFilePath}");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Warning: Problem saving configuration file!");
-            }
-        }
-
-        var garageFilePath = path + "/garage.json";
-        string garageJson = "";
-        try
-        {
-            garageJson = FileHandler.Load(garageFilePath);
-            Console.WriteLine("Garage file loaded!");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            Console.WriteLine("Garage file not found.");
-        }
-
-        try
-        {
-            parkingGarage = ParkingGarage.FromJson(garageJson);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-            Console.WriteLine("Warning: Problem parsing garage file!");
-        }
-
-
+        // config.SaveToFile(fileHandler, configFilename);
+        // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
         ValidatorTests.AddTests(config);
         RegisteredVehicleTests.AddTests(config);

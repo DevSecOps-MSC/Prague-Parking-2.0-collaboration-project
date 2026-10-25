@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FileHandlerLibrary;
 using PragueParking2.Interfaces;
 
 namespace PragueParking2.Classes;
@@ -62,8 +63,12 @@ public class ParkingGarage
         return loadedGarage;
     }
 
-    public static ParkingGarage FromConfiguration(Config config)
-    {
-        return new ParkingGarage(config.ParkingGarageCapacity,config.ParkingSpaceCapacity);
-    }
+    public static ParkingGarage FromFile(FileHandler fileHandler, string filename)
+        => FromJson(fileHandler.Load(filename));
+
+    public void SaveToFile(FileHandler fileHandler, string filename)
+        => fileHandler.Save(filename, ToJson());
+
+    internal static ParkingGarage FromConfig(Config config)
+        => new ParkingGarage(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
 }

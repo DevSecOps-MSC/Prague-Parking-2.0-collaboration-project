@@ -48,7 +48,7 @@ public class ParkingSpace : IParkingSpace
     }
     
     [JsonIgnore]
-    public bool IsFull => false;
+    public bool IsFull => AvailableSpace == 0;
 
     public bool Park(IVehicle vehicle)
     {

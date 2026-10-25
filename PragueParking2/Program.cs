@@ -6,8 +6,10 @@ using SimpleTestLibrary;
 internal class Program
 {
     static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/pp2";
-    static readonly string defaultConfigJson = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+    static readonly string defaultConfigJson = "{\"ParkingGarageCapacity\": 5,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
     static Config config = Config.FromJson(defaultConfigJson);
+    static ParkingGarage parkingGarage = ParkingGarage.FromConfiguration(config);
+
     private static void Main(string[] args)
     {
         if (Directory.Exists(path))
@@ -69,45 +71,29 @@ internal class Program
             }
         }
 
-        // // If available, load Configuration File into a [Config] object
-        // var garageFilePath = "../../../garage.json";
-        // string jsonStringGarage;
-        // if (File.Exists(garageFilePath))
-        // {
-        //     jsonStringGarage = FileHandler.Load(garageFilePath);
-        // }
-        // else
-        // {
-        //     try
-        //     {
-        //         jsonStringGarage = FileHandler.Load("garage.json");            
-        //     }
-        //     catch (Exception)
-        //     {
-        //         Console.WriteLine("Garage file not found. Using default values.");
-        //         jsonStringGarage = "{}";
-        //     }
-        // }
-        // var parkingGarage = ParkingGarage.FromJson(jsonStringGarage);
+        var garageFilePath = path + "/garage.json";
+        string garageJson = "";
+        try
+        {
+            garageJson = FileHandler.Load(garageFilePath);
+            Console.WriteLine("Garage file loaded!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Garage file not found.");
+        }
 
-        // var foo = new ParkingGarage(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
+        try
+        {
+            parkingGarage = ParkingGarage.FromJson(garageJson);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Warning: Problem parsing garage file!");
+        }
 
-        // System.Console.WriteLine(foo.ToJson());
-        // FileHandler.Save("garage.json",foo.ToJson());
-
-        // System.Console.WriteLine($"Garage Capacity: {config.ParkingGarageCapacity}");
-        // System.Console.WriteLine($"Parking Space Capacity: {config.ParkingSpaceCapacity}");
-        // System.Console.WriteLine($"Free Minutes: {config.FreeMinutes}");
-        // System.Console.WriteLine("Vehicle Size Chart:");
-        // foreach (var vehicleSize in config.VehicleSizes)
-        // {
-        //     System.Console.WriteLine($"- {vehicleSize.Key}: {vehicleSize.Value}");
-        // }
-        // System.Console.WriteLine("Current Rates:");
-        // foreach (var rate in config.Rates)
-        // {
-        //     System.Console.WriteLine($"- {rate.Key}: {rate.Value:F2} / hour");
-        // }
 
 
         ValidatorTests.AddTests(config);

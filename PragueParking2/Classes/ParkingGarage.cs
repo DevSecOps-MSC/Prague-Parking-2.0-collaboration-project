@@ -61,4 +61,9 @@ public class ParkingGarage
         }
         return loadedGarage;
     }
+
+    public static ParkingGarage FromConfiguration(Config config)
+    {
+        return new ParkingGarage(config.ParkingGarageCapacity,config.ParkingSpaceCapacity);
+    }
 }

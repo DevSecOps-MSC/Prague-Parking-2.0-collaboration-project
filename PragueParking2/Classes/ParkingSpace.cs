@@ -39,7 +39,7 @@ public class ParkingSpace : IParkingSpace
         }
     }
     
-    public bool IsFull => false;
+    public bool IsFull => AvailableSpace == 0;
 
     public bool Park(IVehicle vehicle)
     {

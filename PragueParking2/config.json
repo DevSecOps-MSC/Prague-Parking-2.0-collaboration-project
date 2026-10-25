@@ -1,5 +1,5 @@
 {
-  "ParkingGarageCapacity": 100,
+  "ParkingGarageCapacity": 5,
   "ParkingSpaceCapacity": 4,
   "FreeMinutes": 10,
   "VehicleSizes": {

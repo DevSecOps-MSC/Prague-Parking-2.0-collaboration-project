@@ -1,0 +1,50 @@
+{
+  "ParkingSpaces": [
+    {
+      "ID": 0,
+      "ParkedVehicles": [],
+      "Capacity": 4,
+      "IsEmpty": true,
+      "IsNotEmpty": false,
+      "AvailableSpace": 4,
+      "IsFull": false
+    },
+    {
+      "ID": 0,
+      "ParkedVehicles": [],
+      "Capacity": 4,
+      "IsEmpty": true,
+      "IsNotEmpty": false,
+      "AvailableSpace": 4,
+      "IsFull": false
+    },
+    {
+      "ID": 0,
+      "ParkedVehicles": [],
+      "Capacity": 4,
+      "IsEmpty": true,
+      "IsNotEmpty": false,
+      "AvailableSpace": 4,
+      "IsFull": false
+    },
+    {
+      "ID": 0,
+      "ParkedVehicles": [],
+      "Capacity": 4,
+      "IsEmpty": true,
+      "IsNotEmpty": false,
+      "AvailableSpace": 4,
+      "IsFull": false
+    },
+    {
+      "ID": 0,
+      "ParkedVehicles": [],
+      "Capacity": 4,
+      "IsEmpty": true,
+      "IsNotEmpty": false,
+      "AvailableSpace": 4,
+      "IsFull": false
+    }
+  ],
+  "Capacity": 5
+}

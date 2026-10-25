@@ -5,42 +5,109 @@ using SimpleTestLibrary;
 
 internal class Program
 {
+    static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/pp2";
+    static readonly string defaultConfigJson = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+    static Config config = Config.FromJson(defaultConfigJson);
     private static void Main(string[] args)
     {
-        // If available, load Configuration File into a [Config] object
-        var configFilePath = "../../../config.json";
-        string jsonString;
-        if (File.Exists(configFilePath))
+        if (Directory.Exists(path))
         {
-            jsonString = FileHandler.Load(configFilePath);
+            Console.WriteLine($"Directory [{path}] already exists. Attempting to load configuration.");
         }
         else
         {
+            DirectoryInfo di;
+
             try
             {
-                jsonString = FileHandler.Load("config.json");            
+                di = Directory.CreateDirectory(path);
+                Console.WriteLine($"Directory [{path}] was created successfully!");
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException e)
             {
-                Console.WriteLine("Configuration file not found. Loading default values.");
-                jsonString = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+                Console.WriteLine($"It appears the the user does not have the required permission to create directory [{path}]");
+                Console.WriteLine(e.Message);
             }
         }
-        var config = Config.FromJson(jsonString);
 
-// System.Console.WriteLine($"Garage Capacity: {config.ParkingGarageCapacity}");
-// System.Console.WriteLine($"Parking Space Capacity: {config.ParkingSpaceCapacity}");
-// System.Console.WriteLine($"Free Minutes: {config.FreeMinutes}");
-// System.Console.WriteLine("Vehicle Size Chart:");
-// foreach (var vehicleSize in config.VehicleSizes)
-// {
-//     System.Console.WriteLine($"- {vehicleSize.Key}: {vehicleSize.Value}");
-// }
-// System.Console.WriteLine("Current Rates:");
-// foreach (var rate in config.Rates)
-// {
-//     System.Console.WriteLine($"- {rate.Key}: {rate.Value:F2} / hour");
-// }
+        var configFilePath = path + "/config.json";
+        string configJson;
+        try
+        {
+            configJson = FileHandler.Load(configFilePath);
+            Console.WriteLine("Configuration file loaded!");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Configuration file not found, or it could not be parsed properly. Loading default values.");
+            configJson = "{\"ParkingGarageCapacity\": 100,\"ParkingSpaceCapacity\": 4,\"FreeMinutes\": 10,\"VehicleSizes\": {\"Car\": 4,\"Motorcycle\": 2},\"Rates\": {\"Car\": 20.0,\"Motorcycle\": 10.0}}";
+        }
+
+        try
+        {
+            config = Config.FromJson(configJson);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine("Warning: Problem parsing configuration file!");
+        }
+
+        if (File.Exists(configFilePath) is not true)
+        {
+
+            try
+            {
+                FileHandler.Save(configFilePath, config.ToJson());
+                Console.WriteLine($"New configuration file saved at: {configFilePath}");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Warning: Problem saving configuration file!");
+            }
+        }
+
+        // // If available, load Configuration File into a [Config] object
+        // var garageFilePath = "../../../garage.json";
+        // string jsonStringGarage;
+        // if (File.Exists(garageFilePath))
+        // {
+        //     jsonStringGarage = FileHandler.Load(garageFilePath);
+        // }
+        // else
+        // {
+        //     try
+        //     {
+        //         jsonStringGarage = FileHandler.Load("garage.json");            
+        //     }
+        //     catch (Exception)
+        //     {
+        //         Console.WriteLine("Garage file not found. Using default values.");
+        //         jsonStringGarage = "{}";
+        //     }
+        // }
+        // var parkingGarage = ParkingGarage.FromJson(jsonStringGarage);
+
+        // var foo = new ParkingGarage(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
+
+        // System.Console.WriteLine(foo.ToJson());
+        // FileHandler.Save("garage.json",foo.ToJson());
+
+        // System.Console.WriteLine($"Garage Capacity: {config.ParkingGarageCapacity}");
+        // System.Console.WriteLine($"Parking Space Capacity: {config.ParkingSpaceCapacity}");
+        // System.Console.WriteLine($"Free Minutes: {config.FreeMinutes}");
+        // System.Console.WriteLine("Vehicle Size Chart:");
+        // foreach (var vehicleSize in config.VehicleSizes)
+        // {
+        //     System.Console.WriteLine($"- {vehicleSize.Key}: {vehicleSize.Value}");
+        // }
+        // System.Console.WriteLine("Current Rates:");
+        // foreach (var rate in config.Rates)
+        // {
+        //     System.Console.WriteLine($"- {rate.Key}: {rate.Value:F2} / hour");
+        // }
 
 
         ValidatorTests.AddTests(config);
@@ -51,5 +118,6 @@ internal class Program
         SimpleTest.RunAllTests();
 
         SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+
     }
 }

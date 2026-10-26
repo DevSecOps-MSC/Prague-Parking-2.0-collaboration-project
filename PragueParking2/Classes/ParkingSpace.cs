@@ -52,8 +52,15 @@ public class ParkingSpace : IParkingSpace
 
     public bool Park(IVehicle vehicle)
     {
+        
+        if (vehicle.Size > AvailableSpace)
+        {
+            return false;
+        }
+
         ParkedVehicles.Add(vehicle);
         return true;
+        
     }
 
     public bool Collect(IVehicle vehicle)

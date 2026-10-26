@@ -59,8 +59,8 @@ internal class Program
             parkingGarage = ParkingGarage.FromConfig(config);
         }
 
-        // config.SaveToFile(fileHandler, configFilename);
-        // parkingGarage.SaveToFile(fileHandler, garageFilename);
+        config.SaveToFile(fileHandler, configFilename);
+        parkingGarage.SaveToFile(fileHandler, garageFilename);
 
         ValidatorTests.AddTests(config);
         RegisteredVehicleTests.AddTests(config);

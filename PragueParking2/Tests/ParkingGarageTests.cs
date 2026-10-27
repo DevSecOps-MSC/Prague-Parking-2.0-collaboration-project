@@ -76,7 +76,7 @@ public class ParkingGarageTests
                 var parkingSpace = parkingGarage[3];
                 var spaceId = 3;
 
-                return parkingGarage.FirstEmptySpace() == spaceId;
+                return parkingSpace.ID == spaceId;
             }
         ));
 

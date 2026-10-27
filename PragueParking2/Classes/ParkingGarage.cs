@@ -43,7 +43,7 @@ public class ParkingGarage
 
     public IParkingSpace this[int index]
     {
-        get => ParkingSpaces[index + 1];
+        get => ParkingSpaces[index - 1];
     }
 
     public string ToJson()

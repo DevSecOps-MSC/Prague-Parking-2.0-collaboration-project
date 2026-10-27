@@ -27,7 +27,7 @@ public class ParkingGarage
 
         for (int i = 0; i < Capacity; i++)
         {
-            ParkingSpaces.Add(new ParkingSpace(parkingSpaceCapacity));
+            ParkingSpaces.Add(new ParkingSpace(i + 1, parkingSpaceCapacity));
         }
     }
 

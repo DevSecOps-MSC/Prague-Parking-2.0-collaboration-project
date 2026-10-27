@@ -14,7 +14,7 @@ public class ParkingSpace : IParkingSpace
     public ParkingSpace() { }
     public ParkingSpace(int id, int capacity) : this(capacity)
     {
-        
+        ID = id;
     }
 
     [JsonInclude]

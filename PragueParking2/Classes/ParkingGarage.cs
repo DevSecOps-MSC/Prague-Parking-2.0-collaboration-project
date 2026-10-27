@@ -46,6 +46,13 @@ public class ParkingGarage
 
     internal int FirstAvailableSpace(IVehicle vehicle)
     {
+        foreach (var space in ParkingSpaces)
+        {
+            if (vehicle.Size <= space.AvailableSpace)
+            {
+                return space.ID;
+            }
+        }
         return -1;
     }
 

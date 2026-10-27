@@ -33,6 +33,14 @@ public class ParkingGarage
 
     public int FirstEmptySpace()
     {
+        foreach (var space in ParkingSpaces)
+        {
+            if (space.IsEmpty)
+            {
+                return space.ID;
+            }
+        }
+
         return -1;
     }
 

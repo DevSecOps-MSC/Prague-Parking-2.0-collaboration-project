@@ -6,4 +6,5 @@ public class Car : Vehicle
 {
     public Car(string registration, int size) : base(registration, size)
     { }
+
 }

@@ -5,9 +5,10 @@ namespace PragueParking2.Tests;
 
 public class VehicleTests
 {
-    public static void AddTests(object Configuration)
+    public static void AddTests(Config config)
     {
         var testRegistration = Validator.SanitizeVehicleRegistration("foo 666");
+        var carSize = config.VehicleSizes[VehicleType.Car];
 
         SimpleTest.AddNewTest(
             new Test("A Vehicle has a vehicle Registration", () =>
@@ -25,6 +26,25 @@ public class VehicleTests
                 var vehicle = new Vehicle(testRegistration, size);
 
                 return vehicle.Size == size;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Vehicle has a Vehicle Type", () =>
+            {
+                var car = new Car(testRegistration, 4);
+
+                return car.Type == VehicleType.Car;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Vehicle can have a Vale Ticket", () =>
+            {
+                var vehicle = new Car(testRegistration, carSize);
+                var ticket = new ValetTicket(vehicle, config.Rates);
+
+                return vehicle.Ticket == ticket;
             }
         ));
 

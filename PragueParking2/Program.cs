@@ -63,7 +63,7 @@ internal class Program
         parkingGarage.SaveToFile(fileHandler, garageFilename);
 
         ValidatorTests.AddTests(config);
-        RegisteredVehicleTests.AddTests(config);
+        VehicleTests.AddTests(config);
         ParkingSpaceTests.AddTests(config);
         ParkingGarageTests.AddTests(config);
 

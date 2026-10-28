@@ -31,7 +31,7 @@ public class ParkingGarage
         }
     }
 
-    public int FirstEmptySpace()
+    public int GetIdOfFirstEmptySpace()
     {
         foreach (var space in ParkingSpaces)
         {
@@ -44,7 +44,7 @@ public class ParkingGarage
         return -1;
     }
 
-    internal int FirstAvailableSpace(IVehicle vehicle)
+    internal int GetIdOfFirstAvailableSpace(IVehicle vehicle)
     {
         foreach (var space in ParkingSpaces)
         {

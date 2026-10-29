@@ -127,4 +127,19 @@ public class ParkingGarage
         }
 
     }
+
+    internal int CountEmptyParkingSpaces()
+    {
+        return -1;
+    }
+
+    internal int CountParkedCars()
+    {
+        return -1;
+    }
+
+    internal int CountParkedMotorcycles()
+    {
+        return -1;
+    }
 }

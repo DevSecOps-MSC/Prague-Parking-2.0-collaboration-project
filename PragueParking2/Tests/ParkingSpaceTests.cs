@@ -15,7 +15,7 @@ public static class ParkingSpaceTests
         Motorcycle testMotorcycle = new("_", motorcycleSize);
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space Is Empty by default", () =>
+            new Test("Parking Space: A Parking Space Is Empty by default", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
 
@@ -24,7 +24,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space with a Parked Vehicle Is Not Empty", () =>
+            new Test("Parking Space: A Parking Space with a Parked Vehicle Is Not Empty", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.ParkedVehicles.Add(testCar);
@@ -34,7 +34,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space that is not Empty Is Not Empty", () =>
+            new Test("Parking Space: A Parking Space that is not Empty Is Not Empty", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.ParkedVehicles.Add(testCar);
@@ -44,7 +44,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space has a List of Parked Vehicles", () =>
+            new Test("Parking Space: A Parking Space has a List of Parked Vehicles", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
 
@@ -53,7 +53,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle can be Parked in a Parking Space", () =>
+            new Test("Parking Space: A Vehicle can be Parked in a Parking Space", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
 
@@ -62,7 +62,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("After Parking a Vehicle in a Parking Space, the Parking Space is not empty", () =>
+            new Test("Parking Space: After Parking a Vehicle in a Parking Space, the Parking Space is not empty", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.Park(testCar);
@@ -72,7 +72,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("After Parking a Vehicle in a Parking Space, the Parking Space Contains the Parked Vehicle", () =>
+            new Test("Parking Space: After Parking a Vehicle in a Parking Space, the Parking Space Contains the Parked Vehicle", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.Park(testCar);
@@ -82,7 +82,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle can be Collected from a Parking Space", () =>
+            new Test("Parking Space: A Vehicle can be Collected from a Parking Space", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.Park(testCar);
@@ -92,7 +92,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("After Collecting a Vehicle from a Parking Space, the Parking Space does not Contain the Vehicle", () =>
+            new Test("Parking Space: After Collecting a Vehicle from a Parking Space, the Parking Space does not Contain the Vehicle", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.Park(testCar);
@@ -103,7 +103,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("An Empty Parking Space has Available Space equal to its Capacity", () =>
+            new Test("Parking Space: An Empty Parking Space has Available Space equal to its Capacity", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
 
@@ -112,7 +112,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A non-empty Parking Space has Available Space equal to its Capacity minus total Sizes of its Parked Vehicles", () =>
+            new Test("Parking Space: A non-empty Parking Space has Available Space equal to its Capacity minus total Sizes of its Parked Vehicles", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);
                 parkingSpace.Park(testMotorcycle);
@@ -123,7 +123,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space Is Full if it has no Available Space", () =>
+            new Test("Parking Space: A Parking Space Is Full if it has no Available Space", () =>
             {
                 var testSize = 4;
                 var parkingSpace = new ParkingSpace(testSize);
@@ -136,7 +136,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space can hold more than one Vehicle if there is enough Available Space", () =>
+            new Test("Parking Space: A Parking Space can hold more than one Vehicle if there is enough Available Space", () =>
             {
                 var testSize = 4;
                 var parkingSpace = new ParkingSpace(testSize);
@@ -151,7 +151,7 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle can only be Parked in a Parking Space if there is enough Available Space", () =>
+            new Test("Parking Space: A Vehicle can only be Parked in a Parking Space if there is enough Available Space", () =>
             {
                 var testSize = 4;
                 var parkingSpace = new ParkingSpace(testSize);
@@ -177,12 +177,40 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Space has an ID", () =>
+            new Test("Parking Space: A Parking Space has an ID", () =>
             {
                 var expectedID = 3;
                 var parkingSpace = new ParkingSpace(expectedID, spaceCap);
 
                 return parkingSpace.ID == expectedID;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Space: It is possible to see if a Parking Space Contains Cars", () =>
+            {
+                var size = 4;
+                var parkingSpace = new ParkingSpace(size);
+                var car = new Car("C", size);
+                parkingSpace.Park(car);
+
+                return parkingSpace.ContainsCars(out int qty) == true
+                    && qty == 1;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Space: It is possible to see if a Parking Space Contains Motorcycles", () =>
+            {
+                var size = 4;
+                var parkingSpace = new ParkingSpace(size);
+                var motorcycleOne = new Motorcycle("M1", size / 2);
+                var motorcycleTwo = new Motorcycle("M2", size / 2);
+                parkingSpace.Park(motorcycleOne);
+                parkingSpace.Park(motorcycleTwo);
+
+                return parkingSpace.ContainsMotorcycles(out int qty) == true
+                    && qty == 2;
             }
         ));
 

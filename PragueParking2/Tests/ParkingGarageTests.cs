@@ -16,7 +16,7 @@ public class ParkingGarageTests
         var testMotorcycle = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]);
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage has a Capacity", () =>
+            new Test("Parking Garage: A Parking Garage has a Capacity", () =>
             {
                 var expectedCapacity = 10;
                 var parkingGarage = new ParkingGarage(expectedCapacity, spaceCap);
@@ -26,7 +26,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A new Parking Garage has a number of Empty Parking Spaces corresponding to its Capacity", () =>
+            new Test("Parking Garage: A new Parking Garage has a number of Empty Parking Spaces corresponding to its Capacity", () =>
             {
                 var expectedCapacity = 10;
                 var parkingGarage = new ParkingGarage(expectedCapacity, spaceCap);
@@ -42,7 +42,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage can be Initialized with Empty Parking Spaces", () =>
+            new Test("Parking Garage: A Parking Garage can be Initialized with Empty Parking Spaces", () =>
             {
                 var expectedCapacity = 10;
                 var parkingGarage = new ParkingGarage(expectedCapacity, spaceCap);
@@ -61,7 +61,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage has Parking Spaces numbered 1 to [Capacity]", () =>
+            new Test("Parking Garage: A Parking Garage has Parking Spaces numbered 1 to [Capacity]", () =>
             {
                 var capacity = 10;
                 var parkingGarage = new ParkingGarage(capacity, spaceCap);
@@ -72,7 +72,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage can access every Parking Space by ID", () =>
+            new Test("Parking Garage: A Parking Garage can access every Parking Space by ID", () =>
             {
                 var parkingGarage = new ParkingGarage(10, spaceCap);
                 var parkingSpace = parkingGarage[3];
@@ -83,7 +83,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage can find the first available Empty Parking Space", () =>
+            new Test("Parking Garage: A Parking Garage can find the first available Empty Parking Space", () =>
             {
                 var parkingGarage = new ParkingGarage(10, spaceCap);
                 parkingGarage.ParkingSpaces.First().Park(testMotorcycle);
@@ -94,7 +94,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage can find the first available Parking Space with enough room", () =>
+            new Test("Parking Garage: A Parking Garage can find the first available Parking Space with enough room", () =>
             {
                 var size = 4;
                 var parkingGarage = new ParkingGarage(10, size);
@@ -112,7 +112,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Parking Garage can find a Vehicle", () =>
+            new Test("Parking Garage: A Parking Garage can find a Vehicle", () =>
             {
                 var parkingGarage = new ParkingGarage(10, 4);
                 parkingGarage[1].Park(testCar);
@@ -131,7 +131,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("After Moving a Vehicle from one Parking Space to another, the Vehicle is no longer in the first space", () =>
+            new Test("Parking Garage: After Moving a Vehicle from one Parking Space to another, the Vehicle is no longer in the first space", () =>
             {
                 IVehicle vehicle = testCar;
                 var parkingGarage = new ParkingGarage(10, spaceCap);
@@ -146,7 +146,7 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("After Moving a Vehicle from one Parking Space to another, the Vehicle is now in the new space", () =>
+            new Test("Parking Garage: After Moving a Vehicle from one Parking Space to another, the Vehicle is now in the new space", () =>
             {
                 IVehicle vehicle = testCar;
                 var parkingGarage = new ParkingGarage(10, spaceCap);
@@ -205,6 +205,43 @@ public class ParkingGarageTests
                 }
 
                 return false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: It is possible to Count the number of Empty Parking Spaces", () =>
+            {
+                var expectedNumber = 10;
+                var parkingGarage = new ParkingGarage(expectedNumber, spaceCap);
+
+                return parkingGarage.CountEmptyParkingSpaces() == expectedNumber;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: It is possible to Count the number of Parked Cars", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.Park(new Car("C1", size), 1);
+                parkingGarage.Park(new Car("C2", size), 2);
+                var expectedNumber = 2;
+
+                return parkingGarage.CountParkedCars() == expectedNumber;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: It is possible to Count the number of Parked Motorcycles", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.Park(new Motorcycle("M1", size/2), 1);
+                parkingGarage.Park(new Motorcycle("M2", size/2), 2);
+                parkingGarage.Park(new Motorcycle("M3", size/2), 2);
+                var expectedNumber = 3;
+
+                return parkingGarage.CountParkedMotorcycles() == expectedNumber;
             }
         ));
 

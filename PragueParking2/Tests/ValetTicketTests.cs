@@ -12,7 +12,7 @@ public class ValetTicketTests
         var testCar = new Car(testRegistration, carSize);
 
         SimpleTest.AddNewTest(
-            new Test("A Valet Ticket belongs to a Vehicle", () =>
+            new Test("Valet Ticket: A Valet Ticket belongs to a Vehicle", () =>
             {
                 var ticket = new ValetTicket(testCar, config.Rates);
 
@@ -21,7 +21,7 @@ public class ValetTicketTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Valet Ticket has a Rate depending on its Type", () =>
+            new Test("Valet Ticket: A Valet Ticket has a Rate depending on its Type", () =>
             {
                 var ticket = new ValetTicket(testCar, config.Rates);
 
@@ -30,7 +30,7 @@ public class ValetTicketTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Valet Ticket has a Time of Check In timestamp", () =>
+            new Test("Valet Ticket: A Valet Ticket has a Time of Check In timestamp", () =>
             {
                 var expectedTimestamp = DateTime.Now;
                 var ticket = new ValetTicket(testCar, config.Rates, expectedTimestamp);
@@ -40,7 +40,7 @@ public class ValetTicketTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Valet Ticket has a Time of Check Out timestamp, initially null", () =>
+            new Test("Valet Ticket: A Valet Ticket has a Time of Check Out timestamp, initially null", () =>
             {
                 var ticket = new ValetTicket(testCar, config.Rates);
 
@@ -49,7 +49,7 @@ public class ValetTicketTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Valet Ticket has a Time of Check Out timestamp, when checked out", () =>
+            new Test("Valet Ticket: A Valet Ticket has a Time of Check Out timestamp, when checked out", () =>
             {
                 var ticket = new ValetTicket(testCar, config.Rates);
                 var expectedTimestamp = DateTime.Now + TimeSpan.FromDays(1);

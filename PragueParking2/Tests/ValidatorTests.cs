@@ -8,7 +8,7 @@ public class ValidatorTests
     public static void AddTests(object Configuration)
     {
         SimpleTest.AddNewTest(
-            new Test("A Vehicle Registration can sanitized and cleaned up", () =>
+            new Test("Validator: A Vehicle Registration can sanitized and cleaned up", () =>
             {
                 string testString = " foo 666  ";
                 string expectedResult = "FOO 666";
@@ -18,7 +18,7 @@ public class ValidatorTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle Registration can not be empty", () =>
+            new Test("Validator: A Vehicle Registration can not be empty", () =>
             {
                 string testString = "";
 
@@ -27,7 +27,7 @@ public class ValidatorTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle Registration can not be more than 10 characters long", () =>
+            new Test("Validator: A Vehicle Registration can not be more than 10 characters long", () =>
             {
                 string testString = "xxx-xxx-xxx";
 
@@ -36,7 +36,7 @@ public class ValidatorTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle Registration can contain more than one space", () =>
+            new Test("Validator: A Vehicle Registration can contain more than one space", () =>
             {
                 string testString = "x x x";
 
@@ -45,7 +45,7 @@ public class ValidatorTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle Registration can only contain approved characters", () =>
+            new Test("Validator: A Vehicle Registration can only contain approved characters", () =>
             {
                 string[] testStrings = [
                     "xxx . xxx",

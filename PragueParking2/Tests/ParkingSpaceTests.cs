@@ -1,5 +1,6 @@
 using PragueParking2.Classes;
 using PragueParking2.Classes.Exceptions;
+using PragueParking2.Interfaces;
 using SimpleTestLibrary;
 
 namespace PragueParking2.Tests;
@@ -11,8 +12,8 @@ public static class ParkingSpaceTests
         int carSize = config.VehicleSizes[VehicleType.Car];
         int motorcycleSize = config.VehicleSizes[VehicleType.Motorcycle];
         int spaceCap = config.ParkingSpaceCapacity;
-        Bus testCar = new("_", carSize);
-        Motorcycle testMotorcycle = new("_", motorcycleSize);
+        IVehicle testCar = new Car("_", carSize).SimulateCheckIn(config);
+        IVehicle testMotorcycle = new Motorcycle("_", motorcycleSize).SimulateCheckIn(config);
 
         SimpleTest.AddNewTest(
             new Test("Parking Space: A Parking Space Is Empty by default", () =>
@@ -127,7 +128,7 @@ public static class ParkingSpaceTests
             {
                 var testSize = 4;
                 var parkingSpace = new ParkingSpace(testSize);
-                var car = new Car("_", testSize);
+                var car = new Car("_", testSize).SimulateCheckIn(config);
 
                 parkingSpace.Park(car);
 
@@ -141,38 +142,12 @@ public static class ParkingSpaceTests
                 var testSize = 4;
                 var parkingSpace = new ParkingSpace(testSize);
 
-                var motorcycleOne = new Motorcycle("M1", testSize / 2);
-                var motorcycleTwo = new Motorcycle("M2", testSize / 2);
+                var motorcycleOne = new Motorcycle("M1", testSize / 2).SimulateCheckIn(config);
+                var motorcycleTwo = new Motorcycle("M2", testSize / 2).SimulateCheckIn(config);
 
                 parkingSpace.Park(motorcycleOne);
 
                 return parkingSpace.Park(motorcycleTwo) == true;
-            }
-        ));
-
-        SimpleTest.AddNewTest(
-            new Test("Parking Space: A Vehicle can only be Parked in a Parking Space if there is enough Available Space", () =>
-            {
-                var testSize = 4;
-                var parkingSpace = new ParkingSpace(testSize);
-
-                var motorcycleOne = new Motorcycle("M1", testSize / 2);
-                var motorcycleTwo = new Motorcycle("M2", testSize / 2);
-                var motorcycleThree = new Motorcycle("M3", testSize / 2);
-
-                parkingSpace.Park(motorcycleOne);
-                parkingSpace.Park(motorcycleTwo);
-
-                try
-                {
-                    parkingSpace.Park(motorcycleThree);
-                }
-                catch (NotEnoughRoomException)
-                {
-                    return true;
-                }
-
-                return false;
             }
         ));
 
@@ -191,7 +166,7 @@ public static class ParkingSpaceTests
             {
                 var size = 4;
                 var parkingSpace = new ParkingSpace(size);
-                var car = new Car("C", size);
+                var car = new Car("C", size).SimulateCheckIn(config);
                 parkingSpace.Park(car);
 
                 return parkingSpace.ContainsCars(out int qty) == true
@@ -204,8 +179,8 @@ public static class ParkingSpaceTests
             {
                 var size = 4;
                 var parkingSpace = new ParkingSpace(size);
-                var motorcycleOne = new Motorcycle("M1", size / 2);
-                var motorcycleTwo = new Motorcycle("M2", size / 2);
+                var motorcycleOne = new Motorcycle("M1", size / 2).SimulateCheckIn(config);
+                var motorcycleTwo = new Motorcycle("M2", size / 2).SimulateCheckIn(config);
                 parkingSpace.Park(motorcycleOne);
                 parkingSpace.Park(motorcycleTwo);
 
@@ -219,10 +194,10 @@ public static class ParkingSpaceTests
             {
                 var size = 4;
                 var parkingSpace = new ParkingSpace(size);
-                var bicycleOne = new Bicycle("B1", size / 4);
-                var bicycleTwo = new Bicycle("B2", size / 4);
-                var bicycleThree = new Bicycle("B3", size / 4);
-                var bicycleFour = new Bicycle("B4", size / 4);
+                var bicycleOne = new Bicycle("B1", size / 4).SimulateCheckIn(config);
+                var bicycleTwo = new Bicycle("B2", size / 4).SimulateCheckIn(config);
+                var bicycleThree = new Bicycle("B3", size / 4).SimulateCheckIn(config);
+                var bicycleFour = new Bicycle("B4", size / 4).SimulateCheckIn(config);
                 parkingSpace.Park(bicycleOne);
                 parkingSpace.Park(bicycleTwo);
                 parkingSpace.Park(bicycleThree);

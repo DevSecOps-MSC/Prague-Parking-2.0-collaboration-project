@@ -12,8 +12,8 @@ public class ParkingGarageTests
         int garageCap = config.ParkingGarageCapacity;
         int spaceCap = config.ParkingSpaceCapacity;
         var testGarage = new ParkingGarage(garageCap, spaceCap);
-        var testCar = new Car("_", config.VehicleSizes[VehicleType.Car]);
-        var testMotorcycle = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]);
+        IVehicle testCar = new Car("_", config.VehicleSizes[VehicleType.Car]).SimulateCheckIn(config);
+        IVehicle testMotorcycle = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]).SimulateCheckIn(config);
 
         SimpleTest.AddNewTest(
             new Test("Parking Garage: A Parking Garage has a Capacity", () =>
@@ -46,7 +46,7 @@ public class ParkingGarageTests
             {
                 var expectedCapacity = 10;
                 var parkingGarage = new ParkingGarage(expectedCapacity, spaceCap);
-                parkingGarage.ParkingSpaces.First().Park(new Car("_", 4));
+                parkingGarage.ParkingSpaces.First().Park(new Car("_", 4).SimulateCheckIn(config));
 
                 parkingGarage.InitializeParkingSpaces(spaceCap);
 
@@ -98,9 +98,9 @@ public class ParkingGarageTests
             {
                 var size = 4;
                 var parkingGarage = new ParkingGarage(10, size);
-                var car = new Car("C", size);
-                var motorcycleOne = new Motorcycle("M1", size / 2);
-                var motorcycleTwo = new Motorcycle("M2", size / 2);
+                var car = new Car("C", size).SimulateCheckIn(config);
+                var motorcycleOne = new Motorcycle("M1", size / 2).SimulateCheckIn(config);
+                var motorcycleTwo = new Motorcycle("M2", size / 2).SimulateCheckIn(config);
 
                 parkingGarage.ParkingSpaces[0].Park(car);
                 parkingGarage.ParkingSpaces[1].Park(motorcycleOne);
@@ -122,7 +122,7 @@ public class ParkingGarageTests
                 parkingGarage[5].Park(testMotorcycle);
 
                 var spaceId = 7;
-                var car = new Car("foo 666", 4);
+                var car = new Car("foo 666", 4).SimulateCheckIn(config);
                 parkingGarage[spaceId].Park(car);
 
                 return parkingGarage.FindVehicle(car.Registration, out int foundSpaceId) == true
@@ -180,7 +180,16 @@ public class ParkingGarageTests
                 var parkingGarage = new ParkingGarage(10, size);
                 var spaceId = 1;
 
-                return parkingGarage.Park(vehicle, spaceId) == false;
+                try
+                {
+                    parkingGarage.Park(vehicle, spaceId);
+                }
+                catch (NotEnoughRoomException)
+                {
+                    return true;
+                }
+
+                return false;
             }
         ));
 

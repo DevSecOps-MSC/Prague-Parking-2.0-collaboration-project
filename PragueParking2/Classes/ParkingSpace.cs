@@ -53,15 +53,14 @@ public class ParkingSpace : IParkingSpace
 
     public bool Park(IVehicle vehicle)
     {
-        
+        if (vehicle.Ticket is null)
+            throw new NoValetTicketException("A vehicle must be checked in and given a valet ticket before it can be parked.");
+
         if (vehicle.Size > AvailableSpace)
-        {
             throw new NotEnoughRoomException();
-        }
 
         ParkedVehicles.Add(vehicle);
         return true;
-        
     }
 
     public bool Collect(IVehicle vehicle)

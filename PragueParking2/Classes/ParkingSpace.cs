@@ -77,8 +77,17 @@ public class ParkingSpace : IParkingSpace
 
     internal bool ContainsCars(out int qty)
     {
-        qty = -1;
-        return false;
+        qty = 0;
+        
+        foreach (IVehicle vehicle in ParkedVehicles)
+        {
+            if (vehicle is Car)
+            {
+                qty = qty + 1;
+            }
+        }
+
+        return qty > 0;
     }
 
     internal bool ContainsMotorcycles(out int qty)

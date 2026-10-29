@@ -74,4 +74,16 @@ public class ParkingSpace : IParkingSpace
     {
         return ParkedVehicles.Contains(vehicle);
     }
+
+    internal bool ContainsCars(out int qty)
+    {
+        qty = -1;
+        return false;
+    }
+
+    internal bool ContainsMotorcycles(out int qty)
+    {
+        qty = -1;
+        return false;
+    }
 }

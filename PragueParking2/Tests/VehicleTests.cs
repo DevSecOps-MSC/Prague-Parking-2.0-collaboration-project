@@ -11,7 +11,7 @@ public class VehicleTests
         var carSize = config.VehicleSizes[VehicleType.Car];
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle has a vehicle Registration", () =>
+            new Test("Vehicle: A Vehicle has a vehicle Registration", () =>
             {
                 var vehicle = new Vehicle(testRegistration);
 
@@ -20,7 +20,7 @@ public class VehicleTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle has a Size", () =>
+            new Test("Vehicle: A Vehicle has a Size", () =>
             {
                 var size = 4;
                 var vehicle = new Vehicle(testRegistration, size);
@@ -30,7 +30,7 @@ public class VehicleTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle has a Vehicle Type", () =>
+            new Test("Vehicle: A Vehicle has a Vehicle Type", () =>
             {
                 var car = new Car(testRegistration, 4);
 
@@ -39,7 +39,7 @@ public class VehicleTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("A Vehicle can have a Vale Ticket", () =>
+            new Test("Vehicle: A Vehicle can have a Vale Ticket", () =>
             {
                 var vehicle = new Car(testRegistration, carSize);
                 var ticket = new ValetTicket(vehicle, config.Rates);

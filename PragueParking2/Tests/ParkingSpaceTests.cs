@@ -1,4 +1,5 @@
 using PragueParking2.Classes;
+using PragueParking2.Classes.Exceptions;
 using SimpleTestLibrary;
 
 namespace PragueParking2.Tests;
@@ -10,7 +11,7 @@ public static class ParkingSpaceTests
         int carSize = config.VehicleSizes[VehicleType.Car];
         int motorcycleSize = config.VehicleSizes[VehicleType.Motorcycle];
         int spaceCap = config.ParkingSpaceCapacity;
-        Car testCar = new("_", carSize);
+        Bus testCar = new("_", carSize);
         Motorcycle testMotorcycle = new("_", motorcycleSize);
 
         SimpleTest.AddNewTest(
@@ -162,7 +163,16 @@ public static class ParkingSpaceTests
                 parkingSpace.Park(motorcycleOne);
                 parkingSpace.Park(motorcycleTwo);
 
-                return parkingSpace.Park(motorcycleThree) == false;
+                try
+                {
+                    parkingSpace.Park(motorcycleThree);
+                }
+                catch (NotEnoughRoomException)
+                {
+                    return true;
+                }
+
+                return false;
             }
         ));
 

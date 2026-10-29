@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using PragueParking2.Classes.Exceptions;
 using PragueParking2.Interfaces;
 
 namespace PragueParking2.Classes;
@@ -55,7 +56,7 @@ public class ParkingSpace : IParkingSpace
         
         if (vehicle.Size > AvailableSpace)
         {
-            return false;
+            throw new NotEnoughRoomException();
         }
 
         ParkedVehicles.Add(vehicle);

@@ -203,6 +203,23 @@ The solution seems to be `Environment.GetFolderPath(Environment.SpecialFolder.Ap
 
 ---
 
+## 2026-10-26
+
+When I uploaded my work today, we had our first conflict of code from different branches. I created the pull request and then got the option to resolve the conflict. It was super easy, barely an inconvenience to sort out on GitHub.
+
+---
+
+## 2026-10-28
+
+Added `ValeTicket`, a way to keep track of check-in and check-out times for vehicles. Every vehicle gets one, with the current rate included, so that already parked vehicles are not affected by a change in pricing.
+
+---
+
+## 2026-10-29
+
+Cleanup and refactor of the `FileHandler` library. Created an `Admin` class for collecting startup and setup data and methods.
+
+---
 
 
 

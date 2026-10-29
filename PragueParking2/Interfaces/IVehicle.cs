@@ -9,4 +9,6 @@ public interface IVehicle
     public int Size { get; }
     public ValetTicket? Ticket { get; }
     public VehicleType Type { get; }
+    public void AttachTicket(ValetTicket ticket);
 }
+

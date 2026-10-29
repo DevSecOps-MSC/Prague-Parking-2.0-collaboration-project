@@ -245,5 +245,70 @@ public class ParkingGarageTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: It is possible to Count the number of Parked Bicycles", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.Park(new Bicycle("B1", size/4), 1);
+                parkingGarage.Park(new Bicycle("B2", size/4), 2);
+                parkingGarage.Park(new Bicycle("B3", size/4), 2);
+                var expectedNumber = 3;
+
+                return parkingGarage.CountParkedBicycles() == expectedNumber;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Car gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Motorcycle gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Motorcycle("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Bus("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bicycle gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Bicycle("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+
+
+
     }
 }

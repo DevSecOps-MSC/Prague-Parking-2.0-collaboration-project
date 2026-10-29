@@ -114,7 +114,7 @@ public class ParkingGarage
     internal bool Park(IVehicle vehicle, int spaceId)
     {
         if (FindVehicle(vehicle.Registration, out int foundSpaceId))
-            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is alreadu parked in parking space #{foundSpaceId}!");
+            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
 
         try
         {
@@ -141,5 +141,28 @@ public class ParkingGarage
     internal int CountParkedMotorcycles()
     {
         return -1;
+    }
+
+    internal int CountParkedBicycles()
+    {
+        return -1;
+    }
+
+    internal bool CheckIn(IVehicle vehicle, Dictionary<VehicleType, decimal> rates)
+    {
+        if (FindVehicle(vehicle.Registration, out int foundSpaceId))
+            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
+
+        try
+        {
+            var ticket = new ValetTicket(vehicle, rates);
+            return true;
+        }
+        catch (DuplicateValetTicketException e)
+        {
+            // TODO: log
+            Console.WriteLine(e.Message);
+        }
+        return false;
     }
 }

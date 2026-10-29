@@ -39,7 +39,7 @@ public class VehicleTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("Vehicle: A Vehicle can have a Vale Ticket", () =>
+            new Test("Vehicle: A Vehicle has a Vale Ticket", () =>
             {
                 var vehicle = new Car(testRegistration, carSize);
                 var ticket = new ValetTicket(vehicle, config.Rates);

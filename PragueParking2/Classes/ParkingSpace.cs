@@ -86,4 +86,10 @@ public class ParkingSpace : IParkingSpace
         qty = -1;
         return false;
     }
+
+    internal bool ContainsBicycles(out int qty)
+    {
+        qty = -1;
+        return false;
+    }
 }

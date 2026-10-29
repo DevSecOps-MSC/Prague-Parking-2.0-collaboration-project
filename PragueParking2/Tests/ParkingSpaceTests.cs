@@ -214,6 +214,25 @@ public static class ParkingSpaceTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Parking Space: It is possible to see if a Parking Space Contains Bicycles", () =>
+            {
+                var size = 4;
+                var parkingSpace = new ParkingSpace(size);
+                var bicycleOne = new Bicycle("B1", size / 4);
+                var bicycleTwo = new Bicycle("B2", size / 4);
+                var bicycleThree = new Bicycle("B3", size / 4);
+                var bicycleFour = new Bicycle("B4", size / 4);
+                parkingSpace.Park(bicycleOne);
+                parkingSpace.Park(bicycleTwo);
+                parkingSpace.Park(bicycleThree);
+                parkingSpace.Park(bicycleFour);
+
+                return parkingSpace.ContainsBicycles(out int qty) == true
+                    && qty == 4;
+            }
+        ));
+
 
     }
 

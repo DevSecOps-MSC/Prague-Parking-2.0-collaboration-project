@@ -86,7 +86,7 @@ public class ParkingGarage
         => fileHandler.Save(filename, ToJson());
 
     internal static ParkingGarage FromConfig(Config config)
-        => new ParkingGarage(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
+        => new(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
 
     internal bool FindVehicle(string registration, out int foundSpaceId)
     {
@@ -120,7 +120,7 @@ public class ParkingGarage
         {
             return this[spaceId].Park(vehicle);
         }
-        catch (NotEnoughRoomException e)
+        catch (NotEnoughRoomException)
         {
             // TODO: log event
             return false;

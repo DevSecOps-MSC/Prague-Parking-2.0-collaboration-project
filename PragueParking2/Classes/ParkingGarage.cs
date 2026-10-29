@@ -116,6 +116,9 @@ public class ParkingGarage
         if (FindVehicle(vehicle.Registration, out int foundSpaceId))
             throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
 
+        if (vehicle.Ticket is null)
+            throw new NoValetTicketException("A vehicle must be checked in and given a valet ticket before it can be parked.");
+
         try
         {
             return this[spaceId].Park(vehicle);

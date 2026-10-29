@@ -21,6 +21,12 @@ public class Vehicle(string registration, int size = 1) : IVehicle
         }
     }
 
+    public IVehicle SimulateCheckIn(Config config)
+    {
+        var ticket = new ValetTicket(this, config.Rates);
+        return this;
+    }
+
     public VehicleType Type
         => this switch
         {

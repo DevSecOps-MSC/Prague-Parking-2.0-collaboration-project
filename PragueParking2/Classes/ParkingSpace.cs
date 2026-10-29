@@ -81,9 +81,13 @@ public class ParkingSpace : IParkingSpace
         
         foreach (IVehicle vehicle in ParkedVehicles)
         {
+            
             if (vehicle is Car)
+                
             {
+                
                 qty = qty + 1;
+                
             }
         }
 
@@ -92,7 +96,21 @@ public class ParkingSpace : IParkingSpace
 
     internal bool ContainsMotorcycles(out int qty)
     {
-        qty = -1;
-        return false;
+        qty = 0;
+
+        foreach (IVehicle vehicle in ParkedVehicles)
+            
+        {
+            
+            if (vehicle is Motorcycle)
+            {
+                
+                qty = qty + 1;
+                
+            }
+            
+        }
+
+        return qty > 0;
     }
 }

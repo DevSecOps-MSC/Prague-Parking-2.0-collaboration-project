@@ -2,6 +2,8 @@ using PragueParking2.Tests;
 
 namespace PragueParking2.Classes;
 
+// Note to self: add a ToRecord() or AsRecord() method (or property) for easy logging?
+
 public class ValetTicket
 {
     public Vehicle Vehicle { get; }

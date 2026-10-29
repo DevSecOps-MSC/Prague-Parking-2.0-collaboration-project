@@ -1,4 +1,6 @@
 using PragueParking2.Classes;
+using PragueParking2.Classes.Exceptions;
+using PragueParking2.Interfaces;
 using SimpleTestLibrary;
 
 namespace PragueParking2.Tests;
@@ -97,8 +99,8 @@ public class ParkingGarageTests
                 var size = 4;
                 var parkingGarage = new ParkingGarage(10, size);
                 var car = new Car("C", size);
-                var motorcycleOne = new Motorcycle("M1", size/2);
-                var motorcycleTwo = new Motorcycle("M2", size/2);
+                var motorcycleOne = new Motorcycle("M1", size / 2);
+                var motorcycleTwo = new Motorcycle("M2", size / 2);
 
                 parkingGarage.ParkingSpaces[0].Park(car);
                 parkingGarage.ParkingSpaces[1].Park(motorcycleOne);
@@ -108,5 +110,103 @@ public class ParkingGarageTests
                 return parkingGarage.GetIdOfFirstAvailableSpace(motorcycleTwo) == expectedSpaceId;
             }
         ));
+
+        SimpleTest.AddNewTest(
+            new Test("A Parking Garage can find a Vehicle", () =>
+            {
+                var parkingGarage = new ParkingGarage(10, 4);
+                parkingGarage[1].Park(testCar);
+                parkingGarage[2].Park(testMotorcycle);
+                parkingGarage[4].Park(testMotorcycle);
+                parkingGarage[5].Park(testMotorcycle);
+                parkingGarage[5].Park(testMotorcycle);
+
+                var spaceId = 7;
+                var car = new Car("foo 666", 4);
+                parkingGarage[spaceId].Park(car);
+
+                return parkingGarage.FindVehicle(car.Registration, out int foundSpaceId) == true
+                    && foundSpaceId == spaceId;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("After Moving a Vehicle from one Parking Space to another, the Vehicle is no longer in the first space", () =>
+            {
+                IVehicle vehicle = testCar;
+                var parkingGarage = new ParkingGarage(10, spaceCap);
+                var fromParkingSpaceId = 1;
+                var toParkingSpaceId = 3;
+                parkingGarage[fromParkingSpaceId].Park(vehicle);
+
+                parkingGarage.Move(vehicle, fromParkingSpaceId, toParkingSpaceId);
+
+                return parkingGarage[fromParkingSpaceId].Contains(vehicle) == false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("After Moving a Vehicle from one Parking Space to another, the Vehicle is now in the new space", () =>
+            {
+                IVehicle vehicle = testCar;
+                var parkingGarage = new ParkingGarage(10, spaceCap);
+                var fromParkingSpaceId = 1;
+                var toParkingSpaceId = 3;
+                parkingGarage[fromParkingSpaceId].Park(vehicle);
+
+                parkingGarage.Move(vehicle, fromParkingSpaceId, toParkingSpaceId);
+
+                return parkingGarage[toParkingSpaceId].Contains(vehicle);
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can be Parked in a Parking Space with enough room", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Vehicle("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                var spaceId = 1;
+
+                return parkingGarage.Park(vehicle, spaceId);
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can not be Parked in a Parking Space without enough room", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Vehicle("foo", size + 1);
+                var parkingGarage = new ParkingGarage(10, size);
+                var spaceId = 1;
+
+                return parkingGarage.Park(vehicle, spaceId) == false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can not be Parked if its Registration is already in the system", () =>
+            {
+                var registration = "FOO 666";
+                var size = 4;
+                IVehicle vehicleOne = new Vehicle(registration, size);
+                IVehicle vehicleTwo = new Vehicle(registration, size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.Park(vehicleOne, 10);
+                var spaceId = 2;
+
+                try
+                {
+                    parkingGarage.Park(vehicleTwo, spaceId);
+                }
+                catch (DuplicateVehicleRegistrationException)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        ));
+
     }
 }

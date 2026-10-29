@@ -1,5 +1,3 @@
-using System.Runtime.Serialization;
-
 namespace PragueParking2.Classes.Exceptions;
 
 public class VehicleTypeNotSupportedException : Exception

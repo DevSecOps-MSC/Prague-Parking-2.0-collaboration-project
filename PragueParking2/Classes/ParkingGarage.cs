@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FileHandlerLibrary;
+using PragueParking2.Classes.Exceptions;
 using PragueParking2.Interfaces;
 
 namespace PragueParking2.Classes;
@@ -86,4 +87,44 @@ public class ParkingGarage
 
     internal static ParkingGarage FromConfig(Config config)
         => new ParkingGarage(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
+
+    internal bool FindVehicle(string registration, out int foundSpaceId)
+    {
+        foreach (var space in ParkingSpaces)
+        {
+            foreach (var vehicle in space.ParkedVehicles)
+            {
+                if (vehicle.Registration.Equals(registration))
+                {
+                    foundSpaceId = space.ID;
+                    return true;
+                }
+            }
+        }
+
+        foundSpaceId = -1;
+        return false;
+    }
+
+    internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
+    {
+        return;
+    }
+
+    internal bool Park(IVehicle vehicle, int spaceId)
+    {
+        if (FindVehicle(vehicle.Registration, out int foundSpaceId))
+            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is alreadu parked in parking space #{foundSpaceId}!");
+
+        try
+        {
+            return this[spaceId].Park(vehicle);
+        }
+        catch (NotEnoughRoomException e)
+        {
+            // TODO: log event
+            return false;
+        }
+
+    }
 }

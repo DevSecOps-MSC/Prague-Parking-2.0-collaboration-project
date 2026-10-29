@@ -16,6 +16,8 @@ public class Vehicle(string registration, int size = 1) : IVehicle
         {
             Car => VehicleType.Car,
             Motorcycle => VehicleType.Motorcycle,
+            Bicycle => VehicleType.Bicycle,
+            Bus => VehicleType.Bus,
             _ => throw new VehicleTypeNotSupportedException(
                 "This vehicle type is not supported at the moment")
         };

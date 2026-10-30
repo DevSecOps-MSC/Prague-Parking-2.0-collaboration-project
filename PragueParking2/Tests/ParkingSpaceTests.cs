@@ -208,6 +208,45 @@ public static class ParkingSpaceTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can not be Parked in a Parking Space without enough room", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size).SimulateCheckIn(config);
+                var parkingSpace = new ParkingSpace(size);
+
+                try
+                {
+                    parkingSpace.Park(vehicle);
+                }
+                catch (NotEnoughRoomException)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Space: A Vehicle can only be parked if it has a Valet Ticket", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingSpace = new ParkingSpace(size);
+
+                try
+                {
+                    parkingSpace.Park(vehicle);
+                }
+                catch (NoValetTicketException)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        ));
 
     }
 

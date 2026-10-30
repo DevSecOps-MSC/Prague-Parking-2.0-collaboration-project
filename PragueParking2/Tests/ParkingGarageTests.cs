@@ -180,16 +180,7 @@ public class ParkingGarageTests
                 var parkingGarage = new ParkingGarage(10, size);
                 var spaceId = 1;
 
-                try
-                {
-                    parkingGarage.Park(vehicle, spaceId);
-                }
-                catch (NotEnoughRoomException)
-                {
-                    return true;
-                }
-
-                return false;
+                return parkingGarage.Park(vehicle, spaceId) == false;
             }
         ));
 
@@ -323,16 +314,7 @@ public class ParkingGarageTests
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
 
-                try
-                {
-                    parkingGarage.Park(vehicle, 1);
-                }
-                catch (NoValetTicketException)
-                {
-                    return true;
-                }
-
-                return false;
+                return parkingGarage.Park(vehicle, 1) == false;
             }
         ));
 

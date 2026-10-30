@@ -110,7 +110,11 @@ public class ParkingGarage
 
     internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
-        return;
+        if (this[toParkingSpaceId].Park(vehicle))
+            
+        {
+            this[fromParkingSpaceId].Collect(vehicle);
+        }
     }
 
     internal bool Park(IVehicle vehicle, int spaceId)
@@ -137,22 +141,56 @@ public class ParkingGarage
 
     internal int CountEmptyParkingSpaces()
     {
-        return -1;
+        int count = 0;
+
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+        {
+            if (parkingSpace.IsEmpty)
+            {
+                count = count + 1;
+            }
+        }
+        return count;
     }
 
     internal int CountParkedCars()
     {
-        return -1;
+        int count = 0;
+        
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+        {
+            parkingSpace.ContainsCars(out int qty);
+            
+            count = count + qty;
+        }
+        return count;
     }
 
     internal int CountParkedMotorcycles()
     {
-        return -1;
+        int count = 0;
+
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+        {
+            parkingSpace.ContainsMotorcycles(out int qty);
+            
+            count = count + qty;
+        }
+        return count;
     }
 
     internal int CountParkedBicycles()
     {
-        return -1;
+        int count = 0;
+
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+        {
+            parkingSpace.ContainsBicycles(out int qty);
+            
+            count = count + qty;
+        }
+
+        return count;
     }
 
     internal bool CheckIn(IVehicle vehicle, Dictionary<VehicleType, decimal> rates)

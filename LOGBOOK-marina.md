@@ -127,3 +127,38 @@ I'm really happy to finally have some free time this evening to take care of mys
 At the same time, I know I've learnt a lot throughout this project. I'm much more comfortable with the Git workflow now, and I'm slowly starting to understand how to translate a requirement into actual code.
 
 I still need practice with programming logic. A lot of practice!
+
+---
+
+### Thursday, 29 October
+
+Today I updated my local repository and ran the new tests my colleagues had added.
+
+I worked on counting cars and motorcycles within a parking space. I used `foreach` loops to check each parked vehicle's type and count the matching vehicles.
+
+This helped me practice using `out` parameters. In these methods, the number of vehicles is passed back through `qty`, while the returned `bool` tells us whether any vehicles of that type were found.
+
+Both tests passed, and all previously passing tests still passed. I committed and pushed each fix on its own branch, created pull requests and merged them into `main`.
+
+I was tired, so I decided to stop after these two tasks and continue the next day.
+
+---
+
+### Friday, 30 October
+
+Today I fetched the latest changes and continued working through the failing tests back to back!
+
+At first, the programme crashed because my saved configuration only contained cars and motorcycles, while the new tests also needed bicycles. With Stig's magic, I understood that updating the code through Git does not automatically update the configuration saved separately on my computer. He fixed it and explained it, so everything worked as it should have.
+
+Once that was resolved, I worked on counting bicycles within a parking space, moving vehicles between spaces, counting empty spaces and counting cars, motorcycles and bicycles across the whole garage.
+
+For the garage totals, I reused the counting methods we already had for individual parking spaces and added their results together. This helped me understand how one method can use another instead of repeating the same logic.
+
+For moving vehicles, I added the vehicle to the destination first and removed it from its original space only when parking succeeded.
+
+I ran all tests after each change and followed our branch, commit, push and pull request workflow. By the end, all tests in the current suite passed, and my fixes were merged into `main`.
+
+I still need practice to understand and write the logic independently, but these repeated counting tasks helped me recognise a pattern, so it is not as scary anymore and I am gaining some sort of speed in automation.
+
+I am getting more comfortable breaking a task into smaller steps and checking the result before moving on.
+

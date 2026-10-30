@@ -153,7 +153,6 @@ public class ParkingGarage
             }
             
         }
-
         
         return count;
         
@@ -161,7 +160,17 @@ public class ParkingGarage
 
     internal int CountParkedCars()
     {
-        return -1;
+        int count = 0;
+        
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+            
+        {
+            parkingSpace.ContainsCars(out int qty);
+            
+            count = count + qty;
+        }
+
+        return count;
     }
 
     internal int CountParkedMotorcycles()

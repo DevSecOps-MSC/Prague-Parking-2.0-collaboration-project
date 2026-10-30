@@ -64,12 +64,12 @@ public class ValetTicketTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("Valet Ticket: A Valet Ticket has Parking Space ID, initially null", () =>
+            new Test("Valet Ticket: A Valet Ticket has a Parking Space ID", () =>
             {
                 var vehicle = new Car(testRegistration, carSize);
                 var ticket = new ValetTicket(vehicle, config.Rates);
 
-                return ticket.ParkingSpaceId is null;
+                return ticket.ParkingSpaceId == 0;
             }
         ));
 

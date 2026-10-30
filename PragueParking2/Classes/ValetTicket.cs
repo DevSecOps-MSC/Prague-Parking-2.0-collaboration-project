@@ -11,7 +11,7 @@ public class ValetTicket
     public decimal Rate { get; }
     public DateTime TimeOfCheckIn { get; }
     public DateTime? TimeOfCheckOut { get; private set; }
-    public int? ParkingSpaceId { get; private set; }
+    public int ParkingSpaceId { get; private set; }
 
     public ValetTicket(IVehicle vehicle, Dictionary<VehicleType, decimal> rates, DateTime now)
     {

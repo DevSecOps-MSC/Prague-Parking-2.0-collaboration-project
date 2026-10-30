@@ -224,6 +224,12 @@ public class ParkingGarage
 
     internal bool CheckOut(IVehicle vehicle)
     {
-        return true;
+        if (Collect(vehicle, vehicle.Ticket!.ParkingSpaceId))
+        {
+            vehicle.Ticket.CheckOut(DateTime.Now);
+            return true;
+        }
+
+        return false;
     }
 }

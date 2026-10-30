@@ -60,6 +60,7 @@ public class ParkingSpace : IParkingSpace
             throw new NotEnoughRoomException();
 
         ParkedVehicles.Add(vehicle);
+        vehicle.Ticket.UpdateParkingSpaceId(ID);
         return true;
     }
 

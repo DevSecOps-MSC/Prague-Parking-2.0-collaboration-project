@@ -405,38 +405,47 @@ public class ParkingGarageTests
             }
         ));
 
-        // SimpleTest.AddNewTest(
-        //     new Test("Parking Garage: A Vehicle's Valet Ticket is updated with Parking Space ID when it is Parked", () =>
-        //     {
-        //         var size = 4;
-        //         IVehicle vehicle = new Car("foo", size);
-        //         var parkingGarage = new ParkingGarage(10, size);
-        //         var spaceId = 3;
-        //         parkingGarage.CheckIn(vehicle, config.Rates);
-        //         parkingGarage.Park(vehicle, spaceId);
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle's Valet Ticket is updated with Parking Space ID when it is Parked", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                var spaceId = 3;
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, spaceId);
 
-        //         return parkingGarage.CheckOut(vehicle);
-        //     }
-        // ));
+                return vehicle.Ticket!.ParkingSpaceId == spaceId;
+            }
+        ));
 
-        // SimpleTest.AddNewTest(
-        //     new Test("Parking Garage: A Vehicle is Collected when it is Checked Out", () =>
-        //     {
-        //         var size = 4;
-        //         IVehicle vehicle = new Car("foo", size);
-        //         var parkingGarage = new ParkingGarage(10, size);
-        //         var spaceId = 1;
-        //         parkingGarage.CheckIn(vehicle, config.Rates);
-        //         parkingGarage.Park(vehicle, spaceId);
-        //         parkingGarage.CheckOut(vehicle);
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle is Collected when it is Checked Out", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, vehicle.Ticket!.ParkingSpaceId);
+                parkingGarage.CheckOut(vehicle);
 
-        //         return parkingGarage.FindVehicle(vehicle.Registration, out _) == false;
-        //     }
-        // ));
+                return parkingGarage.FindVehicle(vehicle.Registration, out _) == false;
+            }
+        ));
 
-        // is collected when checked out
-        // should not still be in garage
-        // 
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle's Valet Ticket is updated with timestamp when it is Checked Out", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, vehicle.Ticket!.ParkingSpaceId);
+                parkingGarage.CheckOut(vehicle);
+
+                return vehicle.Ticket.TimeOfCheckOut is not null;
+            }
+        ));
 
     }
 }

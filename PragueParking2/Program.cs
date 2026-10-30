@@ -10,6 +10,7 @@ internal class Program
     static Config? config;
     static ParkingGarage? parkingGarage;
 
+
     private static void Main(string[] args)
     {
         if (Admin.Setup(fileHandler) is false)
@@ -17,14 +18,46 @@ internal class Program
             Console.WriteLine("Something horrible went wrong and it appears impossible to set up the software. Exiting.");
             Environment.Exit(666);
         }
-        config = Admin.LoadConfig(fileHandler);
-        parkingGarage = Admin.LoadGarage(fileHandler,config);
+        // config = Admin.LoadConfig(fileHandler);
+        config = Admin.LoadDefaultConfig();
+        // parkingGarage = Admin.LoadGarage(fileHandler, config);
+        parkingGarage = ParkingGarage.FromConfig(config);
 
+
+
+        // Layout mainLayout = new Layout("Root")
+        //     .SplitRows(
+        //         new Layout("Top")
+        //         .SplitColumns(
+        //             new Layout("Action").Size(40),
+        //             new Layout("Map")
+        //         ).Size(20),
+        //         new Layout("Message").Size(5),
+        //         new Layout("Log").Size(9)
+        //     );
+
+        // Layout mainLayout2 = new Layout("Root")
+        //     .SplitRows(
+        //         new Layout("Top")
+        //         .SplitColumns(
+        //             new Layout("Action").Size(40),
+        //             new Layout("Map")
+        //         ).Size(20),
+        //         new Layout("Bottom").Size(25)
+        //         .SplitColumns(
+        //             new Layout("Message").Size(55),
+        //             new Layout("Log")
+        //         )
+        //     );
+
+
+
+        // AnsiConsole.Write(mainLayout2);
 
         // config.SaveToFile(fileHandler, configFilename);
         // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
- 
+
         ValidatorTests.AddTests(config);
         VehicleTests.AddTests(config);
         ValetTicketTests.AddTests(config);
@@ -35,41 +68,41 @@ internal class Program
 
         SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-   
 
-    Menu menu = new();
 
-    List<string> menuItems =
-    [
-    "Parking",
-    "Retrieve",
-    "Move",
-    "Search",
-    "List",
-    "Admin",
-    "Exit"
-    ];
+        //     Menu menu = new();
 
-while (true)
-{
-    string choice = menu.Show(menuItems);
+        //     List<string> menuItems =
+        //     [
+        //     "Parking",
+        // "Retrieve",
+        // "Move",
+        // "Search",
+        // "List",
+        // "Admin",
+        // "Exit"
+        //     ];
 
-    switch (choice)
-    {
-        case "Parking":
-            AnsiConsole.MarkupLine("[green]Parking screen[/]");
-            Console.ReadKey();
-            break;
+        //     while (true)
+        //     {
+        //         string choice = menu.Show(menuItems);
 
-        case "Retrieve":
-            AnsiConsole.MarkupLine("[green]Retrieve screen[/]");
-            Console.ReadKey();
-            break;
+        //         switch (choice)
+        //         {
+        //             case "Parking":
+        //                 AnsiConsole.MarkupLine("[green]Parking screen[/]");
+        //                 Console.ReadKey();
+        //                 break;
 
-        case "Exit":
-            return;
+        //             case "Retrieve":
+        //                 AnsiConsole.MarkupLine("[green]Retrieve screen[/]");
+        //                 Console.ReadKey();
+        //                 break;
+
+        //             case "Exit":
+        //                 return;
+        //         }
+        //     }
     }
-}
-}
 
 }

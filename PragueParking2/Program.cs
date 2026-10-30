@@ -69,40 +69,61 @@ internal class Program
         SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
 
+        /*
+        Menu menu = new();
 
-        //     Menu menu = new();
+        List<string> menuItems =
+        [
+            "Parking",
+            "Retrieve",
+            "Move",
+            "Search",
+            "List",
+            "Admin",
+            "Exit"
+        ];
 
-        //     List<string> menuItems =
-        //     [
-        //     "Parking",
-        // "Retrieve",
-        // "Move",
-        // "Search",
-        // "List",
-        // "Admin",
-        // "Exit"
-        //     ];
+        while (true)
+        {
+            string choice = menu.Show(menuItems);
 
-        //     while (true)
-        //     {
-        //         string choice = menu.Show(menuItems);
+            switch (choice)
+            {
+                case "Parking":
+                    AnsiConsole.MarkupLine("[green]Parking selected[/]");
+                    //  Console.ReadKey(true);
+                    break;
 
-        //         switch (choice)
-        //         {
-        //             case "Parking":
-        //                 AnsiConsole.MarkupLine("[green]Parking screen[/]");
-        //                 Console.ReadKey();
-        //                 break;
+                case "Retrieve":
+                    AnsiConsole.MarkupLine("[green]Retrieve selected[/]");
+                    //    Console.ReadKey(true);
+                    break;
 
-        //             case "Retrieve":
-        //                 AnsiConsole.MarkupLine("[green]Retrieve screen[/]");
-        //                 Console.ReadKey();
-        //                 break;
+                case "Move":
+                    AnsiConsole.MarkupLine("[green]Move selected[/]");
+                    //   Console.ReadKey(true);
+                    break;
 
-        //             case "Exit":
-        //                 return;
-        //         }
-        //     }
+                case "Search":
+                    AnsiConsole.MarkupLine("[green]Search selected[/]");
+                    //  Console.ReadKey(true);
+                    break;
+
+                case "List":
+                    AnsiConsole.MarkupLine("[green]List selected[/]");
+                    //  Console.ReadKey(true);
+                    break;
+
+                case "Admin":
+                    AnsiConsole.MarkupLine("[green]Admin selected[/]");
+                    //   Console.ReadKey(true);
+                    break;
+
+                case "Exit":
+                    return;
+            }
+        }
+        */
     }
 
 }

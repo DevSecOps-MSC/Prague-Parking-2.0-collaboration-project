@@ -9,7 +9,7 @@ namespace PragueParking2.Classes
 
 
         private int _selectedIndex;
-
+        private string _currentScreen = "Home";
         public string Show(List<string> items)
         {
             while (true)
@@ -36,6 +36,7 @@ namespace PragueParking2.Classes
 
                     case ConsoleKey.Enter:
 
+                        _currentScreen = items[_selectedIndex];
                         return items[_selectedIndex];
                 }
             }
@@ -79,17 +80,18 @@ namespace PragueParking2.Classes
             var interactiveTable = new Table()
                 .Border(TableBorder.Rounded);
 
-            interactiveTable.AddColumn("[yellow]Field[/]");
+            interactiveTable.AddColumn("[yellow]Field[/]");              // if parking is chosen: "Add reg number:
+                                                                         //                        add vehecle type:"
             interactiveTable.AddColumn("[yellow]Value[/]");
 
             interactiveTable.AddRow("Registration", "");
             interactiveTable.AddRow("Vehicle Type", "");
 
 
-            string currentScreen = "mjau mjau";      // change the hard coded to dynamic with the input from menu
+
 
             var interactivePanel = new Panel(interactiveTable)
-                .Header(currentScreen)
+                .Header(_currentScreen)
                 .Border(BoxBorder.Rounded)
                 .Expand();
 
@@ -123,7 +125,7 @@ namespace PragueParking2.Classes
                 new Layout("Map")
             ).Size(20),
 
-            new Layout("Bottom").Size(8)
+            new Layout("Bottom").Size(9)
             .SplitColumns(
                 new Layout("Info").Size(55),
                 new Layout("Log")

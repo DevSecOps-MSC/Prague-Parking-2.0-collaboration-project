@@ -108,7 +108,11 @@ public class ParkingGarage
 
     internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
-        return;
+        if (this[toParkingSpaceId].Park(vehicle))
+            
+        {
+            this[fromParkingSpaceId].Collect(vehicle);
+        }
     }
 
     internal bool Park(IVehicle vehicle, int spaceId)

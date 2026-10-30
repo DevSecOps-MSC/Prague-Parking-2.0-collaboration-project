@@ -139,7 +139,24 @@ public class ParkingGarage
 
     internal int CountEmptyParkingSpaces()
     {
-        return -1;
+        
+        int count = 0;
+
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+            
+        {
+            
+            if (parkingSpace.IsEmpty)
+                
+            {
+                count = count + 1;
+            }
+            
+        }
+
+        
+        return count;
+        
     }
 
     internal int CountParkedCars()

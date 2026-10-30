@@ -209,10 +209,10 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("Parking Garage: A Vehicle can not be Parked in a Parking Space without enough room", () =>
+            new Test("Parking Space: A Vehicle can not be Parked in a Parking Space without enough room", () =>
             {
                 var size = 4;
-                IVehicle vehicle = new Car("foo", size).SimulateCheckIn(config);
+                IVehicle vehicle = new Car("foo", size + 1).SimulateCheckIn(config);
                 var parkingSpace = new ParkingSpace(size);
 
                 try

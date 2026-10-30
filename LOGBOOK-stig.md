@@ -221,6 +221,22 @@ Cleanup and refactor of the `FileHandler` library. Created an `Admin` class for 
 
 ---
 
+Implemented the enforcement of valet tickets, i.e. a vehicle is not allowed to be parked without one. This broke a big bunch of tests, something that I was prepared for. To fix this, I added a `SimulateCheckIn()` method to `Vehicle` to use in the tests. After updating the affected tests, everything's working again. However, I'm expecting a lot of conflicts when merging this branch because Marina has been working on tests at the same time.
+
+---
+
+## 2026-10-30
+
+*Not a single conflict!* The `enforce-valet-tickets` branch merged into `main` with no problems whatsoever.
+
+---
+
+The deadline is approaching fast, so today we need to get a UI in place.
+
+---
+
+
+
 
 
 

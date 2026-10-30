@@ -6,6 +6,8 @@ namespace PragueParking2.Classes
 {
     internal class Menu
     {
+
+
         private int _selectedIndex;
 
         public string Show(List<string> items)
@@ -20,15 +22,15 @@ namespace PragueParking2.Classes
                 {
                     case ConsoleKey.UpArrow:
 
-                        if (_selectedIndex > 0)
-                            _selectedIndex--;
+                        _selectedIndex =
+                            Math.Max(0, _selectedIndex - 1);
 
                         break;
 
                     case ConsoleKey.DownArrow:
 
-                        if (_selectedIndex < items.Count - 1)
-                            _selectedIndex++;
+                        _selectedIndex =
+                            Math.Min(items.Count - 1, _selectedIndex + 1);
 
                         break;
 
@@ -38,61 +40,106 @@ namespace PragueParking2.Classes
                 }
             }
         }
-        //  code for menu panel only
 
-        /* private void Draw(List<string> items)
-         {
-             AnsiConsole.Clear();
-
-             string rows = string.Join(                  
-                 "\n",
-                 items.Select((item, index) =>
-                     index == _selectedIndex
-                         ? $"[black on dodgerblue1]> {item}[/]"
-                         : $"  {item}"));
-
-             var panel = new Panel(rows)
-                 .Header("Menu")
-                 .Border(BoxBorder.Rounded);
-
-             AnsiConsole.Write(panel);
-         }  */
         private void Draw(List<string> items)
         {
             AnsiConsole.Clear();
 
-            string rows = string.Join(
+            string menuItems = string.Join(
                 "\n",
                 items.Select((item, index) =>
                     index == _selectedIndex
                         ? $"[black on dodgerblue1]> {item}[/]"
-                        : $"  {item}"));
+                        : $"  {item}")
+            );
 
-            var menuPanel = new Panel(rows)
+            var menuPanel = new Panel(menuItems)
                 .Header("Menu")
-                .Border(BoxBorder.Rounded);
+                .Border(BoxBorder.Rounded)
+                .Expand();
+            // ==========================
+            // Map
+            // ==========================
 
-            var mapPanel = new Panel(
-            string.Join("\n", Enumerable.Repeat("                                                                     ", 20)))
-            .Header("Map of Garage")
-            .Border(BoxBorder.Rounded);
+            var mapContent = "[white on yellow] ░▒▓█[/]\n " +
+                             "[white on darkorange]▓█[/]\n " +
+                             "[orangered1 on orangered1]█[/]\n " +
+                             "[red3 on red3]████[/]";
 
 
-            var grid = new Grid();
 
-            grid.AddColumn(new GridColumn().Width(25));
-            grid.AddColumn();
+            var mapPanel = new Panel(mapContent)
+                .Header("Map Of Garage")
+                .Border(BoxBorder.Rounded)
+                .Expand();
+            // ==========================
+            // Interactive Table
+            // ==========================
 
-            grid.AddRow(menuPanel, mapPanel);
+            var interactiveTable = new Table()
+                .Border(TableBorder.Rounded);
 
-            AnsiConsole.Write(grid);
+            interactiveTable.AddColumn("[yellow]Field[/]");
+            interactiveTable.AddColumn("[yellow]Value[/]");
+
+            interactiveTable.AddRow("Registration", "");
+            interactiveTable.AddRow("Vehicle Type", "");
+
+
+            string currentScreen = "mjau mjau";      // change the hard coded to dynamic with the input from menu
+
+            var interactivePanel = new Panel(interactiveTable)
+                .Header(currentScreen)
+                .Border(BoxBorder.Rounded)
+                .Expand();
+
+            // ==========================
+            // Log Table
+            // ==========================
+
+            var logTable = new Table()
+                .Border(TableBorder.Rounded);
+
+            logTable.AddColumn("[yellow]Event Log[/]");
+
+            logTable.AddRow("[green]Application started[/]");
+            logTable.AddRow("Waiting for user input");
+            logTable.AddRow(" ");
+
+            var logPanel = new Panel(logTable)
+                .Header("Log")
+                .Border(BoxBorder.Rounded)
+                .Expand();
+
+            // ==========================
+            // Layout
+            // ==========================
+
+            Layout mainLayout = new Layout("Root")
+        .SplitRows(
+            new Layout("Top")
+            .SplitColumns(
+                new Layout("Menu").Size(25),
+                new Layout("Map")
+            ).Size(20),
+
+            new Layout("Bottom").Size(8)
+            .SplitColumns(
+                new Layout("Info").Size(55),
+                new Layout("Log")
+            )
+        );
+
+            mainLayout["Menu"].Update(menuPanel);
+            mainLayout["Map"].Update(mapPanel);
+            mainLayout["Info"].Update(interactivePanel);
+            mainLayout["Log"].Update(logPanel);
+
+
+            AnsiConsole.Write(mainLayout);
         }
-
-
-
-
     }
 }
 
 
-  
+

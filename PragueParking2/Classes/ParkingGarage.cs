@@ -171,6 +171,7 @@ public class ParkingGarage
         foreach (ParkingSpace parkingSpace in ParkingSpaces)
         {
             parkingSpace.ContainsMotorcycles(out int qty);
+            
             count = count + qty;
         }
         return count;
@@ -178,7 +179,16 @@ public class ParkingGarage
 
     internal int CountParkedBicycles()
     {
-        return -1;
+        int count = 0;
+
+        foreach (ParkingSpace parkingSpace in ParkingSpaces)
+        {
+            parkingSpace.ContainsBicycles(out int qty);
+            
+            count = count + qty;
+        }
+
+        return count;
     }
 
     internal bool CheckIn(IVehicle vehicle, Dictionary<VehicleType, decimal> rates)

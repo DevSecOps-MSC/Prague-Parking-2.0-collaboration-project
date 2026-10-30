@@ -122,11 +122,22 @@ public class ParkingGarageTests
                 parkingGarage[5].Park(testMotorcycle);
 
                 var spaceId = 7;
-                var car = new Car("foo 666", 4).SimulateCheckIn(config);
+                var registration = "foo 666";
+                var car = new Car(registration, 4).SimulateCheckIn(config);
                 parkingGarage[spaceId].Park(car);
 
-                return parkingGarage.FindVehicle(car.Registration, out int foundSpaceId) == true
+                return parkingGarage.FindVehicle(registration, out int foundSpaceId) == true
                     && foundSpaceId == spaceId;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: If a Vehicle is not located, the search fails gracefully", () =>
+            {
+                var parkingGarage = new ParkingGarage(10, 4);
+                var registration = "foo 666";
+
+                return parkingGarage.FindVehicle(registration, out _) == false;
             }
         ));
 
@@ -260,6 +271,37 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can be Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+
+                return parkingGarage.CheckIn(vehicle, config.Rates) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can not be Checked In if there is no available space", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size + 1);
+                var parkingGarage = new ParkingGarage(10, size);
+
+                try
+                {
+                    parkingGarage.CheckIn(vehicle, config.Rates);
+                }
+                catch (NotEnoughRoomException)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
             new Test("Parking Garage: A Car gets a Valet Ticket when it is Checked In", () =>
             {
                 var size = 4;
@@ -287,7 +329,7 @@ public class ParkingGarageTests
             new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
             {
                 var size = 4;
-                IVehicle vehicle = new Bus("foo", size * 4);
+                IVehicle vehicle = new Bus("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
                 parkingGarage.CheckIn(vehicle, config.Rates);
 
@@ -318,7 +360,92 @@ public class ParkingGarageTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle gets assigned a Parking Space ID on its Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
 
+                return vehicle.Ticket is not null
+                    && vehicle.Ticket.ParkingSpaceId == 1;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A parked Vehicle can be Collected", () =>
+            {
+                var registration = "foo 666";
+                var size = 4;
+                IVehicle vehicle = new Car(registration, size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                var spaceId = parkingGarage.GetIdOfFirstAvailableSpace(vehicle);
+                parkingGarage.Park(vehicle, spaceId);
+                if (parkingGarage.FindVehicle(registration, out int foundSpaceId) == false)
+                    throw new VehicleNotFoundException();
+                var vehicleToCollect = parkingGarage[foundSpaceId].PickVehicle(registration);
+
+                return parkingGarage.Collect(vehicleToCollect, foundSpaceId) == true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can be Checked Out", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                var spaceId = 1;
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, spaceId);
+
+                return parkingGarage.CheckOut(vehicle);
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle's Valet Ticket is updated with Parking Space ID when it is Parked", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                var spaceId = 3;
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, spaceId);
+
+                return vehicle.Ticket!.ParkingSpaceId == spaceId;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle is Collected when it is Checked Out", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, vehicle.Ticket!.ParkingSpaceId);
+                parkingGarage.CheckOut(vehicle);
+
+                return parkingGarage.FindVehicle(vehicle.Registration, out _) == false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle's Valet Ticket is updated with timestamp when it is Checked Out", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.Park(vehicle, vehicle.Ticket!.ParkingSpaceId);
+                parkingGarage.CheckOut(vehicle);
+
+                return vehicle.Ticket.TimeOfCheckOut is not null;
+            }
+        ));
 
     }
 }

@@ -16,6 +16,11 @@ public interface IParkingSpace
     public bool Park(IVehicle vehicle);
     public bool Collect(IVehicle vehicle);
     public bool Contains(IVehicle vehicle);
+    public bool ContainsCars(out int qty);
+    public bool ContainsMotorcycles(out int qty);
+    public bool ContainsBicycles(out int qty);
+    public IVehicle PickVehicle(string registration);
+
 
 }
 

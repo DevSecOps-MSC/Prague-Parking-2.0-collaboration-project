@@ -92,13 +92,15 @@ public class ParkingGarage
     {
         foreach (var space in ParkingSpaces)
         {
-            foreach (var vehicle in space.ParkedVehicles)
+            try
             {
-                if (vehicle.Registration.Equals(registration))
-                {
-                    foundSpaceId = space.ID;
-                    return true;
-                }
+                var vehicle = space.PickVehicle(registration);
+                foundSpaceId = space.ID;
+                return true;
+            }
+            catch (VehicleNotFoundException)
+            {
+                continue;
             }
         }
 
@@ -158,9 +160,15 @@ public class ParkingGarage
         if (FindVehicle(vehicle.Registration, out int foundSpaceId))
             throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
 
+        var assignedSpaceId = GetIdOfFirstAvailableSpace(vehicle);
+
+        if (assignedSpaceId <= 0)
+            throw new NotEnoughRoomException("No available space. Vehicle can not be checked in.");
+
         try
         {
             var ticket = new ValetTicket(vehicle, rates);
+            ticket.UpdateParkingSpaceId(assignedSpaceId);
             return true;
         }
         catch (DuplicateValetTicketException e)
@@ -169,5 +177,15 @@ public class ParkingGarage
             Console.WriteLine(e.Message);
         }
         return false;
+    }
+
+    internal bool Collect(IVehicle vehicle, int spaceId)
+    {
+        return this[spaceId].Collect(vehicle);
+    }
+
+    internal bool CheckOut(IVehicle vehicle)
+    {
+        return true;
     }
 }

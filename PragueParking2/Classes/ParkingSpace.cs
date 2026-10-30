@@ -65,8 +65,7 @@ public class ParkingSpace : IParkingSpace
 
     public bool Collect(IVehicle vehicle)
     {
-        ParkedVehicles.Remove(vehicle);
-        return true;
+        return ParkedVehicles.Remove(vehicle);
     }
 
     public bool Contains(IVehicle vehicle)
@@ -74,7 +73,7 @@ public class ParkingSpace : IParkingSpace
         return ParkedVehicles.Contains(vehicle);
     }
 
-    internal bool ContainsCars(out int qty)
+    public bool ContainsCars(out int qty)
     {
         qty = 0;
         
@@ -93,7 +92,7 @@ public class ParkingSpace : IParkingSpace
         return qty > 0;
     }
 
-    internal bool ContainsMotorcycles(out int qty)
+    public bool ContainsMotorcycles(out int qty)
     {
         qty = 0;
 
@@ -113,9 +112,21 @@ public class ParkingSpace : IParkingSpace
         return qty > 0;
     }
 
-    internal bool ContainsBicycles(out int qty)
+    public bool ContainsBicycles(out int qty)
     {
         qty = -1;
         return false;
+    }
+
+    public IVehicle PickVehicle(string registration)
+    {
+        registration = Validator.SanitizeVehicleRegistration(registration);
+        foreach (var vehicle in ParkedVehicles)
+        {
+            if (vehicle.Registration.Equals(registration))
+                return vehicle;
+        }
+
+        throw new VehicleNotFoundException("Vehicle not found! Double check vehicle registration.");
     }
 }

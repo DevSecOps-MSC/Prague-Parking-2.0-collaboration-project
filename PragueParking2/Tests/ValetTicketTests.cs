@@ -63,6 +63,28 @@ public class ValetTicketTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Valet Ticket: A Valet Ticket has Parking Space ID, initially null", () =>
+            {
+                var vehicle = new Car(testRegistration, carSize);
+                var ticket = new ValetTicket(vehicle, config.Rates);
+
+                return ticket.ParkingSpaceId is null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Valet Ticket: A Valet Ticket's Parking Space ID can be updated", () =>
+            {
+                var vehicle = new Car(testRegistration, carSize);
+                var ticket = new ValetTicket(vehicle, config.Rates);
+                var expectedSpaceId = 3;
+                ticket.UpdateParkingSpaceId(expectedSpaceId);
+
+                return ticket.ParkingSpaceId == expectedSpaceId;
+            }
+        ));
+
     }
 
 }

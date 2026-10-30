@@ -83,6 +83,23 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
+            new Test("Parking Space: A parked Vehicle can be Picked from a Parking Space", () =>
+            {
+                var registration = "foo 666";
+                var size = 4;
+                IVehicle vehicle = new Car(registration, size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+                var parkingSpace = new ParkingSpace(size);
+                parkingSpace.Park(vehicle);
+
+                var pickedVehicle = parkingSpace.PickVehicle(registration);
+
+                return pickedVehicle == vehicle;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
             new Test("Parking Space: A Vehicle can be Collected from a Parking Space", () =>
             {
                 var parkingSpace = new ParkingSpace(spaceCap);

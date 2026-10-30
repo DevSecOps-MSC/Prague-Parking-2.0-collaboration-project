@@ -1,3 +1,4 @@
+using PragueParking2.Interfaces;
 using PragueParking2.Tests;
 
 namespace PragueParking2.Classes;
@@ -6,20 +7,20 @@ namespace PragueParking2.Classes;
 
 public class ValetTicket
 {
-    public Vehicle Vehicle { get; }
+    public IVehicle Vehicle { get; }
     public decimal Rate { get; }
     public DateTime TimeOfCheckIn { get; }
     public DateTime? TimeOfCheckOut { get; private set; }
 
-    public ValetTicket(Vehicle vehicle, Dictionary<VehicleType, decimal> rates, DateTime now)
+    public ValetTicket(IVehicle vehicle, Dictionary<VehicleType, decimal> rates, DateTime now)
     {
         Vehicle = vehicle;
-        Vehicle.Ticket = this;
+        Vehicle.AttachTicket(this);
         Rate = rates[vehicle.Type];
         TimeOfCheckIn = now;
     }
 
-    public ValetTicket(Vehicle vehicle, Dictionary<VehicleType, decimal> rates):this(vehicle, rates, DateTime.Now)
+    public ValetTicket(IVehicle vehicle, Dictionary<VehicleType, decimal> rates):this(vehicle, rates, DateTime.Now)
     { }
 
     internal void CheckOut(DateTime now)

@@ -12,8 +12,8 @@ public class ParkingGarageTests
         int garageCap = config.ParkingGarageCapacity;
         int spaceCap = config.ParkingSpaceCapacity;
         var testGarage = new ParkingGarage(garageCap, spaceCap);
-        var testCar = new Car("_", config.VehicleSizes[VehicleType.Car]);
-        var testMotorcycle = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]);
+        IVehicle testCar = new Car("_", config.VehicleSizes[VehicleType.Car]).SimulateCheckIn(config);
+        IVehicle testMotorcycle = new Motorcycle("_", config.VehicleSizes[VehicleType.Motorcycle]).SimulateCheckIn(config);
 
         SimpleTest.AddNewTest(
             new Test("Parking Garage: A Parking Garage has a Capacity", () =>
@@ -46,7 +46,7 @@ public class ParkingGarageTests
             {
                 var expectedCapacity = 10;
                 var parkingGarage = new ParkingGarage(expectedCapacity, spaceCap);
-                parkingGarage.ParkingSpaces.First().Park(new Car("_", 4));
+                parkingGarage.ParkingSpaces.First().Park(new Car("_", 4).SimulateCheckIn(config));
 
                 parkingGarage.InitializeParkingSpaces(spaceCap);
 
@@ -98,9 +98,9 @@ public class ParkingGarageTests
             {
                 var size = 4;
                 var parkingGarage = new ParkingGarage(10, size);
-                var car = new Car("C", size);
-                var motorcycleOne = new Motorcycle("M1", size / 2);
-                var motorcycleTwo = new Motorcycle("M2", size / 2);
+                var car = new Car("C", size).SimulateCheckIn(config);
+                var motorcycleOne = new Motorcycle("M1", size / 2).SimulateCheckIn(config);
+                var motorcycleTwo = new Motorcycle("M2", size / 2).SimulateCheckIn(config);
 
                 parkingGarage.ParkingSpaces[0].Park(car);
                 parkingGarage.ParkingSpaces[1].Park(motorcycleOne);
@@ -122,7 +122,7 @@ public class ParkingGarageTests
                 parkingGarage[5].Park(testMotorcycle);
 
                 var spaceId = 7;
-                var car = new Car("foo 666", 4);
+                var car = new Car("foo 666", 4).SimulateCheckIn(config);
                 parkingGarage[spaceId].Park(car);
 
                 return parkingGarage.FindVehicle(car.Registration, out int foundSpaceId) == true
@@ -164,7 +164,7 @@ public class ParkingGarageTests
             new Test("Parking Garage: A Vehicle can be Parked in a Parking Space with enough room", () =>
             {
                 var size = 4;
-                IVehicle vehicle = new Vehicle("foo", size);
+                IVehicle vehicle = new Car("foo", size).SimulateCheckIn(config);
                 var parkingGarage = new ParkingGarage(10, size);
                 var spaceId = 1;
 
@@ -176,11 +176,20 @@ public class ParkingGarageTests
             new Test("Parking Garage: A Vehicle can not be Parked in a Parking Space without enough room", () =>
             {
                 var size = 4;
-                IVehicle vehicle = new Vehicle("foo", size + 1);
+                IVehicle vehicle = new Car("foo", size + 1).SimulateCheckIn(config);
                 var parkingGarage = new ParkingGarage(10, size);
                 var spaceId = 1;
 
-                return parkingGarage.Park(vehicle, spaceId) == false;
+                try
+                {
+                    parkingGarage.Park(vehicle, spaceId);
+                }
+                catch (NotEnoughRoomException)
+                {
+                    return true;
+                }
+
+                return false;
             }
         ));
 
@@ -189,8 +198,8 @@ public class ParkingGarageTests
             {
                 var registration = "FOO 666";
                 var size = 4;
-                IVehicle vehicleOne = new Vehicle(registration, size);
-                IVehicle vehicleTwo = new Vehicle(registration, size);
+                IVehicle vehicleOne = new Car(registration, size).SimulateCheckIn(config);
+                IVehicle vehicleTwo = new Car(registration, size).SimulateCheckIn(config);
                 var parkingGarage = new ParkingGarage(10, size);
                 parkingGarage.Park(vehicleOne, 10);
                 var spaceId = 2;
@@ -223,8 +232,8 @@ public class ParkingGarageTests
             {
                 var size = 4;
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.Park(new Car("C1", size), 1);
-                parkingGarage.Park(new Car("C2", size), 2);
+                parkingGarage.Park(new Car("C1", size).SimulateCheckIn(config), 1);
+                parkingGarage.Park(new Car("C2", size).SimulateCheckIn(config), 2);
                 var expectedNumber = 2;
 
                 return parkingGarage.CountParkedCars() == expectedNumber;
@@ -236,14 +245,98 @@ public class ParkingGarageTests
             {
                 var size = 4;
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.Park(new Motorcycle("M1", size/2), 1);
-                parkingGarage.Park(new Motorcycle("M2", size/2), 2);
-                parkingGarage.Park(new Motorcycle("M3", size/2), 2);
+                parkingGarage.Park(new Motorcycle("M1", size / 2).SimulateCheckIn(config), 1);
+                parkingGarage.Park(new Motorcycle("M2", size / 2).SimulateCheckIn(config), 2);
+                parkingGarage.Park(new Motorcycle("M3", size / 2).SimulateCheckIn(config), 2);
                 var expectedNumber = 3;
 
                 return parkingGarage.CountParkedMotorcycles() == expectedNumber;
             }
         ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: It is possible to Count the number of Parked Bicycles", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.Park(new Bicycle("B1", size / 4).SimulateCheckIn(config), 1);
+                parkingGarage.Park(new Bicycle("B2", size / 4).SimulateCheckIn(config), 2);
+                parkingGarage.Park(new Bicycle("B3", size / 4).SimulateCheckIn(config), 2);
+                var expectedNumber = 3;
+
+                return parkingGarage.CountParkedBicycles() == expectedNumber;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Car gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Motorcycle gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Motorcycle("foo", size / 2);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Bus("foo", size * 4);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bicycle gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Bicycle("foo", size / 4);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
+
+                return vehicle.Ticket is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Vehicle can only be parked if it has a Valet Ticket", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Car("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+
+                try
+                {
+                    parkingGarage.Park(vehicle, 1);
+                }
+                catch (NoValetTicketException)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        ));
+
+
 
     }
 }

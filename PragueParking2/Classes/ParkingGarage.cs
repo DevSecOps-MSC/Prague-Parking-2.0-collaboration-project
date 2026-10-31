@@ -88,7 +88,7 @@ public class ParkingGarage
     internal static ParkingGarage FromConfig(Config config)
         => new(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
 
-    internal bool FindVehicle(string registration, out int foundSpaceId)
+    public bool FindVehicle(string registration, out int foundSpaceId)
     {
         foreach (var space in ParkingSpaces)
         {

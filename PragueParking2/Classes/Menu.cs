@@ -4,6 +4,7 @@
 
 using PragueParking2.Classes;
 using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace PragueParking2.Classes;
 
@@ -18,6 +19,7 @@ namespace PragueParking2.Classes;
     MoveFromSpace,
     MoveToSpace,
     SearchRegistration,
+    ListView,
     AdminMenu
 }
 
@@ -65,6 +67,15 @@ internal class Menu
 
             ConsoleKeyInfo keyInfo =
                 Console.ReadKey(true);
+            if (_mode == MenuMode.ListView)
+            {
+                if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    ResetToHome();
+                }
+
+                continue;
+            }
 
             // ===========================
             // Vehicle Type Selection
@@ -126,42 +137,42 @@ internal class Menu
                 _mode == MenuMode.MoveRegistration ||
                 _mode == MenuMode.SearchRegistration
             )
+            {
+                if (keyInfo.Key == ConsoleKey.Backspace)
                 {
-                    if (keyInfo.Key == ConsoleKey.Backspace)
+                    if (_registration.Length > 0)
                     {
-                        if (_registration.Length > 0)
+                        _registration =
+                            _registration.Substring(
+                                0,
+                                _registration.Length - 1);
+                    }
+                }
+                else if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    if (_mode == MenuMode.RetrieveRegistration)
+                    {
+                        if (_garage.FindVehicle(
+                            _registration,
+                            out int spaceId))
                         {
-                            _registration =
-                                _registration.Substring(
-                                    0,
-                                    _registration.Length - 1);
+                            AddLog(
+                                $"Found {_registration} in space #{spaceId}");
+                        }
+                        else
+                        {
+                            AddLog(
+                                $"Vehicle {_registration} not found");
                         }
                     }
-                    else if (keyInfo.Key == ConsoleKey.Enter)
+                    if (_mode == MenuMode.MoveRegistration)
                     {
-                        if (_mode == MenuMode.RetrieveRegistration)                             //retrieve
-                        {
-                            if (_garage.FindVehicle(
-                                _registration,
-                                out int spaceId))
-                            {
-                                AddLog(
-                                    $"Found {_registration} in space #{spaceId}");
-                            }
-                            else
-                            {
-                                AddLog(
-                                    $"Vehicle {_registration} not found");
-                            }
-                        }
-                       if (_mode == MenuMode.MoveRegistration)
-                       {
-                           _fromParkingSpace = "";
-    
-                           _mode = MenuMode.MoveFromSpace;
+                        _fromParkingSpace = "";
 
-                           continue;
-                       }
+                        _mode = MenuMode.MoveFromSpace;
+
+                        continue;
+                    }
                     if (_mode == MenuMode.MoveFromSpace)
                     {
                         if (keyInfo.Key == ConsoleKey.Backspace)
@@ -210,26 +221,26 @@ internal class Menu
                         continue;
                     }
                     _mode = MenuMode.MainMenu;
-                        _currentScreen = "Home";
-                    }
-                    else if (keyInfo.Key == ConsoleKey.Escape)
-                    {
-                        ResetToHome();
-                    }
-                    else if (!char.IsControl(keyInfo.KeyChar))
-                    {
-                        _registration +=
-                            char.ToUpper(keyInfo.KeyChar);
-                    }
-
-                    continue;
+                    _currentScreen = "Home";
+                }
+                else if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    ResetToHome();
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    _registration +=
+                        char.ToUpper(keyInfo.KeyChar);
                 }
 
-                // ===========================
-                // Main Menu
-                // ===========================
+                continue;
+            }
 
-                switch (keyInfo.Key)
+            // ===========================
+            // Main Menu
+            // ===========================
+
+            switch (keyInfo.Key)
             {
                 case ConsoleKey.UpArrow:
 
@@ -280,6 +291,7 @@ internal class Menu
 
                             break;
 
+
                         case "Move":
 
                             _registration = "";
@@ -288,6 +300,7 @@ internal class Menu
                                 MenuMode.MoveRegistration;
 
                             break;
+
 
                         case "Search":
 
@@ -298,6 +311,7 @@ internal class Menu
 
                             break;
 
+
                         case "Admin":
 
                             _mode =
@@ -306,7 +320,8 @@ internal class Menu
                             break;
 
                         case "List":
-
+                            _mode =
+                                MenuMode.ListView;
                             break;
                     }
 
@@ -330,6 +345,12 @@ internal class Menu
     {
         AnsiConsole.Clear();
 
+        if (_mode == MenuMode.ListView)
+        {
+            DrawListView();
+            return;
+        }
+
         string menuItems =
             string.Join(
                 "\n",
@@ -350,6 +371,9 @@ internal class Menu
 
         string infoText = "";
 
+        IRenderable panelContent =
+            new Markup("");
+
         if (_currentScreen == "Home")
         {
             infoText = "";
@@ -361,7 +385,7 @@ internal class Menu
                  _currentScreen == "Parking" &&
                  _mode == MenuMode.VehicleTypeSelection
 )
-               {
+            {
                 var vehicleTypes =
                     Enum.GetValues<VehicleType>();
 
@@ -441,9 +465,42 @@ internal class Menu
             }
         }
 
+        if (_mode == MenuMode.ListView)
+        {
+            var table = new Table();
+
+            table.Border(TableBorder.Rounded);
+
+            table.AddColumn("Registration");
+            table.AddColumn("Space");
+            table.AddColumn("Check In");
+            table.AddColumn("Price");
+
+            table.AddRow(
+                "ABC123",
+                "4",
+                "16:30",
+                "25 kr");
+
+            table.AddRow(
+                "XYZ789",
+                "7",
+                "17:05",
+                "10 kr");
+
+            panelContent = table;
+        }
+        else
+        {
+            panelContent =
+                new Markup(infoText);
+        }
+
+        //  var interactivePanel =
+        //     new Panel(new Markup(infoText))
         var interactivePanel =
-            new Panel(new Markup(infoText))
-                .Header(_currentScreen)
+        new Panel(panelContent)
+                 .Header(_currentScreen)
                 .Border(BoxBorder.Rounded)
                 .Expand();
 
@@ -476,5 +533,38 @@ internal class Menu
         mainLayout["Log"].Update(logPanel);
 
         AnsiConsole.Write(mainLayout);
+    }
+    private void DrawListView()
+    {
+        var table = new Table();
+
+        table.Border(TableBorder.Rounded);
+
+        table.AddColumn("Registration");
+        table.AddColumn("Space");
+        table.AddColumn("Check In");
+        table.AddColumn("Price");
+
+        table.AddRow(
+            "ABC123",
+            "4",
+            "16:30",
+            "25 kr");
+
+        table.AddRow(
+            "XYZ789",
+            "7",
+            "17:05",
+            "10 kr");
+        var panel =
+    new Panel(table)
+        .Header("Registered Vehicles")
+        .Border(BoxBorder.Rounded)
+        .Expand();
+
+        AnsiConsole.Write(panel);
+
+        AnsiConsole.MarkupLine(
+            "\n[grey]ESC = Back[/]");
     }
 }

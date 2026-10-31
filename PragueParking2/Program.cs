@@ -68,9 +68,8 @@ internal class Program
 
         // SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-
-        /*
-        Menu menu = new();
+  
+        Menu menu = new(parkingGarage);
 
         List<string> menuItems =
         [
@@ -86,44 +85,40 @@ internal class Program
         while (true)
         {
             string choice = menu.Show(menuItems);
+           
+
 
             switch (choice)
             {
                 case "Parking":
                     AnsiConsole.MarkupLine("[green]Parking selected[/]");
-                    //  Console.ReadKey(true);
                     break;
 
                 case "Retrieve":
                     AnsiConsole.MarkupLine("[green]Retrieve selected[/]");
-                    //    Console.ReadKey(true);
                     break;
 
                 case "Move":
                     AnsiConsole.MarkupLine("[green]Move selected[/]");
-                    //   Console.ReadKey(true);
                     break;
 
                 case "Search":
                     AnsiConsole.MarkupLine("[green]Search selected[/]");
-                    //  Console.ReadKey(true);
                     break;
 
                 case "List":
                     AnsiConsole.MarkupLine("[green]List selected[/]");
-                    //  Console.ReadKey(true);
                     break;
 
                 case "Admin":
                     AnsiConsole.MarkupLine("[green]Admin selected[/]");
-                    //   Console.ReadKey(true);
                     break;
 
                 case "Exit":
                     return;
             }
         }
-        */
+     
     }
 
 }

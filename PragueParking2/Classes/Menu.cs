@@ -1,147 +1,380 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using PragueParking2.Classes;
 using Spectre.Console;
-namespace PragueParking2.Classes
+
+namespace PragueParking2.Classes;
+
+internal enum MenuMode
 {
-    internal class Menu
+    MainMenu,
+    VehicleTypeSelection,
+    ParkingRegistration,
+    RetrieveRegistration,
+    MoveRegistration,
+    SearchRegistration,
+    AdminMenu
+}
+
+internal class Menu
+{
+    private readonly ParkingGarage _garage;
+
+    public Menu(ParkingGarage garage)
     {
+        _garage = garage;
+    }
 
+    private string _registration = "";
+    private MenuMode _mode = MenuMode.MainMenu;
 
-        private int _selectedIndex;
-        private string _currentScreen = "Home";
-        public string Show(List<string> items)
+    private VehicleType _selectedVehicleType = VehicleType.Car;
+    private int _vehicleTypeIndex = 0;
+
+    private int _selectedIndex;
+
+    private string _currentScreen = "Home";
+
+    public string Registration => _registration;
+    public VehicleType SelectedVehicleType => _selectedVehicleType;
+
+    private readonly List<string> _logEntries = [];
+
+    public void AddLog(string message)
+    {
+        _logEntries.Insert(0, message);
+
+        if (_logEntries.Count > 8)
         {
-            while (true)
+            _logEntries.RemoveAt(_logEntries.Count - 1);
+        }
+    }
+
+    public string Show(List<string> items)
+    {
+        while (true)
+        {
+            Draw(items);
+
+            ConsoleKeyInfo keyInfo =
+                Console.ReadKey(true);
+
+            // ===========================
+            // Vehicle Type Selection
+            // ===========================
+
+            if (_mode == MenuMode.VehicleTypeSelection)
             {
-                Draw(items);
+                int maxIndex =
+                    Enum.GetValues<VehicleType>().Length - 1;
 
-                ConsoleKey key = Console.ReadKey(true).Key;
-
-                switch (key)
+                switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
 
-                        _selectedIndex =
-                            Math.Max(0, _selectedIndex - 1);
+                        _vehicleTypeIndex =
+                            Math.Max(
+                                0,
+                                _vehicleTypeIndex - 1);
 
                         break;
 
                     case ConsoleKey.DownArrow:
 
-                        _selectedIndex =
-                            Math.Min(items.Count - 1, _selectedIndex + 1);
+                        _vehicleTypeIndex =
+                            Math.Min(
+                                maxIndex,
+                                _vehicleTypeIndex + 1);
 
                         break;
 
                     case ConsoleKey.Enter:
 
-                        _currentScreen = items[_selectedIndex];
-                        return items[_selectedIndex];
+                        _selectedVehicleType =
+                            Enum.GetValues<VehicleType>()
+                                [_vehicleTypeIndex];
+
+                        _mode = MenuMode.ParkingRegistration;
+
+                        break;
+
+                    case ConsoleKey.Escape:
+
+                        ResetToHome();
+
+                        break;
                 }
+
+                continue;
+            }
+
+            // ===========================
+            // Registration Input
+            // ===========================
+
+            if
+            (
+                _mode == MenuMode.ParkingRegistration ||
+                _mode == MenuMode.RetrieveRegistration ||
+                _mode == MenuMode.MoveRegistration ||
+                _mode == MenuMode.SearchRegistration
+            )
+            {
+                if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (_registration.Length > 0)
+                    {
+                        _registration =
+                            _registration.Substring(
+                                0,
+                                _registration.Length - 1);
+                    }
+                }
+                else if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    _mode = MenuMode.MainMenu;
+                }
+                else if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    ResetToHome();
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    _registration +=
+                        char.ToUpper(keyInfo.KeyChar);
+                }
+
+                continue;
+            }
+
+            // ===========================
+            // Main Menu
+            // ===========================
+
+            switch (keyInfo.Key)
+            {
+                case ConsoleKey.UpArrow:
+
+                    _selectedIndex =
+                        Math.Max(
+                            0,
+                            _selectedIndex - 1);
+
+                    break;
+
+                case ConsoleKey.DownArrow:
+
+                    _selectedIndex =
+                        Math.Min(
+                            items.Count - 1,
+                            _selectedIndex + 1);
+
+                    break;
+
+                case ConsoleKey.Enter:
+
+                    _currentScreen =
+                        items[_selectedIndex];
+
+                    if (_currentScreen == "Exit")
+                    {
+                        return "Exit";
+                    }
+
+                    switch (_currentScreen)
+                    {
+                        case "Parking":
+
+                            _registration = "";
+                            _vehicleTypeIndex = 0;
+
+                            _mode =
+                                MenuMode.VehicleTypeSelection;
+
+                            break;
+
+                        case "Retrieve":
+
+                            _registration = "";
+
+                            _mode =
+                                MenuMode.RetrieveRegistration;
+
+                            break;
+
+                        case "Move":
+
+                            _registration = "";
+
+                            _mode =
+                                MenuMode.MoveRegistration;
+
+                            break;
+
+                        case "Search":
+
+                            _registration = "";
+
+                            _mode =
+                                MenuMode.SearchRegistration;
+
+                            break;
+
+                        case "Admin":
+
+                            _mode =
+                                MenuMode.AdminMenu;
+
+                            break;
+
+                        case "List":
+
+                            break;
+                    }
+
+                    break;
             }
         }
+    }
 
-        private void Draw(List<string> items)
-        {
-            AnsiConsole.Clear();
+    private void ResetToHome()
+    {
+        _currentScreen = "Home";
 
-            string menuItems = string.Join(
+        _mode = MenuMode.MainMenu;
+
+        _registration = "";
+        _vehicleTypeIndex = 0;
+    }
+
+    private void Draw(List<string> items)
+    {
+        AnsiConsole.Clear();
+
+        string menuItems =
+            string.Join(
                 "\n",
                 items.Select((item, index) =>
                     index == _selectedIndex
                         ? $"[black on dodgerblue1]> {item}[/]"
-                        : $"  {item}")
-            );
+                        : $"  {item}"));
 
-            var menuPanel = new Panel(menuItems)
-                .Header("Menu")
-                .Border(BoxBorder.Rounded)
-                .Expand();
-            // ==========================
-            // Map
-            // ==========================
+        var menuPanel = new Panel(menuItems)
+            .Header("Menu")
+            .Border(BoxBorder.Rounded)
+            .Expand();
 
-            var mapContent = "[white on yellow] ░▒▓█[/]\n " +
-                             "[white on darkorange]▓█[/]\n " +
-                             "[orangered1 on orangered1]█[/]\n " +
-                             "[red3 on red3]████[/]";
+        var mapPanel = new Panel(GarageMap.Build(_garage))
+            .Header("Map Of Garage")
+            .Border(BoxBorder.Rounded)
+            .Expand();
 
+        string infoText = "";
 
+        if (_currentScreen == "Home")
+        {
+            infoText = "";
+        }
+        else if (_currentScreen == "Parking")
+        {
+            if (_mode == MenuMode.VehicleTypeSelection)
+            {
+                var vehicleTypes =
+                    Enum.GetValues<VehicleType>();
 
-            var mapPanel = new Panel(mapContent)
-                .Header("Map Of Garage")
-                .Border(BoxBorder.Rounded)
-                .Expand();
-            // ==========================
-            // Interactive Table
-            // ==========================
+                string typeMenu =
+                    string.Join(
+                        "\n",
+                        vehicleTypes.Select((type, index) =>
+                            index == _vehicleTypeIndex
+                                ? $"> [green]{type}[/]"
+                                : $"  {type}"
+                        ));
 
-            var interactiveTable = new Table()
-                .Border(TableBorder.Rounded);
+                infoText =
+                    "[yellow]Select Vehicle Type[/]\n\n" +
+                    typeMenu;
+            }
+            else if
+            (
+                _mode == MenuMode.ParkingRegistration ||
+                _mode == MenuMode.RetrieveRegistration ||
+                _mode == MenuMode.MoveRegistration ||
+                _mode == MenuMode.SearchRegistration
+            )
+            {
+                if (_mode == MenuMode.ParkingRegistration)
+                {
+                    infoText =
+                        $"Vehicle Type: [yellow]{_selectedVehicleType}[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Save[/]";
+                }
+                else if (_mode == MenuMode.RetrieveRegistration)
+                {
+                    infoText =
+                        "[yellow]Retrieve Vehicle[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Search[/]";
+                }
+                else if (_mode == MenuMode.MoveRegistration)
+                {
+                    infoText =
+                        "[yellow]Move Vehicle[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Continue[/]";
+                }
+                else if (_mode == MenuMode.SearchRegistration)
+                {
+                    infoText =
+                        "[yellow]Search Vehicle[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Search[/]";
+                }
+                else if (_mode == MenuMode.AdminMenu)
+                {
+                    infoText =
+                        "[yellow]Admin[/]\n\n" +
+                        "Save\n" +
+                        "Load\n" +
+                        "Statistics\n" +
+                        "Reset Garage";
+                }
+            }
+        }
 
-            interactiveTable.AddColumn("[yellow]Field[/]");              // if parking is chosen: "Add reg number:
-                                                                         //                        add vehecle type:"
-            interactiveTable.AddColumn("[yellow]Value[/]");
-
-            interactiveTable.AddRow("Registration", "");
-            interactiveTable.AddRow("Vehicle Type", "");
-
-
-
-
-            var interactivePanel = new Panel(interactiveTable)
+        var interactivePanel =
+            new Panel(new Markup(infoText))
                 .Header(_currentScreen)
                 .Border(BoxBorder.Rounded)
                 .Expand();
 
-            // ==========================
-            // Log Table
-            // ==========================
+        string logText = string.Join("\n", _logEntries);
 
-            var logTable = new Table()
-                .Border(TableBorder.Rounded);
-
-            logTable.AddColumn("[yellow]Event Log[/]");
-
-            logTable.AddRow("[green]Application started[/]");
-            logTable.AddRow("Waiting for user input");
-            logTable.AddRow(" ");
-
-            var logPanel = new Panel(logTable)
+        var logPanel =
+            new Panel(logText)
                 .Header("Log")
                 .Border(BoxBorder.Rounded)
                 .Expand();
 
-            // ==========================
-            // Layout
-            // ==========================
+        Layout mainLayout = new Layout("Root")
+            .SplitRows(
+                new Layout("Top")
+                    .SplitColumns(
+                        new Layout("Menu").Size(25),
+                        new Layout("Map"))
+                    .Size(20),
 
-            Layout mainLayout = new Layout("Root")
-        .SplitRows(
-            new Layout("Top")
-            .SplitColumns(
-                new Layout("Menu").Size(25),
-                new Layout("Map")
-            ).Size(20),
+                new Layout("Bottom")
+                    .Size(9)
+                    .SplitColumns(
+                        new Layout("Info").Size(55),
+                        new Layout("Log"))
+            );
 
-            new Layout("Bottom").Size(9)
-            .SplitColumns(
-                new Layout("Info").Size(55),
-                new Layout("Log")
-            )
-        );
+        mainLayout["Menu"].Update(menuPanel);
+        mainLayout["Map"].Update(mapPanel);
+        mainLayout["Info"].Update(interactivePanel);
+        mainLayout["Log"].Update(logPanel);
 
-            mainLayout["Menu"].Update(menuPanel);
-            mainLayout["Map"].Update(mapPanel);
-            mainLayout["Info"].Update(interactivePanel);
-            mainLayout["Log"].Update(logPanel);
-
-
-            AnsiConsole.Write(mainLayout);
-        }
+        AnsiConsole.Write(mainLayout);
     }
 }
-
-
-

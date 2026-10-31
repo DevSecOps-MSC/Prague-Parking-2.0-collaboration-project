@@ -20,7 +20,10 @@ namespace PragueParking2.Classes;
     MoveToSpace,
     SearchRegistration,
     ListView,
-    AdminMenu
+    AdminMenu,
+    SaveConfirmation,
+    LoadConfirmation,
+    ConfigMenu
 }
 
 
@@ -32,6 +35,7 @@ internal class Menu
     {
         _garage = garage;
     }
+    private bool _confirmYes = false;
     private string _fromParkingSpace = "";
     private string _toParkingSpace = "";
     private string _registration = "";
@@ -48,6 +52,14 @@ internal class Menu
     public VehicleType SelectedVehicleType => _selectedVehicleType;
 
     private readonly List<string> _logEntries = [];
+    private readonly List<string> _adminItems =
+[
+    "Save",
+    "Load",
+    "Config"
+];
+
+    private int _adminIndex = 0;
 
     public void AddLog(string message)
     {
@@ -76,6 +88,143 @@ internal class Menu
 
                 continue;
             }
+            // ===========================
+            // Admin choices
+            // ===========================
+            if (_mode == MenuMode.SaveConfirmation)
+            {
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.LeftArrow:
+                    case ConsoleKey.RightArrow:
+
+                        _confirmYes =
+                            !_confirmYes;
+
+                        break;
+
+                    case ConsoleKey.Escape:
+
+                        _mode =
+                            MenuMode.AdminMenu;
+
+                        break;
+
+                    case ConsoleKey.Enter:
+
+                        if (_confirmYes)
+                        {
+                            AddLog("Save confirmed");
+                        }
+                        else
+                        {
+                            AddLog("Save cancelled");
+                        }
+
+                        _mode =
+                            MenuMode.AdminMenu;
+
+                        break;
+                }
+
+                continue;
+            }
+            if (_mode == MenuMode.LoadConfirmation)
+            {
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.LeftArrow:
+                    case ConsoleKey.RightArrow:
+
+                        _confirmYes =
+                            !_confirmYes;
+
+                        break;
+
+                    case ConsoleKey.Escape:
+
+                        _mode =
+                            MenuMode.AdminMenu;
+
+                        break;
+
+                    case ConsoleKey.Enter:
+
+                        if (_confirmYes)
+                        {
+                            AddLog("Load confirmed");
+                        }
+                        else
+                        {
+                            AddLog("Load cancelled");
+                        }
+
+                        _mode =
+                            MenuMode.AdminMenu;
+
+                        break;
+                }
+
+                continue;
+            }
+            if (_mode == MenuMode.AdminMenu)
+            {
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow:
+
+                        _adminIndex =
+                            Math.Max(
+                                0,
+                                _adminIndex - 1);
+
+                        break;
+
+                    case ConsoleKey.DownArrow:
+
+                        _adminIndex =
+                            Math.Min(
+                                _adminItems.Count - 1,
+                                _adminIndex + 1);
+
+                        break;
+
+                    case ConsoleKey.Escape:
+
+                        ResetToHome();
+
+                        break;
+
+                    case ConsoleKey.Enter:
+
+                        string selected =
+                            _adminItems[_adminIndex];
+
+                        if (selected == "Save")
+                        {
+                            _confirmYes = false;
+                            _mode = MenuMode.SaveConfirmation;
+                        }
+                        else if (selected == "Load")
+                        {
+                            _confirmYes = false;
+                            _mode = MenuMode.LoadConfirmation;
+                        }
+                        else if (selected == "Config")
+                        {
+                            _mode = MenuMode.ConfigMenu;
+                        }
+
+                        break;
+                }
+
+                continue;
+            }
+
 
             // ===========================
             // Vehicle Type Selection
@@ -314,10 +463,13 @@ internal class Menu
 
                         case "Admin":
 
+                            _adminIndex = 0;
+
                             _mode =
                                 MenuMode.AdminMenu;
 
                             break;
+
 
                         case "List":
                             _mode =
@@ -453,15 +605,68 @@ internal class Menu
                         $"Registration: [blue]{_registration}█[/]\n\n" +
                         "[grey]ENTER = Search[/]";
                 }
-                else if (_mode == MenuMode.AdminMenu)
+            }
+            else if (_mode == MenuMode.AdminMenu)
+            {
+                string adminMenu =
+                    string.Join(
+                        "\n",
+                        _adminItems.Select(
+                            (item, index) =>
+                                index == _adminIndex
+                                    ? $"> [green]{item}[/]"
+                                    : $"  {item}"
+                        ));
+
+                infoText =
+                    "[yellow]Admin[/]\n\n" +
+                    adminMenu +
+                    "\n\n[grey]ENTER = Select[/]" +
+                    "\n[grey]ESC = Back[/]";
+            }
+            else if (_mode == MenuMode.SaveConfirmation)
+            {
+                infoText =
+                    "[yellow]Do you want to save?[/]\n\n";
+
+                if (_confirmYes)
                 {
-                    infoText =
-                        "[yellow]Admin[/]\n\n" +
-                        "Save\n" +
-                        "Load\n" +
-                        "Statistics\n" +
-                        "Reset Garage";
+                    infoText +=
+                        "  No\n" +
+                        "> [green]Yes[/]";
                 }
+                else
+                {
+                    infoText +=
+                        "> [red]No[/]\n" +
+                        "  Yes";
+                }
+
+                infoText +=
+                    "\n\n[grey]ENTER = Confirm[/]" +
+                    "\n[grey]ESC = Cancel[/]";
+            }
+            else if (_mode == MenuMode.LoadConfirmation)
+            {
+                infoText =
+                    "[yellow]Do you want to load?[/]\n\n";
+
+                if (_confirmYes)
+                {
+                    infoText +=
+                        "  No\n" +
+                        "> [green]Yes[/]";
+                }
+                else
+                {
+                    infoText +=
+                        "> [red]No[/]\n" +
+                        "  Yes";
+                }
+
+                infoText +=
+                    "\n\n[grey]ENTER = Confirm[/]" +
+                    "\n[grey]ESC = Cancel[/]";
             }
         }
 

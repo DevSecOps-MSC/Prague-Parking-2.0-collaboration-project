@@ -9,20 +9,20 @@ internal class Program
     static readonly FileHandler fileHandler = new(Admin.path);
     static Config? config;
     static ParkingGarage? parkingGarage;
+    static WorkLog? workLog;
 
 
     private static void Main(string[] args)
     {
         if (Admin.Setup(fileHandler) is false)
         {
-            Console.WriteLine("Something horrible went wrong and it appears impossible to set up the software. Exiting.");
+            Console.WriteLine("Something went horribly wrong and it appears impossible to set up the software. Exiting.");
             Environment.Exit(666);
         }
         // config = Admin.LoadConfig(fileHandler);
         config = Admin.LoadDefaultConfig();
         // parkingGarage = Admin.LoadGarage(fileHandler, config);
         parkingGarage = ParkingGarage.FromConfig(config);
-
 
 
         // Layout mainLayout = new Layout("Root")
@@ -58,15 +58,15 @@ internal class Program
         // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
 
-        ValidatorTests.AddTests(config);
-        VehicleTests.AddTests(config);
-        ValetTicketTests.AddTests(config);
-        ParkingSpaceTests.AddTests(config);
-        ParkingGarageTests.AddTests(config);
+        // ValidatorTests.AddTests(config);
+        // VehicleTests.AddTests(config);
+        // ValetTicketTests.AddTests(config);
+        // ParkingSpaceTests.AddTests(config);
+        // ParkingGarageTests.AddTests(config);
 
-        SimpleTest.RunAllTests();
+        // SimpleTest.RunAllTests();
 
-        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+        // SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
 
         /*

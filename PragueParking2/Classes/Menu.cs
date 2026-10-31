@@ -3,12 +3,21 @@ using Spectre.Console;
 
 namespace PragueParking2.Classes;
 
+internal enum MenuMode
+{
+    MainMenu,
+    VehicleTypeSelection,
+    ParkingRegistration,
+    RetrieveRegistration,
+    MoveRegistration,
+    SearchRegistration,
+    AdminMenu
+}
+
 internal class Menu
 {
     private string _registration = "";
-
-    private bool _inputRegistration = false;
-    private bool _selectVehicleType = false;
+    private MenuMode _mode = MenuMode.MainMenu;
 
     private VehicleType _selectedVehicleType = VehicleType.Car;
     private int _vehicleTypeIndex = 0;
@@ -16,6 +25,21 @@ internal class Menu
     private int _selectedIndex;
 
     private string _currentScreen = "Home";
+
+    public string Registration => _registration;
+    public VehicleType SelectedVehicleType => _selectedVehicleType;
+
+    private readonly List<string> _logEntries = [];
+
+    public void AddLog(string message)
+    {
+        _logEntries.Insert(0, message);
+
+        if (_logEntries.Count > 8)
+        {
+            _logEntries.RemoveAt(_logEntries.Count - 1);
+        }
+    }
 
     public string Show(List<string> items)
     {
@@ -30,7 +54,7 @@ internal class Menu
             // Vehicle Type Selection
             // ===========================
 
-            if (_selectVehicleType)
+            if (_mode == MenuMode.VehicleTypeSelection)
             {
                 int maxIndex =
                     Enum.GetValues<VehicleType>().Length - 1;
@@ -61,8 +85,7 @@ internal class Menu
                             Enum.GetValues<VehicleType>()
                                 [_vehicleTypeIndex];
 
-                        _selectVehicleType = false;
-                        _inputRegistration = true;
+                        _mode = MenuMode.ParkingRegistration;
 
                         break;
 
@@ -80,7 +103,13 @@ internal class Menu
             // Registration Input
             // ===========================
 
-            if (_inputRegistration)
+            if
+            (
+                _mode == MenuMode.ParkingRegistration ||
+                _mode == MenuMode.RetrieveRegistration ||
+                _mode == MenuMode.MoveRegistration ||
+                _mode == MenuMode.SearchRegistration
+            )
             {
                 if (keyInfo.Key == ConsoleKey.Backspace)
                 {
@@ -94,8 +123,7 @@ internal class Menu
                 }
                 else if (keyInfo.Key == ConsoleKey.Enter)
                 {
-                    _inputRegistration = false;
-     
+                    _mode = MenuMode.MainMenu;
                 }
                 else if (keyInfo.Key == ConsoleKey.Escape)
                 {
@@ -144,32 +172,72 @@ internal class Menu
                         return "Exit";
                     }
 
-                    if (_currentScreen == "Parking")
+                    switch (_currentScreen)
                     {
-                        _registration = "";
+                        case "Parking":
 
-                        _vehicleTypeIndex = 0;
+                            _registration = "";
+                            _vehicleTypeIndex = 0;
 
-                        _selectVehicleType = true;
-                        _inputRegistration = false;
+                            _mode =
+                                MenuMode.VehicleTypeSelection;
+
+                            break;
+
+                        case "Retrieve":
+
+                            _registration = "";
+
+                            _mode =
+                                MenuMode.RetrieveRegistration;
+
+                            break;
+
+                        case "Move":
+
+                            _registration = "";
+
+                            _mode =
+                                MenuMode.MoveRegistration;
+
+                            break;
+
+                        case "Search":
+
+                            _registration = "";
+
+                            _mode =
+                                MenuMode.SearchRegistration;
+
+                            break;
+
+                        case "Admin":
+
+                            _mode =
+                                MenuMode.AdminMenu;
+
+                            break;
+
+                        case "List":
+
+                            break;
                     }
 
                     break;
             }
         }
     }
-    // reset method
+
     private void ResetToHome()
     {
         _currentScreen = "Home";
 
-        _selectVehicleType = false;
-        _inputRegistration = false;
+        _mode = MenuMode.MainMenu;
 
         _registration = "";
         _vehicleTypeIndex = 0;
     }
-    // rendering the menu
+
     private void Draw(List<string> items)
     {
         AnsiConsole.Clear();
@@ -182,13 +250,11 @@ internal class Menu
                         ? $"[black on dodgerblue1]> {item}[/]"
                         : $"  {item}"));
 
-        // Menu Panel
         var menuPanel = new Panel(menuItems)
             .Header("Menu")
             .Border(BoxBorder.Rounded)
             .Expand();
 
-        // Map Panel
         var mapPanel = new Panel(
             "[white on yellow] ░▒▓█[/]\n" +
             "[white on darkorange]▓█[/]\n" +
@@ -198,10 +264,6 @@ internal class Menu
             .Border(BoxBorder.Rounded)
             .Expand();
 
-        // ===========================
-        // Info Panel Content
-        // ===========================
-
         string infoText = "";
 
         if (_currentScreen == "Home")
@@ -210,7 +272,7 @@ internal class Menu
         }
         else if (_currentScreen == "Parking")
         {
-            if (_selectVehicleType)
+            if (_mode == MenuMode.VehicleTypeSelection)
             {
                 var vehicleTypes =
                     Enum.GetValues<VehicleType>();
@@ -228,31 +290,68 @@ internal class Menu
                     "[yellow]Select Vehicle Type[/]\n\n" +
                     typeMenu;
             }
-            else if (_inputRegistration)
+            else if
+            (
+                _mode == MenuMode.ParkingRegistration ||
+                _mode == MenuMode.RetrieveRegistration ||
+                _mode == MenuMode.MoveRegistration ||
+                _mode == MenuMode.SearchRegistration
+            )
             {
-                infoText =
-                    $"Vehicle Type: [yellow]{_selectedVehicleType}[/]\n\n" +
-                    $"Registration: [blue]{_registration}█[/]\n\n" +
-                    "[grey]ENTER = Save[/]";
+                if (_mode == MenuMode.ParkingRegistration)
+                {
+                    infoText =
+                        $"Vehicle Type: [yellow]{_selectedVehicleType}[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Save[/]";
+                }
+                else if (_mode == MenuMode.RetrieveRegistration)
+                {
+                    infoText =
+                        "[yellow]Retrieve Vehicle[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Search[/]";
+                }
+                else if (_mode == MenuMode.MoveRegistration)
+                {
+                    infoText =
+                        "[yellow]Move Vehicle[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Continue[/]";
+                }
+                else if (_mode == MenuMode.SearchRegistration)
+                {
+                    infoText =
+                        "[yellow]Search Vehicle[/]\n\n" +
+                        $"Registration: [blue]{_registration}█[/]\n\n" +
+                        "[grey]ENTER = Search[/]";
+                }
+                else if (_mode == MenuMode.AdminMenu)
+                {
+                    infoText =
+                        "[yellow]Admin[/]\n\n" +
+                        "Save\n" +
+                        "Load\n" +
+                        "Statistics\n" +
+                        "Reset Garage";
+                }
             }
         }
 
-        // Interactive Panel
         var interactivePanel =
             new Panel(new Markup(infoText))
                 .Header(_currentScreen)
                 .Border(BoxBorder.Rounded)
                 .Expand();
 
-        // Log Panel
-        var logPanel =
-            new Panel(
-                "[green]Application started[/]")
-            .Header("Log")
-            .Border(BoxBorder.Rounded)
-            .Expand();
+        string logText = string.Join("\n", _logEntries);
 
-        // Layout
+        var logPanel =
+            new Panel(logText)
+                .Header("Log")
+                .Border(BoxBorder.Rounded)
+                .Expand();
+
         Layout mainLayout = new Layout("Root")
             .SplitRows(
                 new Layout("Top")

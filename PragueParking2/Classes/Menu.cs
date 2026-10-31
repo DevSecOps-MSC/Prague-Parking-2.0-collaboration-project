@@ -7,16 +7,20 @@ using Spectre.Console;
 
 namespace PragueParking2.Classes;
 
-internal enum MenuMode
+
+  internal enum MenuMode
 {
     MainMenu,
     VehicleTypeSelection,
     ParkingRegistration,
     RetrieveRegistration,
     MoveRegistration,
+    MoveFromSpace,
+    MoveToSpace,
     SearchRegistration,
     AdminMenu
 }
+
 
 internal class Menu
 {
@@ -26,7 +30,8 @@ internal class Menu
     {
         _garage = garage;
     }
-
+    private string _fromParkingSpace = "";
+    private string _toParkingSpace = "";
     private string _registration = "";
     private MenuMode _mode = MenuMode.MainMenu;
 
@@ -134,7 +139,7 @@ internal class Menu
                     }
                     else if (keyInfo.Key == ConsoleKey.Enter)
                     {
-                        if (_mode == MenuMode.RetrieveRegistration)
+                        if (_mode == MenuMode.RetrieveRegistration)                             //retrieve
                         {
                             if (_garage.FindVehicle(
                                 _registration,
@@ -149,8 +154,62 @@ internal class Menu
                                     $"Vehicle {_registration} not found");
                             }
                         }
+                       if (_mode == MenuMode.MoveRegistration)
+                       {
+                           _fromParkingSpace = "";
+    
+                           _mode = MenuMode.MoveFromSpace;
 
-                        _mode = MenuMode.MainMenu;
+                           continue;
+                       }
+                    if (_mode == MenuMode.MoveFromSpace)
+                    {
+                        if (keyInfo.Key == ConsoleKey.Backspace)
+                        {
+                            if (_fromParkingSpace.Length > 0)
+                            {
+                                _fromParkingSpace =
+                                    _fromParkingSpace[..^1];
+                            }
+                        }
+                        else if (keyInfo.Key == ConsoleKey.Enter)
+                        {
+                            _toParkingSpace = "";
+
+                            _mode = MenuMode.MoveToSpace;
+                        }
+                        else if (!char.IsControl(keyInfo.KeyChar))
+                        {
+                            _fromParkingSpace += keyInfo.KeyChar;
+                        }
+
+                        continue;
+                    }
+                    if (_mode == MenuMode.MoveToSpace)
+                    {
+                        if (keyInfo.Key == ConsoleKey.Backspace)
+                        {
+                            if (_toParkingSpace.Length > 0)
+                            {
+                                _toParkingSpace =
+                                    _toParkingSpace[..^1];
+                            }
+                        }
+                        else if (keyInfo.Key == ConsoleKey.Enter)
+                        {
+                            AddLog(
+                                $"Move {_registration} from {_fromParkingSpace} to {_toParkingSpace}");
+
+                            ResetToHome();
+                        }
+                        else if (!char.IsControl(keyInfo.KeyChar))
+                        {
+                            _toParkingSpace += keyInfo.KeyChar;
+                        }
+
+                        continue;
+                    }
+                    _mode = MenuMode.MainMenu;
                         _currentScreen = "Home";
                     }
                     else if (keyInfo.Key == ConsoleKey.Escape)
@@ -347,6 +406,21 @@ internal class Menu
                         "[yellow]Move Vehicle[/]\n\n" +
                         $"Registration: [blue]{_registration}█[/]\n\n" +
                         "[grey]ENTER = Continue[/]";
+                }
+                else if (_mode == MenuMode.MoveFromSpace)
+                {
+                    infoText =
+                        "[yellow]Move Vehicle[/]\n\n" +
+                        $"Registration: [green]{_registration}[/]\n\n" +
+                        $"From Space: [blue]{_fromParkingSpace}█[/]";
+                }
+                else if (_mode == MenuMode.MoveToSpace)
+                {
+                    infoText =
+                        "[yellow]Move Vehicle[/]\n\n" +
+                        $"Registration: [green]{_registration}[/]\n\n" +
+                        $"From Space: [green]{_fromParkingSpace}[/]\n\n" +
+                        $"To Space: [blue]{_toParkingSpace}█[/]";
                 }
                 else if (_mode == MenuMode.SearchRegistration)
                 {

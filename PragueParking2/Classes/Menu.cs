@@ -1,4 +1,8 @@
-﻿using PragueParking2.Classes;
+﻿
+
+
+
+using PragueParking2.Classes;
 using Spectre.Console;
 
 namespace PragueParking2.Classes;
@@ -117,39 +121,56 @@ internal class Menu
                 _mode == MenuMode.MoveRegistration ||
                 _mode == MenuMode.SearchRegistration
             )
-            {
-                if (keyInfo.Key == ConsoleKey.Backspace)
                 {
-                    if (_registration.Length > 0)
+                    if (keyInfo.Key == ConsoleKey.Backspace)
                     {
-                        _registration =
-                            _registration.Substring(
-                                0,
-                                _registration.Length - 1);
+                        if (_registration.Length > 0)
+                        {
+                            _registration =
+                                _registration.Substring(
+                                    0,
+                                    _registration.Length - 1);
+                        }
                     }
-                }
-                else if (keyInfo.Key == ConsoleKey.Enter)
-                {
-                    _mode = MenuMode.MainMenu;
-                }
-                else if (keyInfo.Key == ConsoleKey.Escape)
-                {
-                    ResetToHome();
-                }
-                else if (!char.IsControl(keyInfo.KeyChar))
-                {
-                    _registration +=
-                        char.ToUpper(keyInfo.KeyChar);
+                    else if (keyInfo.Key == ConsoleKey.Enter)
+                    {
+                        if (_mode == MenuMode.RetrieveRegistration)
+                        {
+                            if (_garage.FindVehicle(
+                                _registration,
+                                out int spaceId))
+                            {
+                                AddLog(
+                                    $"Found {_registration} in space #{spaceId}");
+                            }
+                            else
+                            {
+                                AddLog(
+                                    $"Vehicle {_registration} not found");
+                            }
+                        }
+
+                        _mode = MenuMode.MainMenu;
+                        _currentScreen = "Home";
+                    }
+                    else if (keyInfo.Key == ConsoleKey.Escape)
+                    {
+                        ResetToHome();
+                    }
+                    else if (!char.IsControl(keyInfo.KeyChar))
+                    {
+                        _registration +=
+                            char.ToUpper(keyInfo.KeyChar);
+                    }
+
+                    continue;
                 }
 
-                continue;
-            }
+                // ===========================
+                // Main Menu
+                // ===========================
 
-            // ===========================
-            // Main Menu
-            // ===========================
-
-            switch (keyInfo.Key)
+                switch (keyInfo.Key)
             {
                 case ConsoleKey.UpArrow:
 
@@ -235,6 +256,7 @@ internal class Menu
         }
     }
 
+
     private void ResetToHome()
     {
         _currentScreen = "Home";
@@ -273,10 +295,14 @@ internal class Menu
         {
             infoText = "";
         }
-        else if (_currentScreen == "Parking")
+        else //if (_currentScreen == "Parking")
         {
-            if (_mode == MenuMode.VehicleTypeSelection)
-            {
+            if //(_mode == MenuMode.VehicleTypeSelection)
+                (
+                 _currentScreen == "Parking" &&
+                 _mode == MenuMode.VehicleTypeSelection
+)
+               {
                 var vehicleTypes =
                     Enum.GetValues<VehicleType>();
 

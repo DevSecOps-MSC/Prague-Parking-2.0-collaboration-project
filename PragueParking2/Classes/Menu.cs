@@ -5,6 +5,13 @@ namespace PragueParking2.Classes;
 
 internal class Menu
 {
+    private readonly ParkingGarage _garage;
+
+    public Menu(ParkingGarage garage)
+    {
+        _garage = garage;
+    }
+    
     private string _registration = "";
 
     private bool _inputRegistration = false;
@@ -189,11 +196,7 @@ internal class Menu
             .Expand();
 
         // Map Panel
-        var mapPanel = new Panel(
-            "[white on yellow] ░▒▓█[/]\n" +
-            "[white on darkorange]▓█[/]\n" +
-            "[orangered1 on orangered1]█[/]\n" +
-            "[red3 on red3]████[/]")
+        var mapPanel = new Panel(GarageMap.Build(_garage))
             .Header("Map Of Garage")
             .Border(BoxBorder.Rounded)
             .Expand();

@@ -9,13 +9,14 @@ internal class Program
     static readonly FileHandler fileHandler = new(Admin.path);
     static Config? config;
     static ParkingGarage? parkingGarage;
+    static WorkLog? workLog;
 
 
     private static void Main(string[] args)
     {
         if (Admin.Setup(fileHandler) is false)
         {
-            Console.WriteLine("Something horrible went wrong and it appears impossible to set up the software. Exiting.");
+            Console.WriteLine("Something went horribly wrong and it appears impossible to set up the software. Exiting.");
             Environment.Exit(666);
         }
         // config = Admin.LoadConfig(fileHandler);
@@ -24,19 +25,48 @@ internal class Program
         parkingGarage = ParkingGarage.FromConfig(config);
 
 
+        // Layout mainLayout = new Layout("Root")
+        //     .SplitRows(
+        //         new Layout("Top")
+        //         .SplitColumns(
+        //             new Layout("Action").Size(40),
+        //             new Layout("Map")
+        //         ).Size(20),
+        //         new Layout("Message").Size(5),
+        //         new Layout("Log").Size(9)
+        //     );
+
+        // Layout mainLayout2 = new Layout("Root")
+        //     .SplitRows(
+        //         new Layout("Top")
+        //         .SplitColumns(
+        //             new Layout("Action").Size(40),
+        //             new Layout("Map")
+        //         ).Size(20),
+        //         new Layout("Bottom").Size(25)
+        //         .SplitColumns(
+        //             new Layout("Message").Size(55),
+        //             new Layout("Log")
+        //         )
+        //     );
+
+
+
+        // AnsiConsole.Write(mainLayout2);
+
         // config.SaveToFile(fileHandler, configFilename);
         // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
 
-        ValidatorTests.AddTests(config);
-        VehicleTests.AddTests(config);
-        ValetTicketTests.AddTests(config);
-        ParkingSpaceTests.AddTests(config);
-        ParkingGarageTests.AddTests(config);
+        // ValidatorTests.AddTests(config);
+        // VehicleTests.AddTests(config);
+        // ValetTicketTests.AddTests(config);
+        // ParkingSpaceTests.AddTests(config);
+        // ParkingGarageTests.AddTests(config);
 
-        SimpleTest.RunAllTests();
+        // SimpleTest.RunAllTests();
 
-        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+        // SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
   
         Menu menu = new(parkingGarage);

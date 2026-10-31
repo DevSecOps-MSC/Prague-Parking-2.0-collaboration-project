@@ -27,6 +27,12 @@ public class FileHandler(string path)
     public void Save(string filename, string contents)
         => File.WriteAllText($"{Path}/{filename}", contents);
 
+    public string[] LoadLines(string filename)
+        => File.ReadAllLines($"{Path}/{filename}");
+
+    public void SaveLines(string filename, List<string> contents)
+        => File.WriteAllLines($"{Path}/{filename}", contents);
+
     public bool DataDirectoryExists()
         => Directory.Exists(Path);
 }

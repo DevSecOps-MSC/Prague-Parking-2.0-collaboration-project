@@ -162,3 +162,22 @@ I still need practice to understand and write the logic independently, but these
 
 I am getting more comfortable breaking a task into smaller steps and checking the result before moving on.
 
+---
+
+### Saturday, 31 October
+
+Today I updated my local repository and checked that all the existing tests still passed.
+
+Calle was working on the menu and suggested that I help with the garage map. I used his earlier example as a starting point and created a separate `GarageMap` class.
+
+The map shows each parking space's ID, with green for empty spaces, yellow for partly occupied spaces and red for full spaces. I kept the block symbols and connected the map to the garage used by the menu.
+
+I checked the colours using a temporary motorcycle and car, then tested the layout with 100 parking spaces. Afterwards, I removed the temporary demonstration code.
+
+When I created the pull request, there was a conflict because Calle had also updated `Menu.cs`. It was incredibly scary, as I had never stumbled upon a conflict. I kept his newer menu and restored the connections needed for my map. The combined programme built and displayed the map successfully, and I merged the pull request.
+
+This was my first experience resolving a merge conflict in our shared code. I also learnt what the `.csproj` file does hand on, and practised passing an object to a constructor.
+
+I still need help with parts of the code, but it was encouraging to contribute something more visible and tangible to the programme and build on the parking-space logic I had already worked with.
+
+---

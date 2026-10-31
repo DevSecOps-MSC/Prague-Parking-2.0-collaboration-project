@@ -16,6 +16,13 @@ internal enum MenuMode
 
 internal class Menu
 {
+    private readonly ParkingGarage _garage;
+
+    public Menu(ParkingGarage garage)
+    {
+        _garage = garage;
+    }
+
     private string _registration = "";
     private MenuMode _mode = MenuMode.MainMenu;
 
@@ -255,11 +262,7 @@ internal class Menu
             .Border(BoxBorder.Rounded)
             .Expand();
 
-        var mapPanel = new Panel(
-            "[white on yellow] ░▒▓█[/]\n" +
-            "[white on darkorange]▓█[/]\n" +
-            "[orangered1 on orangered1]█[/]\n" +
-            "[red3 on red3]████[/]")
+        var mapPanel = new Panel(GarageMap.Build(_garage))
             .Header("Map Of Garage")
             .Border(BoxBorder.Rounded)
             .Expand();

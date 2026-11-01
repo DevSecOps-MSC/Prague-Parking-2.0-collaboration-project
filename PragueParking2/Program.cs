@@ -28,65 +28,65 @@ internal class Program
         // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
 
-        ValidatorTests.AddTests(config);
-        VehicleTests.AddTests(config);
-        ValetTicketTests.AddTests(config);
-        ParkingSpaceTests.AddTests(config);
-        ParkingGarageTests.AddTests(config);
+        // ValidatorTests.AddTests(config);
+        // VehicleTests.AddTests(config);
+        // ValetTicketTests.AddTests(config);
+        // ParkingSpaceTests.AddTests(config);
+        // ParkingGarageTests.AddTests(config);
 
-        SimpleTest.RunAllTests();
+        // SimpleTest.RunAllTests();
 
-        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+        // SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-        // Menu menu = new(parkingGarage);
+        Menu menu = new(parkingGarage);
 
-        // List<string> menuItems =
-        // [
-        //     "Parking",
-        //     "Retrieve",
-        //     "Move",
-        //     "Search",
-        //     "List",
-        //     "Admin",
-        //     "Exit"
-        // ];
+        List<string> menuItems =
+        [
+            "Parking",
+            "Retrieve",
+            "Move",
+            "Search",
+            "List",
+            "Admin",
+            "Exit"
+        ];
 
-        // while (true)
-        // {
-        //     string choice = menu.Show(menuItems);
+        while (true)
+        {
+            string choice = menu.Show(menuItems);
            
 
 
-        //     switch (choice)
-        //     {
-        //         case "Parking":
-        //             AnsiConsole.MarkupLine("[green]Parking selected[/]");
-        //             break;
+            switch (choice)
+            {
+                case "Parking":
+                    AnsiConsole.MarkupLine("[green]Parking selected[/]");
+                    break;
 
-        //         case "Retrieve":
-        //             AnsiConsole.MarkupLine("[green]Retrieve selected[/]");
-        //             break;
+                case "Retrieve":
+                    AnsiConsole.MarkupLine("[green]Retrieve selected[/]");
+                    break;
 
-        //         case "Move":
-        //             AnsiConsole.MarkupLine("[green]Move selected[/]");
-        //             break;
+                case "Move":
+                    AnsiConsole.MarkupLine("[green]Move selected[/]");
+                    break;
 
-        //         case "Search":
-        //             AnsiConsole.MarkupLine("[green]Search selected[/]");
-        //             break;
+                case "Search":
+                    AnsiConsole.MarkupLine("[green]Search selected[/]");
+                    break;
 
-        //         case "List":
-        //             AnsiConsole.MarkupLine("[green]List selected[/]");
-        //             break;
+                case "List":
+                    AnsiConsole.MarkupLine("[green]List selected[/]");
+                    break;
 
-        //         case "Admin":
-        //             AnsiConsole.MarkupLine("[green]Admin selected[/]");
-        //             break;
+                case "Admin":
+                    AnsiConsole.MarkupLine("[green]Admin selected[/]");
+                    break;
 
-        //         case "Exit":
-        //             return;
-        //     }
-        // }
+                case "Exit":
+                    return;
+            }
+        }
   
     }
 

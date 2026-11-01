@@ -678,21 +678,20 @@ public class ParkingGarageTests
             }
         ));
 
-        // SimpleTest.AddNewTest(
-        //     new Test("Parking Garage: It is possible to see if a Parking Space Contains a Bus", () =>
-        //     {
-        //         var capacity = 10;
-        //         var busCapable = 5;
-        //         var carSize = 4;
-        //         var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
-        //         var bus = new Bus("BUS", carSize * 4);
-        //         parkingGarage.CheckIn(bus, config.Rates);
-        //         parkingGarage.Park(bus);
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: It is possible to Collect a Bus", () =>
+            {
+                var capacity = 10;
+                var busCapable = 5;
+                var carSize = 4;
+                var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var bus = new Bus("BUS", carSize * 4);
+                parkingGarage.CheckIn(bus, config.Rates);
+                parkingGarage.Park(bus);
 
-
-        //         return parkingGarage.Park(bus);
-        //     }
-        // ));
+                return parkingGarage.Collect(bus, bus.Ticket!.ParkingSpaceId);
+            }
+        ));
 
 
 

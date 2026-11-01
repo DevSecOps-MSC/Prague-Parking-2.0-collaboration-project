@@ -980,17 +980,17 @@ internal class Menu
         table.AddColumn("Check In");
         table.AddColumn("Price");
 
-        table.AddRow(
-            "ABC123",
-            "4",
-            "16:30",
-            "25 kr");
-
-        table.AddRow(
-            "XYZ789",
-            "7",
-            "17:05",
-            "10 kr");
+        foreach (var space in _garage.ParkingSpaces)
+        {
+            foreach (var vehicle in space.ParkedVehicles)
+            {
+                table.AddRow(
+                    vehicle.Registration,
+                    space.ID.ToString(),
+                    vehicle.Type.ToString(),
+                    "N/A");
+            }
+        }
         var panel =
     new Panel(table)
         .Header("Registered Vehicles")

@@ -37,9 +37,11 @@ namespace PragueParking2.Classes;
 internal class Menu
 {
     private ParkingGarage _garage;
-    public Menu(ParkingGarage garage)
+    private Config _config;
+    public Menu(ParkingGarage garage, Config config)
     {
         _garage = garage;
+        _config = config;
     }
 
     private readonly FileHandler _fileHandler =

@@ -298,19 +298,4 @@ public class ParkingGarage
 
         return false;
     }
-  
-    public void LoadFromFile(
-    FileHandler fileHandler,
-    string fileName)
-    {
-        ParkingGarage loadedGarage =
-            FromFile(fileHandler, fileName);
-
-        Capacity = loadedGarage.Capacity;
-
-        ParkingSpaces.Clear();
-
-        ParkingSpaces.AddRange(
-            loadedGarage.ParkingSpaces);
-    }
 }

@@ -1,4 +1,8 @@
-﻿/*
+﻿
+
+
+
+/*
  TODO
  - Connect SaveConfirmation to SaveToFile()
  - Connect LoadConfirmation to FromFile()
@@ -32,14 +36,14 @@ namespace PragueParking2.Classes;
 
 internal class Menu
 {
-    private readonly ParkingGarage _garage;
+    private ParkingGarage _garage;
     public Menu(ParkingGarage garage)
     {
         _garage = garage;
     }
 
     private readonly FileHandler _fileHandler =
-    new("Data");
+        new(Admin.path);
 
 
     // Fields for user input
@@ -150,7 +154,7 @@ internal class Menu
                             {
                                 _garage.SaveToFile(
                                     _fileHandler,
-                                    "garage.json");
+                                    "data.json");
 
                                 AddLog("Garage saved successfully");
                             }
@@ -198,9 +202,10 @@ internal class Menu
                         {
                             try
                             {
-                                _garage.LoadFromFile(
-                                    _fileHandler,
-                                    "garage.json");
+                                _garage =
+                                    ParkingGarage.FromFile(
+                                        _fileHandler,
+                                        "data.json");
 
                                 AddLog("Garage loaded successfully");
                             }

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using PragueParking2.Classes;
 using PragueParking2.Classes.Exceptions;
 using PragueParking2.Interfaces;
@@ -444,6 +445,95 @@ public class ParkingGarageTests
                 parkingGarage.CheckOut(vehicle);
 
                 return vehicle.Ticket.TimeOfCheckOut is not null;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Parking Garage can generate a temporary Vehicle Registration for a Bicycle", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                var bicycleRegistration = parkingGarage.GenerateBicycleRegistration();
+
+                return string.IsNullOrWhiteSpace(bicycleRegistration) == false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A temporary Bicycle registration starts with 'BIKE-'", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+
+
+                var bicycleRegistration = parkingGarage.GenerateBicycleRegistration();
+
+                return bicycleRegistration.StartsWith("BIKE-");
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A temporary Bicycle registration starts with 'BIKE-' and ends with 5 numerals", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+
+                var bicycleRegistration = parkingGarage.GenerateBicycleRegistration();
+
+                var pattern = @"BIKE-[0-9]{5}";
+
+                if (Regex.IsMatch(bicycleRegistration, pattern))
+                    return true;
+
+                return false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A temporary Bicycle registration is different every time", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                var bicycleRegistration = parkingGarage.GenerateBicycleRegistration();
+                var bicycleRegistration2 = parkingGarage.GenerateBicycleRegistration();
+
+                return bicycleRegistration != bicycleRegistration2;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A temporary Bicycle registration is Random enough to not repeat within a reasonable range", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                var rng = new Random();
+
+                string[] bicycleRegistrations = new string[500];
+                for (int i = 0; i < 500; i++)
+                {
+                    string randomReg = parkingGarage.GenerateBicycleRegistration(rng);
+                    if (bicycleRegistrations.Contains(randomReg))
+                        return false;
+
+                    bicycleRegistrations[0] = randomReg;
+                }
+
+                return true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A new temporary Bicycle registration is generated immediately if a duplicate is already in the system", () =>
+            {
+                var parkingGarage = new ParkingGarage(10, 4);
+                var bicycle = new Bicycle("BIKE-66150", 1);
+                parkingGarage.CheckIn(bicycle, config.Rates);
+                parkingGarage.Park(bicycle, bicycle.Ticket!.ParkingSpaceId);
+
+                var rng = new Random(666); // The first generated is "BIKE-66150"
+                string randomReg = parkingGarage.GenerateBicycleRegistration(rng);
+
+                return parkingGarage.FindVehicle(randomReg, out _) == false;
             }
         ));
 

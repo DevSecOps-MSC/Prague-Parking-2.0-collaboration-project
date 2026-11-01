@@ -1,4 +1,18 @@
-﻿
+﻿/*
+ TODO
+ - Comment sections for improved readablity 
+ - MoveFromSpace and MoveToSpace:
+     * should be handled in their own input block.
+ - Look for 'dead code' and remove
+     * old  _inputRegistration / _selectVehicleType- that are not in use
+     * 'using' that are not used
+ - Connect SaveConfirmation to SaveToFile()
+ - Connect LoadConfirmation to FromFile()
+ - Implement ConfigMenu
+ - Connect workflow to backend
+ - Check naming standard
+ - Improve color theme and polish
+*/
 
 
 
@@ -61,6 +75,11 @@ internal class Menu
 
     private int _adminIndex = 0;
 
+
+    // ===========================
+    // Log
+    // ===========================
+
     public void AddLog(string message)
     {
         _logEntries.Insert(0, message);
@@ -71,6 +90,8 @@ internal class Menu
         }
     }
 
+
+    // Lets user use ESC to go back to Menu choices
     public string Show(List<string> items)
     {
         while (true)
@@ -88,6 +109,8 @@ internal class Menu
 
                 continue;
             }
+
+
             // ===========================
             // Admin choices
             // ===========================
@@ -97,8 +120,6 @@ internal class Menu
                 {
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.DownArrow:
-                    case ConsoleKey.LeftArrow:
-                    case ConsoleKey.RightArrow:
 
                         _confirmYes =
                             !_confirmYes;
@@ -275,6 +296,7 @@ internal class Menu
                 continue;
             }
 
+
             // ===========================
             // Registration Input
             // ===========================
@@ -385,6 +407,7 @@ internal class Menu
                 continue;
             }
 
+
             // ===========================
             // Main Menu
             // ===========================
@@ -482,7 +505,7 @@ internal class Menu
         }
     }
 
-
+  
     private void ResetToHome()
     {
         _currentScreen = "Home";
@@ -530,9 +553,9 @@ internal class Menu
         {
             infoText = "";
         }
-        else //if (_currentScreen == "Parking")
+        else 
         {
-            if //(_mode == MenuMode.VehicleTypeSelection)
+            if 
                 (
                  _currentScreen == "Parking" &&
                  _mode == MenuMode.VehicleTypeSelection
@@ -669,40 +692,10 @@ internal class Menu
                     "\n[grey]ESC = Cancel[/]";
             }
         }
-
-        if (_mode == MenuMode.ListView)
-        {
-            var table = new Table();
-
-            table.Border(TableBorder.Rounded);
-
-            table.AddColumn("Registration");
-            table.AddColumn("Space");
-            table.AddColumn("Check In");
-            table.AddColumn("Price");
-
-            table.AddRow(
-                "ABC123",
-                "4",
-                "16:30",
-                "25 kr");
-
-            table.AddRow(
-                "XYZ789",
-                "7",
-                "17:05",
-                "10 kr");
-
-            panelContent = table;
-        }
-        else
-        {
+  
             panelContent =
                 new Markup(infoText);
-        }
-
-        //  var interactivePanel =
-        //     new Panel(new Markup(infoText))
+        
         var interactivePanel =
         new Panel(panelContent)
                  .Header(_currentScreen)
@@ -716,6 +709,12 @@ internal class Menu
                 .Header("Log")
                 .Border(BoxBorder.Rounded)
                 .Expand();
+
+
+
+        // ===========================
+        // Layout
+        // ===========================
 
         Layout mainLayout = new Layout("Root")
             .SplitRows(
@@ -739,6 +738,8 @@ internal class Menu
 
         AnsiConsole.Write(mainLayout);
     }
+    
+    //List Table 
     private void DrawListView()
     {
         var table = new Table();
@@ -772,4 +773,5 @@ internal class Menu
         AnsiConsole.MarkupLine(
             "\n[grey]ESC = Back[/]");
     }
+    
 }

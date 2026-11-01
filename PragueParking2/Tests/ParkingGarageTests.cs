@@ -113,6 +113,26 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
+            new Test("Parking Garage: Vehicle Types should not be mixed in a Parking Space", () =>
+            {
+                var size = 4;
+                var parkingGarage = new ParkingGarage(10, size);
+                var car = new Car("C", size).SimulateCheckIn(config);
+                var motorcycleOne = new Motorcycle("M1", size / 2).SimulateCheckIn(config);
+                var motorcycleTwo = new Motorcycle("M2", size / 2).SimulateCheckIn(config);
+                var bicycleOne = new Bicycle("B1", size / 4).SimulateCheckIn(config);
+                var bicycleTwo = new Bicycle("B2", size / 4).SimulateCheckIn(config);
+
+                parkingGarage[1].Park(car);
+                parkingGarage[2].Park(motorcycleOne);
+
+                var expectedSpaceId = 3;
+
+                return parkingGarage.GetIdOfFirstAvailableSpace(bicycleTwo) == expectedSpaceId;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
             new Test("Parking Garage: A Parking Garage can find a Vehicle", () =>
             {
                 var parkingGarage = new ParkingGarage(10, 4);
@@ -534,6 +554,83 @@ public class ParkingGarageTests
                 string randomReg = parkingGarage.GenerateBicycleRegistration(rng);
 
                 return parkingGarage.FindVehicle(randomReg, out _) == false;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: Parking Spaces with smaller Vehicles, like Motorcycles, can be optimized to free up parking spaces", () =>
+            {
+                var capacity = 5;
+                var size = 4;
+                var parkingGarage = new ParkingGarage(capacity, size);
+                var m1 = new Motorcycle("M1", size / 2).SimulateCheckIn(config);
+                var m2 = new Motorcycle("M2", size / 2).SimulateCheckIn(config);
+                var m3 = new Motorcycle("M3", size / 2).SimulateCheckIn(config);
+                var m4 = new Motorcycle("M4", size / 2).SimulateCheckIn(config);
+                var m5 = new Motorcycle("M5", size / 2).SimulateCheckIn(config);
+
+                parkingGarage[1].Park(m1);
+                parkingGarage[2].Park(m2);
+                parkingGarage[3].Park(m3);
+                parkingGarage[4].Park(m4);
+                parkingGarage[5].Park(m5);
+
+                var expectedNumberOfEmptySpaces = 2;
+
+                parkingGarage.OptimizeParking(VehicleType.Motorcycle, out _);
+
+                return parkingGarage.CountEmptyParkingSpaces() == expectedNumberOfEmptySpaces;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: Parking Spaces with smaller Vehicles, like Bicycles, can be optimized to free up parking spaces", () =>
+            {
+                var capacity = 5;
+                var size = 4;
+                var parkingGarage = new ParkingGarage(capacity, size);
+                var b1 = new Bicycle("B1", size / 4).SimulateCheckIn(config);
+                var b2 = new Bicycle("B2", size / 4).SimulateCheckIn(config);
+                var b3 = new Bicycle("B3", size / 4).SimulateCheckIn(config);
+                var b4 = new Bicycle("B4", size / 4).SimulateCheckIn(config);
+                var b5 = new Bicycle("B5", size / 4).SimulateCheckIn(config);
+
+                parkingGarage[1].Park(b1);
+                parkingGarage[2].Park(b2);
+                parkingGarage[3].Park(b3);
+                parkingGarage[4].Park(b4);
+                parkingGarage[5].Park(b5);
+                var expectedNumberOfEmptySpaces = 3;
+
+                parkingGarage.OptimizeParking(VehicleType.Bicycle, out _);
+
+                return parkingGarage.CountEmptyParkingSpaces() == expectedNumberOfEmptySpaces;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: Optimizing parking of smaller Vehicles produces a list of Work Orders", () =>
+            {
+                var capacity = 5;
+                var size = 4;
+                var parkingGarage = new ParkingGarage(capacity, size);
+                var m1 = new Motorcycle("M1", size / 2).SimulateCheckIn(config);
+                var m2 = new Motorcycle("M2", size / 2).SimulateCheckIn(config);
+                var m3 = new Motorcycle("M3", size / 2).SimulateCheckIn(config);
+                var m4 = new Motorcycle("M4", size / 2).SimulateCheckIn(config);
+                var m5 = new Motorcycle("M5", size / 2).SimulateCheckIn(config);
+
+                parkingGarage[1].Park(m1);
+                parkingGarage[2].Park(m2);
+                parkingGarage[3].Park(m3);
+                parkingGarage[4].Park(m4);
+                parkingGarage[5].Park(m5);
+
+                var expectedNumberOfWorkOrders = 4;
+
+                parkingGarage.OptimizeParking(VehicleType.Motorcycle, out List<WorkOrder> workOrders);
+
+                return workOrders.Count == expectedNumberOfWorkOrders;
             }
         ));
 

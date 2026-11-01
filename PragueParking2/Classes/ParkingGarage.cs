@@ -50,6 +50,12 @@ public class ParkingGarage
     {
         foreach (var space in ParkingSpaces)
         {
+            if (space.IsNotEmpty)
+            {
+                if (space.ParkedVehicles.First().Type != vehicle.Type)
+                    continue;
+            }
+
             if (vehicle.Size <= space.AvailableSpace)
             {
                 return space.ID;
@@ -112,7 +118,6 @@ public class ParkingGarage
     internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
         if (this[toParkingSpaceId].Park(vehicle))
-
         {
             this[fromParkingSpaceId].Collect(vehicle);
         }
@@ -247,6 +252,53 @@ public class ParkingGarage
 
         return registration;
     }
+
+    internal bool OptimizeParking(VehicleType vehicleType, out List<WorkOrder> workOrders)
+    {
+        workOrders = [];
+        // Scan the parking garage back to front
+        for (int originSpaceId = Capacity; originSpaceId >= 1; originSpaceId--)
+        {
+            var space = this[originSpaceId];
+
+            // Nothing to move
+            if (space.IsEmpty || space.IsFull)
+                continue;
+
+            // Wrong Vehicle Type
+            if (space.ParkedVehicles.Last().Type != vehicleType)
+                continue;
+
+            // Pick the Vehicle to move
+            var vehicle = space.ParkedVehicles.Last();
+
+            // Get the ID of the first available space to move to
+            var destinationSpaceId = GetIdOfFirstAvailableSpace(vehicle);
+
+            // If origin and destination are the same, no further optimization is possible
+            if (originSpaceId == destinationSpaceId)
+                return true;
+
+            // Move the vehicle
+            if (Collect(vehicle, originSpaceId))
+            {
+                workOrders.Add(new WorkOrder("Collect", vehicleType, vehicle.Registration, originSpaceId));
+                if (Park(vehicle, destinationSpaceId))
+                {
+                    workOrders.Add(new WorkOrder("Park", vehicleType, vehicle.Registration, destinationSpaceId));
+                    continue;
+                }
+                else
+                    throw new Exception("Move failed: Could not park vehicle in destination parking space.");
+            }
+            else
+                throw new Exception("Move failed: Could not collect vehicle from origin parking space.");
+
+        }
+
+        return false;
+    }
+  
     public void LoadFromFile(
     FileHandler fileHandler,
     string fileName)

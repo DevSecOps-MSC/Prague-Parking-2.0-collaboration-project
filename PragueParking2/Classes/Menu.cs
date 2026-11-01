@@ -303,10 +303,10 @@ internal class Menu
 
             if
             (
-                _mode == MenuMode.ParkingRegistration ||
-                _mode == MenuMode.RetrieveRegistration ||
-                _mode == MenuMode.MoveRegistration ||
-                _mode == MenuMode.SearchRegistration
+            _mode == MenuMode.ParkingRegistration ||
+            _mode == MenuMode.RetrieveRegistration ||
+            _mode == MenuMode.MoveRegistration ||
+            _mode == MenuMode.SearchRegistration
             )
             {
                 if (keyInfo.Key == ConsoleKey.Backspace)
@@ -344,53 +344,6 @@ internal class Menu
 
                         continue;
                     }
-                    if (_mode == MenuMode.MoveFromSpace)
-                    {
-                        if (keyInfo.Key == ConsoleKey.Backspace)
-                        {
-                            if (_fromParkingSpace.Length > 0)
-                            {
-                                _fromParkingSpace =
-                                    _fromParkingSpace[..^1];
-                            }
-                        }
-                        else if (keyInfo.Key == ConsoleKey.Enter)
-                        {
-                            _toParkingSpace = "";
-
-                            _mode = MenuMode.MoveToSpace;
-                        }
-                        else if (!char.IsControl(keyInfo.KeyChar))
-                        {
-                            _fromParkingSpace += keyInfo.KeyChar;
-                        }
-
-                        continue;
-                    }
-                    if (_mode == MenuMode.MoveToSpace)
-                    {
-                        if (keyInfo.Key == ConsoleKey.Backspace)
-                        {
-                            if (_toParkingSpace.Length > 0)
-                            {
-                                _toParkingSpace =
-                                    _toParkingSpace[..^1];
-                            }
-                        }
-                        else if (keyInfo.Key == ConsoleKey.Enter)
-                        {
-                            AddLog(
-                                $"Move {_registration} from {_fromParkingSpace} to {_toParkingSpace}");
-
-                            ResetToHome();
-                        }
-                        else if (!char.IsControl(keyInfo.KeyChar))
-                        {
-                            _toParkingSpace += keyInfo.KeyChar;
-                        }
-
-                        continue;
-                    }
                     _mode = MenuMode.MainMenu;
                     _currentScreen = "Home";
                 }
@@ -402,6 +355,73 @@ internal class Menu
                 {
                     _registration +=
                         char.ToUpper(keyInfo.KeyChar);
+                }
+
+                continue;
+            }
+
+
+
+            // ===========================
+            // Move From Space Input
+            // ===========================
+
+            if (_mode == MenuMode.MoveFromSpace)
+            {
+                if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (_fromParkingSpace.Length > 0)
+                    {
+                        _fromParkingSpace =
+                            _fromParkingSpace[..^1];
+                    }
+                }
+                else if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    _toParkingSpace = "";
+
+                    _mode = MenuMode.MoveToSpace;
+                }
+                else if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    ResetToHome();
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    _fromParkingSpace += keyInfo.KeyChar;
+                }
+
+                continue;
+            }
+
+            // ===========================
+            // Move To Space Input
+            // ===========================
+
+            if (_mode == MenuMode.MoveToSpace)
+            {
+                if (keyInfo.Key == ConsoleKey.Backspace)
+                {
+                    if (_toParkingSpace.Length > 0)
+                    {
+                        _toParkingSpace =
+                            _toParkingSpace[..^1];
+                    }
+                }
+                else if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    AddLog(
+                        $"Move {_registration} from {_fromParkingSpace} to {_toParkingSpace}");
+
+                    ResetToHome();
+                }
+                else if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    ResetToHome();
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    _toParkingSpace += keyInfo.KeyChar;
                 }
 
                 continue;
@@ -504,7 +524,8 @@ internal class Menu
             }
         }
     }
-
+          
+        
   
     private void ResetToHome()
     {
@@ -559,7 +580,7 @@ internal class Menu
                 (
                  _currentScreen == "Parking" &&
                  _mode == MenuMode.VehicleTypeSelection
-)
+                )
             {
                 var vehicleTypes =
                     Enum.GetValues<VehicleType>();
@@ -579,10 +600,12 @@ internal class Menu
             }
             else if
             (
-                _mode == MenuMode.ParkingRegistration ||
-                _mode == MenuMode.RetrieveRegistration ||
-                _mode == MenuMode.MoveRegistration ||
-                _mode == MenuMode.SearchRegistration
+            _mode == MenuMode.ParkingRegistration ||
+            _mode == MenuMode.RetrieveRegistration ||
+            _mode == MenuMode.MoveRegistration ||
+            _mode == MenuMode.MoveFromSpace ||
+            _mode == MenuMode.MoveToSpace ||
+            _mode == MenuMode.SearchRegistration
             )
             {
                 if (_mode == MenuMode.ParkingRegistration)

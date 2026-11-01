@@ -1,5 +1,4 @@
 ﻿using FileHandlerLibrary;
-using PragueParking2;
 using PragueParking2.Classes;
 using PragueParking2.Tests;
 using SimpleTestLibrary;
@@ -25,35 +24,6 @@ internal class Program
         parkingGarage = ParkingGarage.FromConfig(config);
 
 
-        // Layout mainLayout = new Layout("Root")
-        //     .SplitRows(
-        //         new Layout("Top")
-        //         .SplitColumns(
-        //             new Layout("Action").Size(40),
-        //             new Layout("Map")
-        //         ).Size(20),
-        //         new Layout("Message").Size(5),
-        //         new Layout("Log").Size(9)
-        //     );
-
-        // Layout mainLayout2 = new Layout("Root")
-        //     .SplitRows(
-        //         new Layout("Top")
-        //         .SplitColumns(
-        //             new Layout("Action").Size(40),
-        //             new Layout("Map")
-        //         ).Size(20),
-        //         new Layout("Bottom").Size(25)
-        //         .SplitColumns(
-        //             new Layout("Message").Size(55),
-        //             new Layout("Log")
-        //         )
-        //     );
-
-
-
-        // AnsiConsole.Write(mainLayout2);
-
         // config.SaveToFile(fileHandler, configFilename);
         // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
@@ -68,57 +38,62 @@ internal class Program
 
         SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-  /*
-        Menu menu = new(parkingGarage);
 
-        List<string> menuItems =
-        [
-            "Parking",
-            "Retrieve",
-            "Move",
-            "Search",
-            "List",
-            "Admin",
-            "Exit"
-        ];
+        // Menu menu = new(parkingGarage);
 
-        while (true)
-        {
-            string choice = menu.Show(menuItems);
+        // List<string> menuItems =
+        // [
+        //     "Parking",
+        //     "Retrieve",
+        //     "Move",
+        //     "Search",
+        //     "List",
+        //     "Admin",
+        //     "Exit"
+        // ];
+
+        // while (true)
+        // {
+        //     string choice = menu.Show(menuItems);
            
 
 
-            switch (choice)
-            {
-                case "Parking":
-                    AnsiConsole.MarkupLine("[green]Parking selected[/]");
-                    break;
+        //     switch (choice)
+        //     {
+        //         case "Parking":
+        //             AnsiConsole.MarkupLine("[green]Parking selected[/]");
+        //             break;
 
-                case "Retrieve":
-                    AnsiConsole.MarkupLine("[green]Retrieve selected[/]");
-                    break;
+        //         case "Retrieve":
+        //             AnsiConsole.MarkupLine("[green]Retrieve selected[/]");
+        //             break;
 
-                case "Move":
-                    AnsiConsole.MarkupLine("[green]Move selected[/]");
-                    break;
+        //         case "Move":
+        //             AnsiConsole.MarkupLine("[green]Move selected[/]");
+        //             break;
 
-                case "Search":
-                    AnsiConsole.MarkupLine("[green]Search selected[/]");
-                    break;
+        //         case "Search":
+        //             AnsiConsole.MarkupLine("[green]Search selected[/]");
+        //             break;
 
-                case "List":
-                    AnsiConsole.MarkupLine("[green]List selected[/]");
-                    break;
+        //         case "List":
+        //             AnsiConsole.MarkupLine("[green]List selected[/]");
+        //             break;
 
-                case "Admin":
-                    AnsiConsole.MarkupLine("[green]Admin selected[/]");
-                    break;
+        //         case "Admin":
+        //             AnsiConsole.MarkupLine("[green]Admin selected[/]");
+        //             break;
 
-                case "Exit":
-                    return;
-            }
-        }
-  */
+        //         case "Exit":
+        //             return;
+        //     }
+        // }
+  
     }
 
 }
+
+
+
+
+

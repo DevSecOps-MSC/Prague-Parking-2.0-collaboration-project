@@ -52,20 +52,25 @@ public class ParkingGarage
 
     internal int GetIdOfFirstAvailableSpace(IVehicle vehicle)
     {
-        // if (vehicle.Size > ParkingSpaces.First().Capacity)
-
-        // TODO: Remove magic numbers!
-        if (vehicle.Type == VehicleType.Bus)
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        if (vehicle.Size > spaceCapacity)
         {
             var firstEmptySpaceId = GetIdOfFirstEmptySpace();
+            var neededSpaces = vehicle.Size / spaceCapacity;
 
-            if (firstEmptySpaceId -1 > BusCapable - 4)
+            if (firstEmptySpaceId -1 > BusCapable - neededSpaces)
                 return -1;
-
+            
             for (int i = firstEmptySpaceId; i < BusCapable; i++)
             {
-                if (this[i].IsEmpty && this[i + 1].IsEmpty && this[i + 2].IsEmpty && this[i + 3].IsEmpty)
-                    return i;
+                for (int j = 1; j < neededSpaces; j++)
+                {
+                    if (this[i+j].IsNotEmpty)
+                        break;
+                    
+                    if (j == neededSpaces - 1)
+                        return i;
+                }
             }
 
             return -1;
@@ -321,5 +326,4 @@ public class ParkingGarage
 
         return false;
     }
-
 }

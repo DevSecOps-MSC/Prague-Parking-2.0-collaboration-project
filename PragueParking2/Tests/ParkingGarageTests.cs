@@ -634,17 +634,17 @@ public class ParkingGarageTests
             }
         ));
 
-        // SimpleTest.AddNewTest(
-        //     new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
-        //     {
-        //         var size = 4;
-        //         IVehicle vehicle = new Bus("foo", size);
-        //         var parkingGarage = new ParkingGarage(10, size);
-        //         parkingGarage.CheckIn(vehicle, config.Rates);
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
+            {
+                var size = 4;
+                IVehicle vehicle = new Bus("foo", size);
+                var parkingGarage = new ParkingGarage(10, size);
+                parkingGarage.CheckIn(vehicle, config.Rates);
 
-        //         return vehicle.Ticket is not null;
-        //     }
-        // ));
+                return vehicle.Ticket is not null;
+            }
+        ));
 
         SimpleTest.AddNewTest(
             new Test("Parking Garage: A Parking Garage can accommodate a Bus if it has enough adjacent Bus Capable Parking Spaces", () =>

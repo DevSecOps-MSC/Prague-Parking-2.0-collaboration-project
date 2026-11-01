@@ -15,10 +15,14 @@ public class ParkingGarage
     [JsonInclude]
     public int Capacity { get; private set; }
 
-    public ParkingGarage(int capacity, int parkingSpaceCapacity)
+    [JsonInclude]
+    public int BusCapable { get; private set; }
+
+    public ParkingGarage(int capacity, int parkingSpaceCapacity, int busCapable = 0)
     {
         Capacity = capacity;
         InitializeParkingSpaces(parkingSpaceCapacity);
+        BusCapable = busCapable;
     }
 
     public ParkingGarage() { }
@@ -48,6 +52,25 @@ public class ParkingGarage
 
     internal int GetIdOfFirstAvailableSpace(IVehicle vehicle)
     {
+        // if (vehicle.Size > ParkingSpaces.First().Capacity)
+
+        // TODO: Remove magic numbers!
+        if (vehicle.Type == VehicleType.Bus)
+        {
+            var firstEmptySpaceId = GetIdOfFirstEmptySpace();
+
+            if (firstEmptySpaceId -1 > BusCapable - 4)
+                return -1;
+
+            for (int i = firstEmptySpaceId; i < BusCapable; i++)
+            {
+                if (this[i].IsEmpty && this[i + 1].IsEmpty && this[i + 2].IsEmpty && this[i + 3].IsEmpty)
+                    return i;
+            }
+
+            return -1;
+        }
+
         foreach (var space in ParkingSpaces)
         {
             if (space.IsNotEmpty)
@@ -298,19 +321,5 @@ public class ParkingGarage
 
         return false;
     }
-  
-    public void LoadFromFile(
-    FileHandler fileHandler,
-    string fileName)
-    {
-        ParkingGarage loadedGarage =
-            FromFile(fileHandler, fileName);
 
-        Capacity = loadedGarage.Capacity;
-
-        ParkingSpaces.Clear();
-
-        ParkingSpaces.AddRange(
-            loadedGarage.ParkingSpaces);
-    }
 }

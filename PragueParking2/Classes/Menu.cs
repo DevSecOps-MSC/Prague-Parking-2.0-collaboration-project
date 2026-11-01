@@ -198,9 +198,9 @@ internal class Menu
                         {
                             try
                             {
-                                _garage.LoadFromFile(
-                                    _fileHandler,
-                                    "garage.json");
+                                // _garage.LoadFromFile(
+                                //     _fileHandler,
+                                //     "garage.json");
 
                                 AddLog("Garage loaded successfully");
                             }

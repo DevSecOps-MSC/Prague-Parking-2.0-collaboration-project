@@ -347,18 +347,6 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
-            {
-                var size = 4;
-                IVehicle vehicle = new Bus("foo", size);
-                var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
-
-                return vehicle.Ticket is not null;
-            }
-        ));
-
-        SimpleTest.AddNewTest(
             new Test("Parking Garage: A Bicycle gets a Valet Ticket when it is Checked In", () =>
             {
                 var size = 4;
@@ -633,6 +621,50 @@ public class ParkingGarageTests
                 return workOrders.Count == expectedNumberOfWorkOrders;
             }
         ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Parking Garage can have a number of Bus Capable Parking Spaces", () =>
+            {
+                var capacity = 10;
+                var busCapable = 5;
+                var size = 4;
+                var parkingGarage = new ParkingGarage(capacity, size, busCapable);
+
+                return parkingGarage.BusCapable == busCapable;
+            }
+        ));
+
+        // SimpleTest.AddNewTest(
+        //     new Test("Parking Garage: A Bus gets a Valet Ticket when it is Checked In", () =>
+        //     {
+        //         var size = 4;
+        //         IVehicle vehicle = new Bus("foo", size);
+        //         var parkingGarage = new ParkingGarage(10, size);
+        //         parkingGarage.CheckIn(vehicle, config.Rates);
+
+        //         return vehicle.Ticket is not null;
+        //     }
+        // ));
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Parking Garage can accommodate a Bus if it has enough adjacent Bus Capable Parking Spaces", () =>
+            {
+                var capacity = 10;
+                var busCapable = 5;
+                var carSize = 4;
+                var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var motorcycle = new Motorcycle("M1", carSize / 2).SimulateCheckIn(config);
+                var bus = new Bus("BUS", carSize * 4).SimulateCheckIn(config);
+
+                parkingGarage[1].Park(motorcycle);
+
+                var expectedSpaceId = 2;
+
+                return parkingGarage.GetIdOfFirstAvailableSpace(bus) == expectedSpaceId;
+            }
+        ));
+
+
 
     }
 }

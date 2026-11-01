@@ -13,6 +13,9 @@ public class Config
     public int ParkingSpaceCapacity { get; private set; }
 
     [JsonInclude]
+    public int BusCapableParkingSpaceCapacity { get; private set; }
+
+    [JsonInclude]
     public int FreeMinutes { get; private set; }
 
     [JsonInclude]
@@ -21,17 +24,13 @@ public class Config
     [JsonInclude]
     public Dictionary<VehicleType, decimal> Rates { get; private set; } = [];
 
-    public Config(int garageCapacity, int spaceCapacity, int freeMinutes)
+    public Config(int garageCapacity, int spaceCapacity, int busCapableParkingSpaceCapacity, int freeMinutes)
     {
         ParkingGarageCapacity = garageCapacity;
         ParkingSpaceCapacity = spaceCapacity;
+        BusCapableParkingSpaceCapacity = Math.Min(busCapableParkingSpaceCapacity, garageCapacity);
         FreeMinutes = freeMinutes;
 
-        VehicleSizes.Add(VehicleType.Car, 4);
-        VehicleSizes.Add(VehicleType.Motorcycle, 2);
-
-        Rates.Add(VehicleType.Car, 20.0M);
-        Rates.Add(VehicleType.Motorcycle, 10.0M);
     }
 
     public Config() { }

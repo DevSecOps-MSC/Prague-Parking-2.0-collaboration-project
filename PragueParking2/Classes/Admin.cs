@@ -7,8 +7,9 @@ internal static class Admin
 {
     static readonly string defaultConfigJson = """
     {
-        "ParkingGarageCapacity": 10,
+        "ParkingGarageCapacity": 100,
         "ParkingSpaceCapacity": 4,
+        "BusCapableParkingSpaceCapacity": 50,
         "FreeMinutes": 10,
         "VehicleSizes": {
             "Bus": 16,

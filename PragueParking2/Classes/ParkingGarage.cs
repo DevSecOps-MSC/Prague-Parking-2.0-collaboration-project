@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FileHandlerLibrary;
@@ -15,10 +16,14 @@ public class ParkingGarage
     [JsonInclude]
     public int Capacity { get; private set; }
 
-    public ParkingGarage(int capacity, int parkingSpaceCapacity)
+    [JsonInclude]
+    public int BusCapable { get; private set; }
+
+    public ParkingGarage(int capacity, int parkingSpaceCapacity, int busCapable = 0)
     {
         Capacity = capacity;
         InitializeParkingSpaces(parkingSpaceCapacity);
+        BusCapable = busCapable;
     }
 
     public ParkingGarage() { }
@@ -48,6 +53,30 @@ public class ParkingGarage
 
     internal int GetIdOfFirstAvailableSpace(IVehicle vehicle)
     {
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        if (vehicle.Size > spaceCapacity)
+        {
+            var firstEmptySpaceId = GetIdOfFirstEmptySpace();
+            var neededSpaces = vehicle.Size / spaceCapacity;
+
+            if (firstEmptySpaceId - 1 > BusCapable - neededSpaces)
+                return -1;
+
+            for (int i = firstEmptySpaceId; i < BusCapable; i++)
+            {
+                for (int j = 1; j < neededSpaces; j++)
+                {
+                    if (this[i + j].IsNotEmpty)
+                        break;
+
+                    if (j == neededSpaces - 1)
+                        return i;
+                }
+            }
+
+            return -1;
+        }
+
         foreach (var space in ParkingSpaces)
         {
             if (space.IsNotEmpty)
@@ -117,10 +146,18 @@ public class ParkingGarage
 
     internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
-        if (this[toParkingSpaceId].Park(vehicle))
+        if (vehicle.Type==VehicleType.Bus)
+            Collect((Bus)vehicle, fromParkingSpaceId);
+        else
+            Collect(vehicle, fromParkingSpaceId);
+
+        if (vehicle.Type==VehicleType.Bus)
         {
-            this[fromParkingSpaceId].Collect(vehicle);
+            vehicle.Ticket!.UpdateParkingSpaceId(toParkingSpaceId);
+            Park((Bus)vehicle);   
         }
+        else
+            Park(vehicle, toParkingSpaceId);
     }
 
     internal bool Park(IVehicle vehicle, int spaceId)
@@ -143,6 +180,25 @@ public class ParkingGarage
             return false;
         }
 
+    }
+
+    internal bool Park(Bus bus)
+    {
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        if (bus.Size > spaceCapacity)
+        {
+            var firstSpaceId = bus.Ticket!.ParkingSpaceId;
+            var neededSpaces = bus.Size / spaceCapacity;
+            this[firstSpaceId].ParkedVehicles.Add(bus);
+
+            for (int i = 1; i < neededSpaces; i++)
+            {
+                var busFragment = new Bus(bus.Registration, bus.Size / neededSpaces);
+                this[firstSpaceId + i].ParkBus(busFragment);
+            }
+            return true;
+        }
+        return false;
     }
 
     internal int CountEmptyParkingSpaces()
@@ -298,4 +354,15 @@ public class ParkingGarage
 
         return false;
     }
+
+    internal bool Collect(Bus bus, int spaceId)
+    {
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        for (int i = 1; i < bus.Size / spaceCapacity; i++)
+        {
+            this[spaceId + i].ParkedVehicles.Clear();
+        }
+        return this[spaceId].Collect(bus);
+    }
+
 }

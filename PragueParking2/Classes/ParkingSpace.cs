@@ -47,7 +47,7 @@ public class ParkingSpace : IParkingSpace
             return Capacity - occupiedSpace;
         }
     }
-    
+
     [JsonIgnore]
     public bool IsFull => AvailableSpace == 0;
 
@@ -77,16 +77,16 @@ public class ParkingSpace : IParkingSpace
     public bool ContainsCars(out int qty)
     {
         qty = 0;
-        
+
         foreach (IVehicle vehicle in ParkedVehicles)
         {
-            
+
             if (vehicle is Car)
-                
+
             {
-                
+
                 qty = qty + 1;
-                
+
             }
         }
 
@@ -98,16 +98,16 @@ public class ParkingSpace : IParkingSpace
         qty = 0;
 
         foreach (IVehicle vehicle in ParkedVehicles)
-            
+
         {
-            
+
             if (vehicle is Motorcycle)
             {
-                
+
                 qty = qty + 1;
-                
+
             }
-            
+
         }
 
         return qty > 0;
@@ -128,6 +128,11 @@ public class ParkingSpace : IParkingSpace
         return qty > 0;
     }
 
+    public bool ContainsBus()
+    {
+        return ParkedVehicles.First().Type == VehicleType.Bus;
+    }
+
     public IVehicle PickVehicle(string registration)
     {
         registration = Validator.SanitizeVehicleRegistration(registration);
@@ -138,5 +143,10 @@ public class ParkingSpace : IParkingSpace
         }
 
         throw new VehicleNotFoundException("Vehicle not found! Double check vehicle registration.");
+    }
+
+    public void ParkBus(Bus busFragment)
+    {
+        ParkedVehicles.Add(busFragment);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using PragueParking2.Classes;
 
 namespace PragueParking2.Interfaces;
 
@@ -19,8 +20,8 @@ public interface IParkingSpace
     public bool ContainsCars(out int qty);
     public bool ContainsMotorcycles(out int qty);
     public bool ContainsBicycles(out int qty);
+    public bool ContainsBus();
     public IVehicle PickVehicle(string registration);
-
-
+    void ParkBus(Bus busFragment);
 }
 

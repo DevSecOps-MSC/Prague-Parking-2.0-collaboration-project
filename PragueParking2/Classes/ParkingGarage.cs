@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FileHandlerLibrary;
@@ -171,6 +172,25 @@ public class ParkingGarage
             return false;
         }
 
+    }
+
+    internal bool Park(Bus bus)
+    {
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        if (bus.Size > spaceCapacity)
+        {
+            var firstSpaceId = bus.Ticket!.ParkingSpaceId;
+            var neededSpaces = bus.Size / spaceCapacity;
+            this[firstSpaceId].ParkedVehicles.Add(bus);
+
+            for (int i = 1; i < neededSpaces; i++)
+            {
+                var busFragment = new Bus(bus.Registration, bus.Size / neededSpaces);
+                this[firstSpaceId + i].ParkBus(busFragment);
+            }
+            return true;
+        }
+        return false;
     }
 
     internal int CountEmptyParkingSpaces()

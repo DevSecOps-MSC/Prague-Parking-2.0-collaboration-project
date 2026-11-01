@@ -664,6 +664,36 @@ public class ParkingGarageTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bus can be parked if there are enough adjacent Bus Capable Parking Spaces", () =>
+            {
+                var capacity = 10;
+                var busCapable = 5;
+                var carSize = 4;
+                var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var bus = new Bus("BUS", carSize * 4);
+                parkingGarage.CheckIn(bus, config.Rates);
+
+                return parkingGarage.Park(bus);
+            }
+        ));
+
+        // SimpleTest.AddNewTest(
+        //     new Test("Parking Garage: It is possible to see if a Parking Space Contains a Bus", () =>
+        //     {
+        //         var capacity = 10;
+        //         var busCapable = 5;
+        //         var carSize = 4;
+        //         var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+        //         var bus = new Bus("BUS", carSize * 4);
+        //         parkingGarage.CheckIn(bus, config.Rates);
+        //         parkingGarage.Park(bus);
+
+
+        //         return parkingGarage.Park(bus);
+        //     }
+        // ));
+
 
 
     }

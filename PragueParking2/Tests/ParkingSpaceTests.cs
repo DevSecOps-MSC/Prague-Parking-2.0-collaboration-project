@@ -226,6 +226,27 @@ public static class ParkingSpaceTests
         ));
 
         SimpleTest.AddNewTest(
+            new Test("Parking Space: It is possible to see if a Parking Space Contains a Bus", () =>
+            {
+                var capacity = 10;
+                var busCapable = 5;
+                var carSize = 4;
+                var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var bus = new Bus("BUS", carSize * 4);
+                parkingGarage.CheckIn(bus, config.Rates);
+                parkingGarage.Park(bus);
+
+                for (int i = 0; i < bus.Size / carSize; i++)
+                {
+                    if (parkingGarage[1+i].ContainsBus() == false)
+                        return false;
+                }
+
+                return true;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
             new Test("Parking Space: A Vehicle can not be Parked in a Parking Space without enough room", () =>
             {
                 var size = 4;

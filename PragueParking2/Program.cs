@@ -38,7 +38,6 @@ internal class Program
 
         SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-
         // Menu menu = new(parkingGarage);
 
         // List<string> menuItems =

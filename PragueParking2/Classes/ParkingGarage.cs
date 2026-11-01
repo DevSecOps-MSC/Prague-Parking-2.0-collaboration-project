@@ -111,7 +111,7 @@ public class ParkingGarage
     internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
         if (this[toParkingSpaceId].Park(vehicle))
-            
+
         {
             this[fromParkingSpaceId].Collect(vehicle);
         }
@@ -156,11 +156,11 @@ public class ParkingGarage
     internal int CountParkedCars()
     {
         int count = 0;
-        
+
         foreach (ParkingSpace parkingSpace in ParkingSpaces)
         {
             parkingSpace.ContainsCars(out int qty);
-            
+
             count = count + qty;
         }
         return count;
@@ -173,7 +173,7 @@ public class ParkingGarage
         foreach (ParkingSpace parkingSpace in ParkingSpaces)
         {
             parkingSpace.ContainsMotorcycles(out int qty);
-            
+
             count = count + qty;
         }
         return count;
@@ -186,7 +186,7 @@ public class ParkingGarage
         foreach (ParkingSpace parkingSpace in ParkingSpaces)
         {
             parkingSpace.ContainsBicycles(out int qty);
-            
+
             count = count + qty;
         }
 
@@ -231,5 +231,19 @@ public class ParkingGarage
         }
 
         return false;
+    }
+
+    internal string GenerateBicycleRegistration(Random? rng = null)
+    {
+        rng ??= new Random();
+        string registration;
+
+        do
+        {
+            int id = rng.Next(99999) + 1;
+            registration = $"BIKE-{id:00000}";
+        } while (FindVehicle(registration, out _) is true);
+
+        return registration;
     }
 }

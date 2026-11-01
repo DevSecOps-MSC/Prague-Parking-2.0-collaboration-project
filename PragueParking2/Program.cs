@@ -58,17 +58,17 @@ internal class Program
         // parkingGarage.SaveToFile(fileHandler, garageFilename);
 
 
-        // ValidatorTests.AddTests(config);
-        // VehicleTests.AddTests(config);
-        // ValetTicketTests.AddTests(config);
-        // ParkingSpaceTests.AddTests(config);
-        // ParkingGarageTests.AddTests(config);
+        ValidatorTests.AddTests(config);
+        VehicleTests.AddTests(config);
+        ValetTicketTests.AddTests(config);
+        ParkingSpaceTests.AddTests(config);
+        ParkingGarageTests.AddTests(config);
 
-        // SimpleTest.RunAllTests();
+        SimpleTest.RunAllTests();
 
-        // SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-  
+/*  
         Menu menu = new(parkingGarage);
 
         List<string> menuItems =
@@ -118,7 +118,7 @@ internal class Program
                     return;
             }
         }
-     
+*/
     }
 
 }

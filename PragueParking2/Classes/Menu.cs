@@ -58,12 +58,14 @@ internal class Menu
     private int _selectedIndex;
     private int _adminIndex;
     private int _vehicleTypeIndex;
+    private int _configIndex;
     private VehicleType _selectedVehicleType = VehicleType.Car;
 
 
-
+    // Properties
     public string Registration => _registration;
     public VehicleType SelectedVehicleType => _selectedVehicleType;
+
 
     private readonly List<string> _logEntries = [];
 
@@ -74,6 +76,13 @@ internal class Menu
     "Save",
     "Load",
     "Config"
+];
+    // Config data
+    private readonly List<string> _configItems =
+[
+    "Garage Capacity",
+    "Space Capacity",
+    "Vehicle Rates"
 ];
 
     // ===========================
@@ -152,6 +161,7 @@ internal class Menu
 
                 continue;
             }
+
             if (_mode == MenuMode.LoadConfirmation)
             {
                 switch (keyInfo.Key)
@@ -190,6 +200,7 @@ internal class Menu
 
                 continue;
             }
+
             if (_mode == MenuMode.AdminMenu)
             {
                 switch (keyInfo.Key)
@@ -235,8 +246,50 @@ internal class Menu
                         }
                         else if (selected == "Config")
                         {
-                            _mode = MenuMode.ConfigMenu;
+                            _configIndex = 0;
+
+                            _mode =
+                                MenuMode.ConfigMenu;
                         }
+
+                        break;
+                }
+                continue;
+            }
+
+            if (_mode == MenuMode.ConfigMenu)
+            {
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow:
+
+                        _configIndex =
+                            Math.Max(
+                                0,
+                                _configIndex - 1);
+
+                        break;
+
+                    case ConsoleKey.DownArrow:
+
+                        _configIndex =
+                            Math.Min(
+                                _configItems.Count - 1,
+                                _configIndex + 1);
+
+                        break;
+
+                    case ConsoleKey.Escape:
+
+                        _mode =
+                            MenuMode.AdminMenu;
+
+                        break;
+
+                    case ConsoleKey.Enter:
+
+                        AddLog(
+                            $"Config selected: {_configItems[_configIndex]}");
 
                         break;
                 }
@@ -517,9 +570,11 @@ internal class Menu
             }
         }
     }
-          
-        
-  
+
+
+    // ===========================
+    // Reset UI State
+    // ===========================
     private void ResetToHome()
     {
         _currentScreen = "Home";
@@ -711,6 +766,24 @@ internal class Menu
                 infoText +=
                     "\n\n[grey]ENTER = Confirm[/]" +
                     "\n[grey]ESC = Cancel[/]";
+            }
+            else if (_mode == MenuMode.ConfigMenu)
+            {
+                string configMenu =
+                    string.Join(
+                        "\n",
+                        _configItems.Select(
+                            (item, index) =>
+                                index == _configIndex
+                                    ? $"> [green]{item}[/]"
+                                    : $"  {item}"
+                        ));
+
+                infoText =
+                    "[yellow]Configuration[/]\n\n" +
+                    configMenu +
+                    "\n\n[grey]ENTER = Select[/]" +
+                    "\n[grey]ESC = Back[/]";
             }
         }
   

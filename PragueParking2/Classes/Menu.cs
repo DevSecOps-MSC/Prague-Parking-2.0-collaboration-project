@@ -1,11 +1,6 @@
 ﻿/*
  TODO
- - Comment sections for improved readablity 
- - MoveFromSpace and MoveToSpace:
-     * should be handled in their own input block.
  - Look for 'dead code' and remove
-     * old  _inputRegistration / _selectVehicleType- that are not in use
-     * 'using' that are not used
  - Connect SaveConfirmation to SaveToFile()
  - Connect LoadConfirmation to FromFile()
  - Implement ConfigMenu
@@ -14,9 +9,6 @@
  - Improve color theme and polish
 */
 
-
-
-using PragueParking2.Classes;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -44,28 +36,39 @@ namespace PragueParking2.Classes;
 internal class Menu
 {
     private readonly ParkingGarage _garage;
-
     public Menu(ParkingGarage garage)
     {
         _garage = garage;
     }
-    private bool _confirmYes = false;
+
+
+    // Fields
+    private string _registration = "";
     private string _fromParkingSpace = "";
     private string _toParkingSpace = "";
-    private string _registration = "";
+
+
+    // UI state
     private MenuMode _mode = MenuMode.MainMenu;
-
-    private VehicleType _selectedVehicleType = VehicleType.Car;
-    private int _vehicleTypeIndex = 0;
-
-    private int _selectedIndex;
-
     private string _currentScreen = "Home";
+    private bool _confirmYes = false;
+
+
+    // Selections
+    private int _selectedIndex;
+    private int _adminIndex;
+    private int _vehicleTypeIndex;
+    private VehicleType _selectedVehicleType = VehicleType.Car;
+
+
 
     public string Registration => _registration;
     public VehicleType SelectedVehicleType => _selectedVehicleType;
 
     private readonly List<string> _logEntries = [];
+
+
+    // Menu data
     private readonly List<string> _adminItems =
 [
     "Save",
@@ -73,13 +76,9 @@ internal class Menu
     "Config"
 ];
 
-    private int _adminIndex = 0;
-
-
     // ===========================
     // Log
     // ===========================
-
     public void AddLog(string message)
     {
         _logEntries.Insert(0, message);
@@ -90,8 +89,9 @@ internal class Menu
         }
     }
 
-
-    // Lets user use ESC to go back to Menu choices
+    // ===========================
+    // Main application loop and menu navigation
+    // ===========================
     public string Show(List<string> items)
     {
         while (true)
@@ -112,7 +112,7 @@ internal class Menu
 
 
             // ===========================
-            // Admin choices
+            // Admin Menu Navigation
             // ===========================
             if (_mode == MenuMode.SaveConfirmation)
             {
@@ -158,8 +158,6 @@ internal class Menu
                 {
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.DownArrow:
-                    case ConsoleKey.LeftArrow:
-                    case ConsoleKey.RightArrow:
 
                         _confirmYes =
                             !_confirmYes;
@@ -250,7 +248,6 @@ internal class Menu
             // ===========================
             // Vehicle Type Selection
             // ===========================
-
             if (_mode == MenuMode.VehicleTypeSelection)
             {
                 int maxIndex =
@@ -300,7 +297,6 @@ internal class Menu
             // ===========================
             // Registration Input
             // ===========================
-
             if
             (
             _mode == MenuMode.ParkingRegistration ||
@@ -365,7 +361,6 @@ internal class Menu
             // ===========================
             // Move From Space Input
             // ===========================
-
             if (_mode == MenuMode.MoveFromSpace)
             {
                 if (keyInfo.Key == ConsoleKey.Backspace)
@@ -397,7 +392,6 @@ internal class Menu
             // ===========================
             // Move To Space Input
             // ===========================
-
             if (_mode == MenuMode.MoveToSpace)
             {
                 if (keyInfo.Key == ConsoleKey.Backspace)
@@ -431,7 +425,6 @@ internal class Menu
             // ===========================
             // Main Menu
             // ===========================
-
             switch (keyInfo.Key)
             {
                 case ConsoleKey.UpArrow:
@@ -537,6 +530,11 @@ internal class Menu
         _vehicleTypeIndex = 0;
     }
 
+
+
+    // ===========================
+    // UI Rendering
+    // ===========================
     private void Draw(List<string> items)
     {
         AnsiConsole.Clear();
@@ -738,7 +736,6 @@ internal class Menu
         // ===========================
         // Layout
         // ===========================
-
         Layout mainLayout = new Layout("Root")
             .SplitRows(
                 new Layout("Top")

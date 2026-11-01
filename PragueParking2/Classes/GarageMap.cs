@@ -45,7 +45,7 @@ internal static class GarageMap
                 colour = "red";
             }
 
-            map.Append($"[{colour}]■ {space.ID,3}[/]    ");
+            map.Append($"[{colour}]  ■ {space.ID,3}[/]  ");
 
             count++;
 

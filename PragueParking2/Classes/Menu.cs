@@ -11,6 +11,7 @@
 */
 
 using FileHandlerLibrary;
+using PragueParking2.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 namespace PragueParking2.Classes;
@@ -399,19 +400,50 @@ internal class Menu
                 }
                 else if (keyInfo.Key == ConsoleKey.Enter)
                 {
-                    if (_mode == MenuMode.RetrieveRegistration)
+                    if (_mode == MenuMode.ParkingRegistration)
                     {
-                        if (_garage.FindVehicle(
-                            _registration,
-                            out int spaceId))
+                        try
                         {
+                            IVehicle vehicle =
+                                _selectedVehicleType switch
+                                {
+                                    VehicleType.Car =>
+                                        new Car(
+                                            _registration,
+                                            _config.VehicleSizes[VehicleType.Car]),
+
+                                    VehicleType.Motorcycle =>
+                                        new Motorcycle(
+                                            _registration,
+                                            _config.VehicleSizes[VehicleType.Motorcycle]),
+
+                                    VehicleType.Bicycle =>
+                                        new Bicycle(
+                                            _registration,
+                                            _config.VehicleSizes[VehicleType.Bicycle]),
+
+                                    VehicleType.Bus =>
+                                        new Bus(
+                                            _registration,
+                                            _config.VehicleSizes[VehicleType.Bus]),
+
+                                    _ => throw new Exception("Unsupported vehicle type")
+                                };
+
+                            _garage.CheckIn(
+                                vehicle,
+                                _config.Rates);
+
+                            _garage.Park(
+                                vehicle,
+                                vehicle.Ticket!.ParkingSpaceId);
+
                             AddLog(
-                                $"Found {_registration} in space #{spaceId}");
+                                $"Parked {vehicle.Registration} in space #{vehicle.Ticket.ParkingSpaceId}");
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            AddLog(
-                                $"Vehicle {_registration} not found");
+                            AddLog(ex.Message);
                         }
                     }
                     if (_mode == MenuMode.MoveRegistration)

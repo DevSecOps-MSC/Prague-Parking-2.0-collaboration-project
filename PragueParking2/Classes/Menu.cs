@@ -446,6 +446,40 @@ internal class Menu
                             AddLog(ex.Message);
                         }
                     }
+                    if (_mode == MenuMode.RetrieveRegistration)
+                    {
+                        try
+                        {
+                            if (_garage.FindVehicle(
+                                _registration,
+                                out int spaceId))
+                            {
+                                IVehicle vehicle =
+                                    _garage[spaceId]
+                                        .PickVehicle(_registration);
+
+                                if (_garage.CheckOut(vehicle))
+                                {
+                                    AddLog(
+                                        $"Retrieved {vehicle.Registration} from space #{spaceId}");
+                                }
+                                else
+                                {
+                                    AddLog(
+                                        $"Failed to retrieve {vehicle.Registration}");
+                                }
+                            }
+                            else
+                            {
+                                AddLog(
+                                    $"Vehicle {_registration} not found");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            AddLog(ex.Message);
+                        }
+                    }
                     if (_mode == MenuMode.MoveRegistration)
                     {
                         _fromParkingSpace = "";

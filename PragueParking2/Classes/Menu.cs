@@ -480,6 +480,21 @@ internal class Menu
                             AddLog(ex.Message);
                         }
                     }
+                    if (_mode == MenuMode.SearchRegistration)
+                    {
+                        if (_garage.FindVehicle(
+                            _registration,
+                            out int spaceId))
+                        {
+                            AddLog(
+                                $"Found {_registration} in space #{spaceId}");
+                        }
+                        else
+                        {
+                            AddLog(
+                                $"Vehicle {_registration} not found");
+                        }
+                    }
                     if (_mode == MenuMode.MoveRegistration)
                     {
                         _fromParkingSpace = "";

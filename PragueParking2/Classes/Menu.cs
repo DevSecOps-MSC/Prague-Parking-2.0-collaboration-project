@@ -567,10 +567,36 @@ internal class Menu
                 }
                 else if (keyInfo.Key == ConsoleKey.Enter)
                 {
-                    AddLog(
-                        $"Move {_registration} from {_fromParkingSpace} to {_toParkingSpace}");
+                    try
+                    {
+                        if (_garage.FindVehicle(
+                            _registration,
+                            out int foundSpaceId))
+                        {
+                            IVehicle vehicle =
+                                _garage[foundSpaceId]
+                                    .PickVehicle(_registration);
 
-                    ResetToHome();
+                            _garage.Move(
+                                vehicle,
+                                int.Parse(_fromParkingSpace),
+                                int.Parse(_toParkingSpace));
+
+                            AddLog(
+                                $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                        }
+                        else
+                        {
+                            AddLog(
+                                $"Vehicle {_registration} not found");
+                        }
+
+                        ResetToHome();
+                    }
+                    catch (Exception ex)
+                    {
+                        AddLog(ex.Message);
+                    }
                 }
                 else if (keyInfo.Key == ConsoleKey.Escape)
                 {

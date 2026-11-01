@@ -1,17 +1,14 @@
 ﻿/*
  TODO
- - Look for 'dead code' and remove
  - Connect SaveConfirmation to SaveToFile()
  - Connect LoadConfirmation to FromFile()
- - Implement ConfigMenu
  - Connect workflow to backend
- - Check naming standard
  - Improve color theme and polish
 */
 
+using FileHandlerLibrary;
 using Spectre.Console;
 using Spectre.Console.Rendering;
-
 namespace PragueParking2.Classes;
 
 
@@ -41,8 +38,11 @@ internal class Menu
         _garage = garage;
     }
 
+    private readonly FileHandler _fileHandler =
+    new("Data");
 
-    // Fields
+
+    // Fields for user input
     private string _registration = "";
     private string _fromParkingSpace = "";
     private string _toParkingSpace = "";
@@ -146,7 +146,18 @@ internal class Menu
 
                         if (_confirmYes)
                         {
-                            AddLog("Save confirmed");
+                            try
+                            {
+                                _garage.SaveToFile(
+                                    _fileHandler,
+                                    "garage.json");
+
+                                AddLog("Garage saved successfully");
+                            }
+                            catch (Exception ex)
+                            {
+                                AddLog($"Save failed: {ex.Message}");
+                            }
                         }
                         else
                         {
@@ -185,7 +196,18 @@ internal class Menu
 
                         if (_confirmYes)
                         {
-                            AddLog("Load confirmed");
+                            try
+                            {
+                                _garage.LoadFromFile(
+                                    _fileHandler,
+                                    "garage.json");
+
+                                AddLog("Garage loaded successfully");
+                            }
+                            catch (Exception ex)
+                            {
+                                AddLog($"Load failed: {ex.Message}");
+                            }
                         }
                         else
                         {

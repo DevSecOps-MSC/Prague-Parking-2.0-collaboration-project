@@ -4,6 +4,7 @@ using FileHandlerLibrary;
 using PragueParking2.Classes.Exceptions;
 using PragueParking2.Interfaces;
 
+
 namespace PragueParking2.Classes;
 
 public class ParkingGarage
@@ -245,5 +246,19 @@ public class ParkingGarage
         } while (FindVehicle(registration, out _) is true);
 
         return registration;
+    }
+    public void LoadFromFile(
+    FileHandler fileHandler,
+    string fileName)
+    {
+        ParkingGarage loadedGarage =
+            FromFile(fileHandler, fileName);
+
+        Capacity = loadedGarage.Capacity;
+
+        ParkingSpaces.Clear();
+
+        ParkingSpaces.AddRange(
+            loadedGarage.ParkingSpaces);
     }
 }

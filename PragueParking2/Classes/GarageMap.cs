@@ -4,76 +4,57 @@ namespace PragueParking2.Classes;
 
 internal static class GarageMap
 {
-    
     internal static string Build(ParkingGarage garage)
-    
     {
         var map = new StringBuilder();
-        
+
         int columns = 10;
         int count = 0;
 
-        map.AppendLine("[green]Empty[/] | [yellow]Partly occupied[/] | [red]Full[/]");
-        
+        map.AppendLine(
+            "[green]4 Free[/] | " +
+            "[yellow]3 Free[/] | " +
+            "[darkorange]2 Free[/] | " +
+            "[orangered1]1 Free[/] | " +
+            "[red]Full[/]");
+
         map.AppendLine();
 
         foreach (ParkingSpace space in garage.ParkingSpaces)
-            
         {
-            
             string colour;
 
-            if (space.IsEmpty)
-                
+            if (space.AvailableSpace == 4)
             {
                 colour = "green";
             }
-            
-            else if (space.AvailableSpace > 0)
-                
+            else if (space.AvailableSpace == 3)
             {
                 colour = "yellow";
             }
-            
+            else if (space.AvailableSpace == 2)
+            {
+                colour = "darkorange";
+            }
+            else if (space.AvailableSpace == 1)
+            {
+                colour = "orangered1";
+            }
             else
-            
             {
                 colour = "red";
             }
 
-            string symbol;
+            map.Append($"[{colour}]■ {space.ID,3}[/]  ");
 
-            if (space.IsEmpty)
-                
-            {
-                symbol = "░░░░";
-            }
-            
-            else if (space.AvailableSpace > 0)
-                
-            {
-                symbol = "▓▓░░";
-            }
-            
-            else
-            
-            {
-                symbol = "████";
-            }
-
-            map.Append($"[{colour}]{symbol} {space.ID,3}[/]  ");            
-            
-            count = count + 1;
+            count++;
 
             if (count % columns == 0)
-                
             {
                 map.AppendLine();
             }
-            
         }
 
         return map.ToString();
-        
     }
 }

@@ -517,7 +517,8 @@ internal class Menu
             }
         }
     }
-
+          
+        
   
     private void ResetToHome()
     {
@@ -577,7 +578,7 @@ internal class Menu
                 (
                  _currentScreen == "Parking" &&
                  _mode == MenuMode.VehicleTypeSelection
-)
+                )
             {
                 var vehicleTypes =
                     Enum.GetValues<VehicleType>();

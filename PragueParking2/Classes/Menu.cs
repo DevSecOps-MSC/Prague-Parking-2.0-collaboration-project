@@ -434,12 +434,15 @@ internal class Menu
                                 vehicle,
                                 _config.Rates[vehicle.Type]);
 
-                            _garage.Park(
-                                vehicle,
-                                vehicle.Ticket!.ParkingSpaceId);
+                            if (vehicle.Type == VehicleType.Bus)
+                                _garage.Park((Bus)vehicle);
+                            else
+                                _garage.Park(
+                                    vehicle,
+                                    vehicle.Ticket!.ParkingSpaceId);
 
                             AddLog(
-                                $"Parked {vehicle.Registration} in space #{vehicle.Ticket.ParkingSpaceId}");
+                                $"Parked {vehicle.Registration} in space #{vehicle.Ticket!.ParkingSpaceId}");
                         }
                         catch (Exception ex)
                         {

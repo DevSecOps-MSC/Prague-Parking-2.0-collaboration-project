@@ -1,4 +1,5 @@
 using FileHandlerLibrary;
+using Spectre.Console;
 
 namespace PragueParking2.Classes;
 
@@ -6,9 +7,9 @@ internal static class Admin
 {
     static readonly string defaultConfigJson = """
     {
-        "ParkingGarageCapacity": 100,
+        "ParkingGarageCapacity": 10,
         "ParkingSpaceCapacity": 4,
-        "BusCapableParkingSpaceCapacity": 50,
+        "BusCapableParkingSpaceCapacity": 5,
         "FreeMinutes": 10,
         "VehicleSizes": {
             "Bus": 16,
@@ -30,24 +31,24 @@ internal static class Admin
     static readonly string configFilename = "config.json";
     static readonly string dataFilename = "data.json";
 
-    internal static bool Setup(FileHandler fileHandler)
+    internal static bool Setup(FileHandler fileHandler, WorkLog log)
     {
+
+
         if (fileHandler.DataDirectoryExists())
         {
-            // TODO: log!
-            Console.WriteLine("Application data directory exists. Continuing to load configuration.");
+            log.AddEntry("Application data directory exists. Continuing to load configuration.");
         }
         else
         {
-            // TODO: log!
-            Console.WriteLine("It appears that this is the first time this software is running. Attempting to create application data directory.");
+            log.AddEntry("It appears that this is the first time this software is running. Attempting to create application data directory.");
             if (fileHandler.CreateDataDirectory(out string message))
             {
-                Console.WriteLine(message);
+                log.AddEntry(message);
             }
             else
             {
-                Console.WriteLine(message);
+                log.AddEntry(message);
                 return false;
             }
         }
@@ -59,7 +60,7 @@ internal static class Admin
         => Config.FromJson(defaultConfigJson);
 
 
-    internal static Config LoadConfig(FileHandler fileHandler)
+    internal static Config LoadConfig(FileHandler fileHandler, WorkLog log)
     {
         try
         {
@@ -67,12 +68,12 @@ internal static class Admin
         }
         catch (Exception)
         {
-            Console.WriteLine("Could not load configuration file. Loading default values.");
+            log.AddEntry("Could not load configuration file. Loading default values.");
             return LoadDefaultConfig();
         }
     }
 
-    internal static ParkingGarage LoadGarage(FileHandler fileHandler, Config config)
+    internal static ParkingGarage LoadGarage(FileHandler fileHandler, Config config, WorkLog log)
     {
         try
         {
@@ -80,7 +81,7 @@ internal static class Admin
         }
         catch (Exception)
         {
-            Console.WriteLine("Could not load garage data file. Building new garage from configuration.");
+            log.AddEntry("Could not load garage data file. Building new garage from configuration.");
             return ParkingGarage.FromConfig(config);
         }
     }

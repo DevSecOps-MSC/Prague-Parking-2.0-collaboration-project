@@ -7,21 +7,21 @@ namespace PragueParking2.Classes;
 
 public class ValetTicket
 {
-    public IVehicle Vehicle { get; }
+    // public IVehicle Vehicle { get; }
     public decimal Rate { get; }
     public DateTime TimeOfCheckIn { get; }
     public DateTime? TimeOfCheckOut { get; private set; }
     public int ParkingSpaceId { get; private set; }
 
-    public ValetTicket(IVehicle vehicle, Dictionary<VehicleType, decimal> rates, DateTime now)
+    public ValetTicket(IVehicle vehicle, decimal rate, DateTime timeOfCheckIn)
     {
-        Vehicle = vehicle;
-        Vehicle.AttachTicket(this);
-        Rate = rates[vehicle.Type];
-        TimeOfCheckIn = now;
+        // Vehicle = vehicle;
+        vehicle.AttachTicket(this);
+        Rate = rate;
+        TimeOfCheckIn = timeOfCheckIn;
     }
 
-    public ValetTicket(IVehicle vehicle, Dictionary<VehicleType, decimal> rates):this(vehicle, rates, DateTime.Now)
+    public ValetTicket(IVehicle vehicle, decimal rate):this(vehicle, rate, DateTime.Now)
     { }
 
     internal void CheckOut(DateTime now)

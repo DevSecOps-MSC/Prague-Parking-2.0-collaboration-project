@@ -42,7 +42,7 @@ public class VehicleTests
             new Test("Vehicle: A Vehicle has a Vale Ticket", () =>
             {
                 var vehicle = new Car(testRegistration, carSize);
-                var ticket = new ValetTicket(vehicle, config.Rates);
+                var ticket = new ValetTicket(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket == ticket;
             }

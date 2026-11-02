@@ -15,11 +15,11 @@ public class ParkingSpace : IParkingSpace
     public ParkingSpace() { }
     public ParkingSpace(int id, int capacity) : this(capacity)
     {
-        ID = id;
+        Id = id;
     }
 
     [JsonInclude]
-    public int ID { get; }
+    public int Id { get; }
 
     [JsonInclude]
     public List<IVehicle> ParkedVehicles { get; } = new List<IVehicle>();
@@ -60,7 +60,7 @@ public class ParkingSpace : IParkingSpace
             throw new NotEnoughRoomException();
 
         ParkedVehicles.Add(vehicle);
-        vehicle.Ticket.UpdateParkingSpaceId(ID);
+        vehicle.Ticket.UpdateParkingSpaceId(Id);
         return true;
     }
 

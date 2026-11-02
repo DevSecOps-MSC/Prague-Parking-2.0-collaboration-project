@@ -292,8 +292,27 @@ public class ParkingGarage
         return this[spaceId].Collect(vehicle);
     }
 
+    internal bool Collect(Bus bus, int spaceId)
+    {
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        for (int i = 1; i < bus.Size / spaceCapacity; i++)
+        {
+            this[spaceId + i].ParkedVehicles.Clear();
+        }
+        return this[spaceId].Collect(bus);
+    }
+
     internal bool CheckOut(IVehicle vehicle)
     {
+        if (vehicle.Type == VehicleType.Bus)
+        {
+            if (Collect((Bus)vehicle, vehicle.Ticket!.ParkingSpaceId))
+            {
+                vehicle.Ticket.CheckOut(DateTime.Now);
+                return true;
+            }
+        }
+
         if (Collect(vehicle, vehicle.Ticket!.ParkingSpaceId))
         {
             vehicle.Ticket.CheckOut(DateTime.Now);
@@ -363,16 +382,6 @@ public class ParkingGarage
         return false;
     }
 
-    internal bool Collect(Bus bus, int spaceId)
-    {
-        var spaceCapacity = ParkingSpaces.First().Capacity;
-        for (int i = 1; i < bus.Size / spaceCapacity; i++)
-        {
-            this[spaceId + i].ParkedVehicles.Clear();
-        }
-        return this[spaceId].Collect(bus);
-    }
-
     public string ToJson()
     {
         var options = new JsonSerializerOptions { WriteIndented = true };
@@ -415,11 +424,11 @@ public class ParkingGarage
             garage.ParkingSpaces.Add(
                 new ParkingSpace(space.Id, space.Capacity)
             );
-            
+
             foreach (var vehicleRecord in space.ParkedVehicles)
             {
                 IVehicle vehicle = Vehicle.FromRecord(vehicleRecord);
-                garage[space.Id].ParkedVehicles.Add(vehicle);            
+                garage[space.Id].ParkedVehicles.Add(vehicle);
             }
         }
 

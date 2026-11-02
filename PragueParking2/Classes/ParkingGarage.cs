@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using FileHandlerLibrary;
 using PragueParking2.Classes.Exceptions;
 using PragueParking2.Interfaces;
+using PragueParking2.Tests;
 
 
 namespace PragueParking2.Classes;
@@ -17,12 +18,16 @@ public class ParkingGarage
     public int Capacity { get; private set; }
 
     [JsonInclude]
+    public int SpaceCapacity { get; private set; }
+
+    [JsonInclude]
     public int BusCapable { get; private set; }
 
-    public ParkingGarage(int capacity, int parkingSpaceCapacity, int busCapable = 0)
+    public ParkingGarage(int capacity, int spaceCapacity, int busCapable = 0)
     {
         Capacity = capacity;
-        InitializeParkingSpaces(parkingSpaceCapacity);
+        SpaceCapacity = spaceCapacity;
+        InitializeParkingSpaces(spaceCapacity);
         BusCapable = busCapable;
     }
 
@@ -44,7 +49,7 @@ public class ParkingGarage
         {
             if (space.IsEmpty)
             {
-                return space.ID;
+                return space.Id;
             }
         }
 
@@ -87,33 +92,34 @@ public class ParkingGarage
 
             if (vehicle.Size <= space.AvailableSpace)
             {
-                return space.ID;
+                return space.Id;
             }
         }
         return -1;
     }
 
+    [JsonIgnore]
     public IParkingSpace this[int index]
     {
         get => ParkingSpaces[index - 1];
     }
 
-    public string ToJson()
-    {
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        string jsonString = JsonSerializer.Serialize(this, options);
-        return jsonString;
-    }
+    // public string ToJson()
+    // {
+    //     var options = new JsonSerializerOptions { WriteIndented = true };
+    //     string jsonString = JsonSerializer.Serialize(this, options);
+    //     return jsonString;
+    // }
 
-    public static ParkingGarage FromJson(string jsonString)
-    {
-        ParkingGarage? loadedGarage = JsonSerializer.Deserialize<ParkingGarage>(jsonString);
-        if (loadedGarage is null)
-        {
-            throw new NullReferenceException("Error! Could not parse save file.");
-        }
-        return loadedGarage;
-    }
+    // public static ParkingGarage FromJson(string jsonString)
+    // {
+    //     ParkingGarage? loadedGarage = JsonSerializer.Deserialize<ParkingGarage>(jsonString);
+    //     if (loadedGarage is null)
+    //     {
+    //         throw new NullReferenceException("Error! Could not parse save file.");
+    //     }
+    //     return loadedGarage;
+    // }
 
     public static ParkingGarage FromFile(FileHandler fileHandler, string filename)
         => FromJson(fileHandler.Load(filename));
@@ -122,7 +128,7 @@ public class ParkingGarage
         => fileHandler.Save(filename, ToJson());
 
     internal static ParkingGarage FromConfig(Config config)
-        => new(config.ParkingGarageCapacity, config.ParkingSpaceCapacity);
+        => new(config.ParkingGarageCapacity, config.ParkingSpaceCapacity, config.BusCapableParkingSpaceCapacity);
 
     public bool FindVehicle(string registration, out int foundSpaceId)
     {
@@ -131,7 +137,7 @@ public class ParkingGarage
             try
             {
                 var vehicle = space.PickVehicle(registration);
-                foundSpaceId = space.ID;
+                foundSpaceId = space.Id;
                 return true;
             }
             catch (VehicleNotFoundException)
@@ -146,15 +152,15 @@ public class ParkingGarage
 
     internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
-        if (vehicle.Type==VehicleType.Bus)
+        if (vehicle.Type == VehicleType.Bus)
             Collect((Bus)vehicle, fromParkingSpaceId);
         else
             Collect(vehicle, fromParkingSpaceId);
 
-        if (vehicle.Type==VehicleType.Bus)
+        if (vehicle.Type == VehicleType.Bus)
         {
             vehicle.Ticket!.UpdateParkingSpaceId(toParkingSpaceId);
-            Park((Bus)vehicle);   
+            Park((Bus)vehicle);
         }
         else
             Park(vehicle, toParkingSpaceId);
@@ -194,6 +200,8 @@ public class ParkingGarage
             for (int i = 1; i < neededSpaces; i++)
             {
                 var busFragment = new Bus(bus.Registration, bus.Size / neededSpaces);
+                var ticket = bus.Ticket;
+                busFragment.AttachTicket(ticket);
                 this[firstSpaceId + i].ParkBus(busFragment);
             }
             return true;
@@ -255,7 +263,7 @@ public class ParkingGarage
         return count;
     }
 
-    internal bool CheckIn(IVehicle vehicle, Dictionary<VehicleType, decimal> rates)
+    internal bool CheckIn(IVehicle vehicle, decimal rate)
     {
         if (FindVehicle(vehicle.Registration, out int foundSpaceId))
             throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
@@ -267,7 +275,7 @@ public class ParkingGarage
 
         try
         {
-            var ticket = new ValetTicket(vehicle, rates);
+            var ticket = new ValetTicket(vehicle, rate);
             ticket.UpdateParkingSpaceId(assignedSpaceId);
             return true;
         }
@@ -363,6 +371,60 @@ public class ParkingGarage
             this[spaceId + i].ParkedVehicles.Clear();
         }
         return this[spaceId].Collect(bus);
+    }
+
+    public string ToJson()
+    {
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        List<ParkingSpaceRecord> parkingSpaceRecords = [];
+        foreach (var space in ParkingSpaces)
+        {
+            List<VehicleRecord> parkedVehicleRecords = [];
+            foreach (var vehicle in space.ParkedVehicles)
+            {
+                var ticket = vehicle.Ticket!;
+                ValetTicketRecord valetTicketRecord = new(
+                    vehicle.Registration, ticket.ParkingSpaceId, ticket.Rate, ticket.TimeOfCheckIn
+                );
+
+                parkedVehicleRecords.Add(
+                    new VehicleRecord(vehicle.Type, vehicle.Registration, vehicle.Size, valetTicketRecord)
+                );
+            }
+            parkingSpaceRecords.Add(
+                            new ParkingSpaceRecord(space.Id, space.Capacity, parkedVehicleRecords)
+                        );
+        }
+        var garageRecord = new ParkingGarageRecord(Capacity, SpaceCapacity, BusCapable, parkingSpaceRecords);
+        string jsonString = JsonSerializer.Serialize(garageRecord, options);
+        return jsonString;
+    }
+
+    public static ParkingGarage FromJson(string jsonString)
+    {
+        ParkingGarageRecord? loadedGarage = JsonSerializer.Deserialize<ParkingGarageRecord>(jsonString);
+        if (loadedGarage is null)
+        {
+            throw new NullReferenceException("Error! Could not parse save file.");
+        }
+
+        ParkingGarage garage = new(loadedGarage.Capacity, loadedGarage.ParkingSpaceCapacity, loadedGarage.BusCapable);
+        garage.ParkingSpaces = [];
+        foreach (var space in loadedGarage.ParkingSpaceRecords)
+        {
+            garage.ParkingSpaces.Add(
+                new ParkingSpace(space.Id, space.Capacity)
+            );
+            
+            foreach (var vehicleRecord in space.ParkedVehicles)
+            {
+                IVehicle vehicle = Vehicle.FromRecord(vehicleRecord);
+                garage[space.Id].ParkedVehicles.Add(vehicle);            
+            }
+        }
+
+
+        return garage;
     }
 
 }

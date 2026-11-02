@@ -67,8 +67,8 @@ public class ParkingGarageTests
                 var capacity = 10;
                 var parkingGarage = new ParkingGarage(capacity, spaceCap);
 
-                return parkingGarage.ParkingSpaces.First().ID == 1
-                    && parkingGarage.ParkingSpaces.Last().ID == capacity;
+                return parkingGarage.ParkingSpaces.First().Id == 1
+                    && parkingGarage.ParkingSpaces.Last().Id == capacity;
             }
         ));
 
@@ -79,7 +79,7 @@ public class ParkingGarageTests
                 var parkingSpace = parkingGarage[3];
                 var spaceId = 3;
 
-                return parkingSpace.ID == spaceId;
+                return parkingSpace.Id == spaceId;
             }
         ));
 
@@ -298,7 +298,7 @@ public class ParkingGarageTests
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
 
-                return parkingGarage.CheckIn(vehicle, config.Rates) == true;
+                return parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]) == true;
             }
         ));
 
@@ -311,7 +311,7 @@ public class ParkingGarageTests
 
                 try
                 {
-                    parkingGarage.CheckIn(vehicle, config.Rates);
+                    parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 }
                 catch (NotEnoughRoomException)
                 {
@@ -328,7 +328,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket is not null;
             }
@@ -340,7 +340,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Motorcycle("foo", size / 2);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket is not null;
             }
@@ -352,7 +352,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Bicycle("foo", size / 4);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket is not null;
             }
@@ -375,7 +375,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket is not null
                     && vehicle.Ticket.ParkingSpaceId == 1;
@@ -389,7 +389,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Car(registration, size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 var spaceId = parkingGarage.GetIdOfFirstAvailableSpace(vehicle);
                 parkingGarage.Park(vehicle, spaceId);
                 if (parkingGarage.FindVehicle(registration, out int foundSpaceId) == false)
@@ -407,7 +407,7 @@ public class ParkingGarageTests
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
                 var spaceId = 1;
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 parkingGarage.Park(vehicle, spaceId);
 
                 return parkingGarage.CheckOut(vehicle);
@@ -421,7 +421,7 @@ public class ParkingGarageTests
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
                 var spaceId = 3;
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 parkingGarage.Park(vehicle, spaceId);
 
                 return vehicle.Ticket!.ParkingSpaceId == spaceId;
@@ -434,7 +434,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 parkingGarage.Park(vehicle, vehicle.Ticket!.ParkingSpaceId);
                 parkingGarage.CheckOut(vehicle);
 
@@ -448,7 +448,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Car("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 parkingGarage.Park(vehicle, vehicle.Ticket!.ParkingSpaceId);
                 parkingGarage.CheckOut(vehicle);
 
@@ -535,7 +535,7 @@ public class ParkingGarageTests
             {
                 var parkingGarage = new ParkingGarage(10, 4);
                 var bicycle = new Bicycle("BIKE-66150", 1);
-                parkingGarage.CheckIn(bicycle, config.Rates);
+                parkingGarage.CheckIn(bicycle, config.Rates[bicycle.Type]);
                 parkingGarage.Park(bicycle, bicycle.Ticket!.ParkingSpaceId);
 
                 var rng = new Random(666); // The first generated is "BIKE-66150"
@@ -640,7 +640,7 @@ public class ParkingGarageTests
                 var size = 4;
                 IVehicle vehicle = new Bus("foo", size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket is not null;
             }
@@ -672,7 +672,7 @@ public class ParkingGarageTests
                 var carSize = 4;
                 var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
                 var bus = new Bus("BUS", carSize * 4);
-                parkingGarage.CheckIn(bus, config.Rates);
+                parkingGarage.CheckIn(bus, config.Rates[bus.Type]);
 
                 return parkingGarage.Park(bus);
             }
@@ -686,7 +686,7 @@ public class ParkingGarageTests
                 var carSize = 4;
                 var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
                 var bus = new Bus("BUS", carSize * 4);
-                parkingGarage.CheckIn(bus, config.Rates);
+                parkingGarage.CheckIn(bus, config.Rates[bus.Type]);
                 parkingGarage.Park(bus);
 
                 return parkingGarage.Collect(bus, bus.Ticket!.ParkingSpaceId);

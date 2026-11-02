@@ -432,7 +432,7 @@ internal class Menu
 
                             _garage.CheckIn(
                                 vehicle,
-                                _config.Rates);
+                                _config.Rates[vehicle.Type]);
 
                             _garage.Park(
                                 vehicle,
@@ -986,7 +986,7 @@ internal class Menu
             {
                 table.AddRow(
                     vehicle.Registration,
-                    space.ID.ToString(),
+                    space.Id.ToString(),
                     vehicle.Type.ToString(),
                     "N/A");
             }

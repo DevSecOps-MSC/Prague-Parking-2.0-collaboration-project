@@ -6,27 +6,53 @@ using Spectre.Console;
 internal class Program
 {
     static readonly FileHandler fileHandler = new(Admin.path);
-    static Config? config;
-    static ParkingGarage? parkingGarage;
-    static WorkLog? workLog;
+    static Config config;
+    static ParkingGarage parkingGarage;
+    static WorkLog garageLog = new();
 
+    static void PrintLog()
+    {
+        foreach (var entry in garageLog.AllEntries)
+        {
+            Console.WriteLine($"{entry.CreatedAt}: {entry.Content}");
+        }
+    }
 
     private static void Main(string[] args)
     {
-        if (Admin.Setup(fileHandler) is false)
+        Console.Clear();
+
+        if (Admin.Setup(fileHandler, garageLog) is false)
         {
             Console.WriteLine("Something went horribly wrong and it appears impossible to set up the software. Exiting.");
             Environment.Exit(666);
         }
-        // config = Admin.LoadConfig(fileHandler);
-        config = Admin.LoadDefaultConfig();
-        // parkingGarage = Admin.LoadGarage(fileHandler, config);
-        parkingGarage = ParkingGarage.FromConfig(config);
+        config = Admin.LoadConfig(fileHandler, garageLog);
+        parkingGarage = Admin.LoadGarage(fileHandler, config, garageLog);
 
+PrintLog();
 
-        // config.SaveToFile(fileHandler, configFilename);
-        // parkingGarage.SaveToFile(fileHandler, garageFilename);
+        // var bus = new Bus("bus 123", 16);
+        // parkingGarage.CheckIn(bus, config.Rates[bus.Type]);
+        // parkingGarage.Park(bus);
 
+        // var car = new Car("Car 123", 4);
+        // parkingGarage.CheckIn(car, config.Rates[car.Type]);
+        // parkingGarage.Park(car, car.Ticket.ParkingSpaceId);
+
+        // var motorcycle = new Motorcycle("Motorcycle 123", 2);
+        // parkingGarage.CheckIn(motorcycle, config.Rates[motorcycle.Type]);
+        // parkingGarage.Park(motorcycle, motorcycle.Ticket.ParkingSpaceId);
+
+        // var bicycle = new Bicycle("Bicycle 123", 1);
+        // parkingGarage.CheckIn(bicycle, config.Rates[bicycle.Type]);
+        // parkingGarage.Park(bicycle, bicycle.Ticket.ParkingSpaceId);
+
+        // System.Console.WriteLine(parkingGarage.ToJson2());
+
+        // parkingGarage = ParkingGarage.FromJson2(parkingGarage.ToJson2());
+
+        // System.Console.WriteLine(parkingGarage.ToJson2());
 
         // ValidatorTests.AddTests(config);
         // VehicleTests.AddTests(config);
@@ -38,9 +64,8 @@ internal class Program
 
         // SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
 
-        Menu menu = new(parkingGarage, config);
-    
 
+        Menu menu = new(parkingGarage, config);
         List<string> menuItems =
         [
             "Parking",
@@ -55,7 +80,7 @@ internal class Program
         while (true)
         {
             string choice = menu.Show(menuItems);
-           
+
 
 
             switch (choice)
@@ -88,7 +113,10 @@ internal class Program
                     return;
             }
         }
-  
+
+        // config.SaveToFile(fileHandler, configFilename);
+        // parkingGarage.SaveToFile(fileHandler, garageFilename);
+
     }
 
 }

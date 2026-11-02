@@ -5,7 +5,7 @@ namespace PragueParking2.Interfaces;
 
 public interface IParkingSpace
 {
-    public int ID { get; }
+    public int Id { get; }
     public int Capacity { get; }
     public List<IVehicle> ParkedVehicles { get; }
 

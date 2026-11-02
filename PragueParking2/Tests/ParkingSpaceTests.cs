@@ -89,7 +89,7 @@ public static class ParkingSpaceTests
                 var size = 4;
                 IVehicle vehicle = new Car(registration, size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.CheckIn(vehicle, config.Rates);
+                parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
                 var parkingSpace = new ParkingSpace(size);
                 parkingSpace.Park(vehicle);
 
@@ -174,7 +174,7 @@ public static class ParkingSpaceTests
                 var expectedID = 3;
                 var parkingSpace = new ParkingSpace(expectedID, spaceCap);
 
-                return parkingSpace.ID == expectedID;
+                return parkingSpace.Id == expectedID;
             }
         ));
 
@@ -233,7 +233,7 @@ public static class ParkingSpaceTests
                 var carSize = 4;
                 var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
                 var bus = new Bus("BUS", carSize * 4);
-                parkingGarage.CheckIn(bus, config.Rates);
+                parkingGarage.CheckIn(bus, config.Rates[bus.Type]);
                 parkingGarage.Park(bus);
 
                 for (int i = 0; i < bus.Size / carSize; i++)

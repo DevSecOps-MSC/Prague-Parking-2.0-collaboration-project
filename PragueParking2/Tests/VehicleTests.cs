@@ -5,7 +5,7 @@ namespace PragueParking2.Tests;
 
 public class VehicleTests
 {
-    public static void AddTests(Config config)
+    public static void AddTests(AppConfiguration config)
     {
         var testRegistration = Validator.SanitizeVehicleRegistration("foo 666");
         var carSize = config.VehicleSizes[VehicleType.Car];

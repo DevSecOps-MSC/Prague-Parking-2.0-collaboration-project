@@ -15,10 +15,14 @@ internal static class AppConstants
         "BusCapableParkingSpaceCapacity": 50,
         "FreeMinutes": 10,
         "VehicleSizes": {
+            "Bus": 16,
+            "Bicycle": 1,
             "Car": 4,
             "Motorcycle": 2
     },
         "Rates": {
+            "Bus": 80.0,
+            "Bicycle": 5.0,
             "Car": 20.0,
             "Motorcycle": 10.0
         }

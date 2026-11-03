@@ -49,4 +49,20 @@ public class FileHandler(string path)
             return false;
         }
     }
+
+    public bool DeleteDirectory(string directoryName, out string message)
+    {
+        string directory = $"{Path}{directoryName}";
+        try
+        {
+            Directory.Delete(directory, true);
+            message = $"Directory [{directory}] was deleted successfully!";
+            return true;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            message = $"It appears the user does not have the required permission to delete directory [{directory}].";
+            return false;
+        }
+    }
 }

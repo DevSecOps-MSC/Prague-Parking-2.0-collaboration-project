@@ -1,16 +1,23 @@
 using FileHandlerLibrary;
+using PragueParking2.Tests;
+using SimpleTestLibrary;
 
 namespace PragueParking2.Classes;
 
 internal static class Admin
 {
-    internal static string path ="";
+    internal static string path = "";
     internal static readonly string BaseDirectory = AppContext.BaseDirectory;
 
-    internal static Core SetupApp()
+    internal static Core SetupApp(string[] args)
     {
         FileHandler fileHandler = new(BaseDirectory);
         AppLog log = new();
+
+        if (args.Contains("--fresh"))
+            ClearAppData(fileHandler, log);
+
+
         log.AddEntry("Setting up application.");
 
         if (SetupDataDirectory(fileHandler, log) is false)
@@ -22,9 +29,37 @@ internal static class Admin
 
         AppConfiguration config = LoadConfiguration(fileHandler, log);
 
+        if (args.Contains("--run-tests"))
+            RunTests(fileHandler, config, log);
+
         ParkingGarage garage = LoadParkingGarageData(fileHandler, config, log);
 
         return new(fileHandler, config, garage, log);
+    }
+
+    private static void RunTests(FileHandler fileHandler, AppConfiguration config, AppLog log)
+    {
+        ValidatorTests.AddTests(config);
+        VehicleTests.AddTests(config);
+        ValetTicketTests.AddTests(config);
+        ParkingSpaceTests.AddTests(config);
+        ParkingGarageTests.AddTests(config);
+
+        SimpleTest.RunAllTests();
+
+        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+
+        Environment.Exit(0);
+    }
+
+    private static void ClearAppData(FileHandler fileHandler, AppLog log)
+    {
+        if (fileHandler.DirectoryExists(AppConstants.DataDirectory))
+        {
+            log.AddEntry("Deleting data directory!");
+            bool result = fileHandler.DeleteDirectory(AppConstants.DataDirectory, out string message);
+            log.AddEntry(message);
+        }
     }
 
     internal static bool SetupDataDirectory(FileHandler fileHandler, AppLog log)
@@ -58,7 +93,7 @@ internal static class Admin
                 log.AddEntry("Configuration file loaded successfully!");
                 return config;
             }
-            catch (Exception )
+            catch (Exception)
             {
                 log.AddEntry("Could not load configuration file. Loading default values.");
             }

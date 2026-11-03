@@ -38,15 +38,15 @@ namespace PragueParking2.Classes;
 internal class Menu
 {
     private ParkingGarage _garage;
-    private Config _config;
-    public Menu(ParkingGarage garage, Config config)
+    private AppConfiguration _config;
+    public Menu(ParkingGarage garage, AppConfiguration config)
     {
         _garage = garage;
         _config = config;
     }
 
     private readonly FileHandler _fileHandler =
-        new(Admin.path);
+        new(Admin.BaseDirectory + AppConstants.DataDirectory);
 
 
     // Fields for user input

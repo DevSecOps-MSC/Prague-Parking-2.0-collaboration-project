@@ -1,92 +1,135 @@
 using FileHandlerLibrary;
-using Spectre.Console;
+using PragueParking2.Tests;
+using SimpleTestLibrary;
 
 namespace PragueParking2.Classes;
 
 internal static class Admin
 {
-    static readonly string defaultConfigJson = """
+    internal static string path = "";
+    internal static readonly string BaseDirectory = AppContext.BaseDirectory;
+
+    internal static Core SetupApp(string[] args)
     {
-        "ParkingGarageCapacity": 100,
-        "ParkingSpaceCapacity": 4,
-        "BusCapableParkingSpaceCapacity": 50,
-        "FreeMinutes": 10,
-        "VehicleSizes": {
-            "Bus": 16,
-            "Bicycle": 1,
-            "Car": 4,
-            "Motorcycle": 2
-    },
-        "Rates": {
-            "Bus": 80.0,
-            "Bicycle": 5.0,
-            "Car": 20.0,
-            "Motorcycle": 10.0
+        FileHandler fileHandler = new(BaseDirectory);
+        AppLog log = new();
+
+        if (args.Contains("--fresh"))
+            ClearAppData(fileHandler, log);
+
+
+        log.AddEntry("Setting up application.");
+
+        if (SetupDataDirectory(fileHandler, log) is false)
+        {
+            log.AddEntry("Something went horribly wrong and it appears impossible to set up the software. Exiting.");
+            log.DumpToConsole();
+            Environment.Exit(666);
+        }
+
+        AppConfiguration config = LoadConfiguration(fileHandler, log);
+
+        if (args.Contains("--run-tests"))
+            RunTests(fileHandler, config, log);
+
+        ParkingGarage garage = LoadParkingGarageData(fileHandler, config, log);
+
+        return new(fileHandler, config, garage, log);
+    }
+
+    private static void RunTests(FileHandler fileHandler, AppConfiguration config, AppLog log)
+    {
+        ValidatorTests.AddTests(config);
+        VehicleTests.AddTests(config);
+        ValetTicketTests.AddTests(config);
+        ParkingSpaceTests.AddTests(config);
+        ParkingGarageTests.AddTests(config);
+
+        SimpleTest.RunAllTests();
+
+        SimpleTestResultReport.WriteReport(SimpleTest.TestResults);
+
+        Environment.Exit(0);
+    }
+
+    private static void ClearAppData(FileHandler fileHandler, AppLog log)
+    {
+        if (fileHandler.DirectoryExists(AppConstants.DataDirectory))
+        {
+            log.AddEntry("Deleting data directory!");
+            bool result = fileHandler.DeleteDirectory(AppConstants.DataDirectory, out string message);
+            log.AddEntry(message);
         }
     }
-    """;
 
-    internal static readonly string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/pp2";
-    internal static readonly string baseDirectory = AppContext.BaseDirectory;
-    static readonly string configFilename = "config.json";
-    static readonly string dataFilename = "data.json";
-
-    internal static bool Setup(FileHandler fileHandler, WorkLog log)
+    internal static bool SetupDataDirectory(FileHandler fileHandler, AppLog log)
     {
-
-
-        if (fileHandler.DataDirectoryExists())
+        if (fileHandler.DirectoryExists(AppConstants.DataDirectory))
         {
-            log.AddEntry("Application data directory exists. Continuing to load configuration.");
+            log.AddEntry("Data directory exists.");
+            return true;
         }
         else
         {
-            log.AddEntry("It appears that this is the first time this software is running. Attempting to create application data directory.");
-            if (fileHandler.CreateDataDirectory(out string message))
-            {
-                log.AddEntry(message);
-            }
-            else
-            {
-                log.AddEntry(message);
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    internal static Config LoadDefaultConfig()
-        => Config.FromJson(defaultConfigJson);
-
-
-    internal static Config LoadConfig(FileHandler fileHandler, WorkLog log)
-    {
-        try
-        {
-            return Config.FromFile(fileHandler, configFilename);
-        }
-        catch (Exception)
-        {
-            log.AddEntry("Could not load configuration file. Loading default values.");
-            return LoadDefaultConfig();
+            log.AddEntry("Data directory not found. Proceeding with attempt to create it.");
+            bool result = fileHandler.CreateDirectory(AppConstants.DataDirectory, out string message);
+            log.AddEntry(message);
+            return result;
         }
     }
 
-    internal static ParkingGarage LoadGarage(FileHandler fileHandler, Config config, WorkLog log)
+    internal static AppConfiguration LoadDefaultConfig()
+        => AppConfiguration.FromJson(AppConstants.DefaultConfigJson);
+
+
+    internal static AppConfiguration LoadConfiguration(FileHandler fileHandler, AppLog log)
     {
-        try
+        if (fileHandler.FileExists(AppConstants.ConfigFile))
         {
-            return ParkingGarage.FromFile(fileHandler, dataFilename);
+            log.AddEntry("Configuration file found. Proceeding with attempt to load it.");
+            try
+            {
+                var config = AppConfiguration.FromFile(fileHandler, AppConstants.ConfigFile);
+                log.AddEntry("Configuration file loaded successfully!");
+                return config;
+            }
+            catch (Exception)
+            {
+                log.AddEntry("Could not load configuration file. Loading default values.");
+            }
         }
-        catch (Exception)
+        else
         {
-            log.AddEntry("Could not load garage data file. Building new garage from configuration.");
-            return ParkingGarage.FromConfig(config);
+            log.AddEntry("Configuration file not found. Loading default values.");
         }
+
+        return LoadDefaultConfig();
+    }
+
+    internal static ParkingGarage LoadParkingGarageData(FileHandler fileHandler, AppConfiguration config, AppLog log)
+    {
+        if (fileHandler.FileExists(AppConstants.DataFile))
+        {
+            log.AddEntry("Parking garage data file found. Proceeding with attempt to load it.");
+            try
+            {
+                var garage = ParkingGarage.FromFile(fileHandler, AppConstants.DataFile);
+                log.AddEntry("Parking garage data file loaded successfully!");
+                return garage;
+            }
+            catch (Exception)
+            {
+                log.AddEntry("Could not load parking garage data file. Building new garage from configuration.");
+            }
+        }
+        else
+        {
+            log.AddEntry("Parking garage data file not found. Building new garage from configuration.");
+        }
+
+        return ParkingGarage.FromConfig(config);
     }
 }
-
 
 
 

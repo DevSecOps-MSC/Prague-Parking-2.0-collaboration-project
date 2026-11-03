@@ -8,7 +8,7 @@ namespace PragueParking2.Tests;
 
 public class ParkingGarageTests
 {
-    public static void AddTests(Config config)
+    public static void AddTests(AppConfiguration config)
     {
         int garageCap = config.ParkingGarageCapacity;
         int spaceCap = config.ParkingSpaceCapacity;

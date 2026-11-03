@@ -1,0 +1,32 @@
+using System;
+
+namespace PragueParking2.Classes;
+
+internal static class AppConstants
+{
+    internal const string DataDirectory = "data/";
+    internal const string SourceDirectory = "../../../";
+    internal const string DataFile = DataDirectory + "data.json";
+    internal const string ConfigFile = DataDirectory + "config.json";
+    internal const string DefaultConfigJson = """
+    {
+        "ParkingGarageCapacity": 100,
+        "ParkingSpaceCapacity": 4,
+        "BusCapableParkingSpaceCapacity": 50,
+        "FreeMinutes": 10,
+        "VehicleSizes": {
+            "Bus": 16,
+            "Bicycle": 1,
+            "Car": 4,
+            "Motorcycle": 2
+    },
+        "Rates": {
+            "Bus": 80.0,
+            "Bicycle": 5.0,
+            "Car": 20.0,
+            "Motorcycle": 10.0
+        }
+    }
+    """;
+
+}

@@ -104,30 +104,13 @@ public class ParkingGarage
         get => ParkingSpaces[index - 1];
     }
 
-    // public string ToJson()
-    // {
-    //     var options = new JsonSerializerOptions { WriteIndented = true };
-    //     string jsonString = JsonSerializer.Serialize(this, options);
-    //     return jsonString;
-    // }
-
-    // public static ParkingGarage FromJson(string jsonString)
-    // {
-    //     ParkingGarage? loadedGarage = JsonSerializer.Deserialize<ParkingGarage>(jsonString);
-    //     if (loadedGarage is null)
-    //     {
-    //         throw new NullReferenceException("Error! Could not parse save file.");
-    //     }
-    //     return loadedGarage;
-    // }
-
     public static ParkingGarage FromFile(FileHandler fileHandler, string filename)
         => FromJson(fileHandler.Load(filename));
 
     public void SaveToFile(FileHandler fileHandler, string filename)
         => fileHandler.Save(filename, ToJson());
 
-    internal static ParkingGarage FromConfig(Config config)
+    internal static ParkingGarage FromConfig(AppConfiguration config)
         => new(config.ParkingGarageCapacity, config.ParkingSpaceCapacity, config.BusCapableParkingSpaceCapacity);
 
     public bool FindVehicle(string registration, out int foundSpaceId)

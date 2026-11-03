@@ -26,7 +26,7 @@ public class Vehicle(string registration, int size = 1) : IVehicle
         }
     }
 
-    public IVehicle SimulateCheckIn(Config config)
+    public IVehicle SimulateCheckIn(AppConfiguration config)
     {
         var ticket = new ValetTicket(this, config.Rates[Type]);
         return this;
@@ -55,7 +55,7 @@ public class Vehicle(string registration, int size = 1) : IVehicle
             _ => throw new VehicleTypeNotSupportedException(
                 "This vehicle type is not supported at the moment")
         };
-System.Console.WriteLine(record.ValetTicketRecord.TimeOfCheckIn);
+        Console.WriteLine(record.ValetTicketRecord.TimeOfCheckIn);
         ValetTicket ticket = new(vehicle, record.ValetTicketRecord.Rate, record.ValetTicketRecord.TimeOfCheckIn);
         ticket.UpdateParkingSpaceId(record.ValetTicketRecord.ParkingSpaceId);
         return vehicle;

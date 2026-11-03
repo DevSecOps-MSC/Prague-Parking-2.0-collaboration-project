@@ -7,7 +7,7 @@ namespace PragueParking2.Tests;
 
 public static class ParkingSpaceTests
 {
-    public static void AddTests(Config config)
+    public static void AddTests(AppConfiguration config)
     {
         int carSize = config.VehicleSizes[VehicleType.Car];
         int motorcycleSize = config.VehicleSizes[VehicleType.Motorcycle];

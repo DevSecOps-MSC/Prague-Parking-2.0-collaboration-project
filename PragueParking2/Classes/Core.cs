@@ -16,7 +16,7 @@ internal class Core(FileHandler fileHandler, AppConfiguration config, ParkingGar
 
     internal AppLog Log { get => _log; }
 
-    internal ParkingGarage ParkingGarage { get => _parkingGarage; }
+    internal ParkingGarage ParkingGarage { get => _parkingGarage; private set { _parkingGarage = value; } }
 
 
     internal bool SaveConfiguration()
@@ -49,6 +49,11 @@ internal class Core(FileHandler fileHandler, AppConfiguration config, ParkingGar
         }
 
         return false;
+    }
+
+    internal void LoadGarageData()
+    {
+        ParkingGarage = Admin.LoadParkingGarageData(FileHandler, Config, Log);
     }
 
 }

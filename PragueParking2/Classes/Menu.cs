@@ -10,7 +10,6 @@
  - Improve color theme and polish
 */
 
-using FileHandlerLibrary;
 using PragueParking2.Interfaces;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -37,6 +36,7 @@ namespace PragueParking2.Classes;
 
 internal class Menu
 {
+    private readonly Core Core;
     private ParkingGarage _garage;
     private AppConfiguration _config;
     public Menu(ParkingGarage garage, AppConfiguration config)
@@ -45,9 +45,10 @@ internal class Menu
         _config = config;
     }
 
-    private readonly FileHandler _fileHandler =
-        new(Admin.BaseDirectory + AppConstants.DataDirectory);
-
+    public Menu(Core core)
+    {
+        Core = core;
+    }
 
     // Fields for user input
     private string _registration = "";
@@ -153,18 +154,7 @@ internal class Menu
 
                         if (_confirmYes)
                         {
-                            try
-                            {
-                                _garage.SaveToFile(
-                                    _fileHandler,
-                                    "data.json");
-
-                                AddLog("Garage saved successfully");
-                            }
-                            catch (Exception ex)
-                            {
-                                AddLog($"Save failed: {ex.Message}");
-                            }
+                            Core.SaveGarageData();
                         }
                         else
                         {
@@ -203,19 +193,7 @@ internal class Menu
 
                         if (_confirmYes)
                         {
-                            try
-                            {
-                                _garage =
-                                    ParkingGarage.FromFile(
-                                        _fileHandler,
-                                        "data.json");
-
-                                AddLog("Garage loaded successfully");
-                            }
-                            catch (Exception ex)
-                            {
-                                AddLog($"Load failed: {ex.Message}");
-                            }
+                            Core.LoadGarageData();
                         }
                         else
                         {

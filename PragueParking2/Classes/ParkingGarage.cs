@@ -59,28 +59,33 @@ public class ParkingGarage
     internal int GetIdOfFirstAvailableSpace(IVehicle vehicle)
     {
         var spaceCapacity = ParkingSpaces.First().Capacity;
-        if (vehicle.Size > spaceCapacity)
+        if (vehicle.Type == VehicleType.Bus && vehicle.Size > spaceCapacity)
         {
-            var firstEmptySpaceId = GetIdOfFirstEmptySpace();
             var neededSpaces = vehicle.Size / spaceCapacity;
 
-            if (firstEmptySpaceId - 1 > BusCapable - neededSpaces)
-                return -1;
-
-            for (int i = firstEmptySpaceId; i < BusCapable; i++)
+            for (int i = 1; i <= BusCapable - neededSpaces + 1; i++)
             {
-                for (int j = 1; j < neededSpaces; j++)
-                {
-                    if (this[i + j].IsNotEmpty)
-                        break;
+                int nrOfEmptySpaces = 0;
 
-                    if (j == neededSpaces - 1)
-                        return i;
+                if (this[i].IsEmpty)
+                {
+                    for (int j = 0; j < neededSpaces; j++)
+                    {
+                        if (this[i + j].IsEmpty)
+                            nrOfEmptySpaces++;
+                        else
+                            break;
+                    }
                 }
+                else
+                    continue;
+                if (nrOfEmptySpaces == neededSpaces)
+                    return i;
             }
 
             return -1;
         }
+
 
         foreach (var space in ParkingSpaces)
         {
@@ -248,8 +253,8 @@ public class ParkingGarage
 
     internal bool CheckIn(IVehicle vehicle, decimal rate)
     {
-        if (FindVehicle(vehicle.Registration, out int foundSpaceId))
-            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
+        // if (FindVehicle(vehicle.Registration, out int foundSpaceId))
+        //     throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
 
         var assignedSpaceId = GetIdOfFirstAvailableSpace(vehicle);
 

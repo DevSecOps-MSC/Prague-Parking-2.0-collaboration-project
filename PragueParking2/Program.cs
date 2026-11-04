@@ -30,7 +30,7 @@ internal class Program
             {
                 core.SaveConfiguration();
                 core.SaveGarageData();
-                core.Log.DumpToConsole();
+                // core.Log.DumpToConsole();
                 Environment.Exit(0);
             }
 

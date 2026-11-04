@@ -217,18 +217,18 @@ public class ParkingGarageTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("Parking Garage: A Vehicle can not be Parked if its Registration is already in the system", () =>
+            new Test("Parking Garage: A Vehicle can not be Checked In if its Registration is already in the system", () =>
             {
                 var registration = "FOO 666";
                 var size = 4;
-                IVehicle vehicleOne = new Car(registration, size).SimulateCheckIn(config);
-                IVehicle vehicleTwo = new Car(registration, size).SimulateCheckIn(config);
+                IVehicle vehicleOne = new Car(registration, size);
+                IVehicle vehicleTwo = new Car(registration, size);
                 var parkingGarage = new ParkingGarage(10, size);
-                parkingGarage.Park(vehicleOne, 10);
-                var spaceId = 2;
+                parkingGarage.CheckIn(vehicleOne, config.Rates[vehicleOne.Type]);
+                parkingGarage.Park(vehicleOne, vehicleOne.Ticket!.ParkingSpaceId);
                 try
                 {
-                    parkingGarage.Park(vehicleTwo, spaceId);
+                    parkingGarage.CheckIn(vehicleTwo, config.Rates[vehicleTwo.Type]);
                 }
                 catch (DuplicateVehicleRegistrationException)
                 {
@@ -714,6 +714,23 @@ public class ParkingGarageTests
             }
         ));
 
+
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Bus can only be moved if there are enough adjacent Bus Capable Parking Spaces", () =>
+            {
+                var capacity = 20;
+                var busCapable = 10;
+                var carSize = 4;
+                var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var car = new Car("CAR", carSize);
+                parkingGarage.CheckIn(car, config.Rates[car.Type]);
+                parkingGarage.Park(car, 1);
+                var bus = new Bus("BUS", carSize * 4);
+                parkingGarage.CheckIn(bus, config.Rates[bus.Type]);
+
+                return parkingGarage.Move(bus,2,9) == false;
+            }
+        ));
 
 
     }

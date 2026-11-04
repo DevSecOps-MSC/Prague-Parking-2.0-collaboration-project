@@ -551,13 +551,18 @@ internal class Menu(Core core)
                                 Core.ParkingGarage[foundSpaceId]
                                     .PickVehicle(_registration);
 
-                            Core.ParkingGarage.Move(
-                                vehicle,
-                                int.Parse(_fromParkingSpace),
-                                int.Parse(_toParkingSpace));
+                            if (Core.ParkingGarage.Move(
+                                vehicle, int.Parse(_fromParkingSpace), int.Parse(_toParkingSpace)))
+                            {
+                                AddLog(
+                                    $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                            }
+                            else
+                            {
+                                AddLog(
+                                    $"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                            }
 
-                            AddLog(
-                                $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
                         }
                         else
                         {

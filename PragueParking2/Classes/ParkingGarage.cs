@@ -56,6 +56,36 @@ public class ParkingGarage
         return -1;
     }
 
+    internal bool BusWillFit(Bus bus, int spaceId)
+    {
+        var spaceCapacity = ParkingSpaces.First().Capacity;
+        var neededSpaces = bus.Size / spaceCapacity;
+
+        if (spaceId > BusCapable - neededSpaces + 1)
+            return false;
+
+        int nrOfEmptySpaces = 0;
+
+        if (this[spaceId].IsEmpty)
+        {
+            for (int i = 0; i < neededSpaces; i++)
+            {
+                if (this[spaceId + i].IsEmpty)
+                    nrOfEmptySpaces++;
+                else
+                    break;
+            }
+        }
+        else
+            return false;
+
+        if (nrOfEmptySpaces == neededSpaces)
+            return true;
+
+        return false;
+
+    }
+
     internal int GetIdOfFirstAvailableSpace(IVehicle vehicle)
     {
         var spaceCapacity = ParkingSpaces.First().Capacity;
@@ -65,21 +95,7 @@ public class ParkingGarage
 
             for (int i = 1; i <= BusCapable - neededSpaces + 1; i++)
             {
-                int nrOfEmptySpaces = 0;
-
-                if (this[i].IsEmpty)
-                {
-                    for (int j = 0; j < neededSpaces; j++)
-                    {
-                        if (this[i + j].IsEmpty)
-                            nrOfEmptySpaces++;
-                        else
-                            break;
-                    }
-                }
-                else
-                    continue;
-                if (nrOfEmptySpaces == neededSpaces)
+                if (BusWillFit((Bus)vehicle, i))
                     return i;
             }
 
@@ -138,10 +154,18 @@ public class ParkingGarage
         return false;
     }
 
-    internal void Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
+    internal bool Move(IVehicle vehicle, int fromParkingSpaceId, int toParkingSpaceId)
     {
         if (vehicle.Type == VehicleType.Bus)
+        {
             Collect((Bus)vehicle, fromParkingSpaceId);
+
+            if (BusWillFit((Bus)vehicle, toParkingSpaceId) is false)
+            {
+                Park((Bus)vehicle);
+                return false;
+            }
+        }
         else
             Collect(vehicle, fromParkingSpaceId);
 
@@ -152,13 +176,12 @@ public class ParkingGarage
         }
         else
             Park(vehicle, toParkingSpaceId);
+
+        return true;
     }
 
     internal bool Park(IVehicle vehicle, int spaceId)
     {
-        if (FindVehicle(vehicle.Registration, out int foundSpaceId))
-            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
-
         try
         {
             return this[spaceId].Park(vehicle);
@@ -253,8 +276,8 @@ public class ParkingGarage
 
     internal bool CheckIn(IVehicle vehicle, decimal rate)
     {
-        // if (FindVehicle(vehicle.Registration, out int foundSpaceId))
-        //     throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
+        if (FindVehicle(vehicle.Registration, out int foundSpaceId))
+            throw new DuplicateVehicleRegistrationException($"A vehicle with this registration is already parked in parking space #{foundSpaceId}!");
 
         var assignedSpaceId = GetIdOfFirstAvailableSpace(vehicle);
 

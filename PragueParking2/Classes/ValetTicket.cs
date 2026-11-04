@@ -7,6 +7,17 @@ namespace PragueParking2.Classes;
 
 public class ValetTicket
 {
+    internal TimeSpan TotalTimeParked
+    {
+        get
+        {
+            if (TimeOfCheckOut is not null)
+                return (TimeSpan)(TimeOfCheckOut - TimeOfCheckIn);
+            else
+                return DateTime.Now - TimeOfCheckIn;
+        }
+    }
+
     // public IVehicle Vehicle { get; }
     public decimal Rate { get; }
     public DateTime TimeOfCheckIn { get; }

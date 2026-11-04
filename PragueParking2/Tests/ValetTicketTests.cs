@@ -85,6 +85,35 @@ public class ValetTicketTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Valet Ticket: Valet Ticket can calculate current Total Time Parked", () =>
+            {
+                var vehicle = new Car(testRegistration, carSize);
+
+                var expectedTimeInMinutes = 74;
+                var ticket = new ValetTicket(vehicle, config.Rates[vehicle.Type], DateTime.Now - TimeSpan.FromMinutes(expectedTimeInMinutes));
+
+                var expectedTotalParkedTime = TimeSpan.FromMinutes(expectedTimeInMinutes);
+
+                return (int)ticket.TotalTimeParked.TotalMinutes == (int)expectedTotalParkedTime.TotalMinutes;
+            }
+        ));
+
+        SimpleTest.AddNewTest(
+            new Test("Valet Ticket: Valet Ticket can calculate final Total Time Parked", () =>
+            {
+                var vehicle = new Car(testRegistration, carSize);
+
+                var expectedTimeInMinutes = 74;
+                var ticket = new ValetTicket(vehicle, config.Rates[vehicle.Type], DateTime.Now);
+                ticket.CheckOut(DateTime.Now + TimeSpan.FromMinutes(expectedTimeInMinutes));
+
+                var expectedTotalParkedTime = TimeSpan.FromMinutes(expectedTimeInMinutes);
+
+                return (int)ticket.TotalTimeParked.TotalMinutes == (int)expectedTotalParkedTime.TotalMinutes;
+            }
+        ));
+
     }
 
 }

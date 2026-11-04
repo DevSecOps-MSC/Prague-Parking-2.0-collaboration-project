@@ -10,7 +10,7 @@ internal class Program
         core.SaveConfiguration();
         core.SaveGarageData();
 
-        Menu menu = new(core.ParkingGarage, core.Config);
+        Menu menu = new(core);
         List<string> menuItems =
         [
             "Parking",

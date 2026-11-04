@@ -34,21 +34,9 @@ namespace PragueParking2.Classes;
 }
 
 
-internal class Menu
+internal class Menu(Core core)
 {
-    private readonly Core Core;
-    private ParkingGarage _garage;
-    private AppConfiguration _config;
-    public Menu(ParkingGarage garage, AppConfiguration config)
-    {
-        _garage = garage;
-        _config = config;
-    }
-
-    public Menu(Core core)
-    {
-        Core = core;
-    }
+    private readonly Core Core = core;
 
     // Fields for user input
     private string _registration = "";
@@ -68,11 +56,6 @@ internal class Menu
     private int _vehicleTypeIndex;
     private int _configIndex;
     private VehicleType _selectedVehicleType = VehicleType.Car;
-
-
-    // Properties
-    public string Registration => _registration;
-    public VehicleType SelectedVehicleType => _selectedVehicleType;
 
 
     private readonly List<string> _logEntries = [];
@@ -388,36 +371,38 @@ internal class Menu
                                     VehicleType.Car =>
                                         new Car(
                                             _registration,
-                                            _config.VehicleSizes[VehicleType.Car]),
+                                            Core.Config.VehicleSizes[VehicleType.Car]),
 
                                     VehicleType.Motorcycle =>
                                         new Motorcycle(
                                             _registration,
-                                            _config.VehicleSizes[VehicleType.Motorcycle]),
+                                            Core.Config.VehicleSizes[VehicleType.Motorcycle]),
 
                                     VehicleType.Bicycle =>
                                         new Bicycle(
                                             _registration,
-                                            _config.VehicleSizes[VehicleType.Bicycle]),
+                                            Core.Config.VehicleSizes[VehicleType.Bicycle]),
 
                                     VehicleType.Bus =>
                                         new Bus(
                                             _registration,
-                                            _config.VehicleSizes[VehicleType.Bus]),
+                                            Core.Config.VehicleSizes[VehicleType.Bus]),
 
                                     _ => throw new Exception("Unsupported vehicle type")
                                 };
 
-                            _garage.CheckIn(
+                            Core.ParkingGarage.CheckIn(
                                 vehicle,
-                                _config.Rates[vehicle.Type]);
+                                Core.Config.Rates[vehicle.Type]);
 
                             if (vehicle.Type == VehicleType.Bus)
-                                _garage.Park((Bus)vehicle);
+                                Core.ParkingGarage.Park((Bus)vehicle);
                             else
-                                _garage.Park(
+                                Core.ParkingGarage.Park(
                                     vehicle,
                                     vehicle.Ticket!.ParkingSpaceId);
+
+                            Core.Log.AddEntry(new WorkOrder("Park", vehicle.Type, vehicle.Registration, vehicle.Ticket!.ParkingSpaceId));
 
                             AddLog(
                                 $"Parked {vehicle.Registration} in space #{vehicle.Ticket!.ParkingSpaceId}");
@@ -431,18 +416,25 @@ internal class Menu
                     {
                         try
                         {
-                            if (_garage.FindVehicle(
+                            if (Core.ParkingGarage.FindVehicle(
                                 _registration,
                                 out int spaceId))
                             {
                                 IVehicle vehicle =
-                                    _garage[spaceId]
+                                    Core.ParkingGarage[spaceId]
                                         .PickVehicle(_registration);
 
-                                if (_garage.CheckOut(vehicle))
+                                if (Core.ParkingGarage.CheckOut(vehicle))
                                 {
+
+                            Core.Log.AddEntry(new WorkOrder("Collect", vehicle.Type, vehicle.Registration, spaceId));
+                            var minutesParked = Math.Ceiling(vehicle.Ticket!.TotalTimeParked.TotalMinutes);
+                            var rate = vehicle.Ticket!.Rate;
+                            var totalPrice = minutesParked > 10 ? (rate / 60.0M) * (decimal)minutesParked : 0.0M;
+                            Core.Log.AddEntry($"Total price: {totalPrice:F2}");
+
                                     AddLog(
-                                        $"Retrieved {vehicle.Registration} from space #{spaceId}");
+                                        $"Retrieved {vehicle.Registration} from space #{spaceId}. Total price: {totalPrice:F2}");
                                 }
                                 else
                                 {
@@ -463,7 +455,7 @@ internal class Menu
                     }
                     if (_mode == MenuMode.SearchRegistration)
                     {
-                        if (_garage.FindVehicle(
+                        if (Core.ParkingGarage.FindVehicle(
                             _registration,
                             out int spaceId))
                         {
@@ -550,15 +542,15 @@ internal class Menu
                 {
                     try
                     {
-                        if (_garage.FindVehicle(
+                        if (Core.ParkingGarage.FindVehicle(
                             _registration,
                             out int foundSpaceId))
                         {
                             IVehicle vehicle =
-                                _garage[foundSpaceId]
+                                Core.ParkingGarage[foundSpaceId]
                                     .PickVehicle(_registration);
 
-                            _garage.Move(
+                            Core.ParkingGarage.Move(
                                 vehicle,
                                 int.Parse(_fromParkingSpace),
                                 int.Parse(_toParkingSpace));
@@ -730,7 +722,7 @@ internal class Menu
             .Border(BoxBorder.Rounded)
             .Expand();
 
-        var mapPanel = new Panel(GarageMap.Build(_garage))
+        var mapPanel = new Panel(GarageMap.Build(Core.ParkingGarage))
             .Header("Map Of Garage")
             .Border(BoxBorder.Rounded)
             .Expand();
@@ -961,7 +953,7 @@ internal class Menu
         table.AddColumn("Check In");
         table.AddColumn("Price");
 
-        foreach (var space in _garage.ParkingSpaces)
+        foreach (var space in Core.ParkingGarage.ParkingSpaces)
         {
             foreach (var vehicle in space.ParkedVehicles)
             {

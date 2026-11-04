@@ -419,4 +419,6 @@ public class ParkingGarage
         return garage;
     }
 
+    internal decimal GetTotalToPay(ValetTicket ticket)
+        => (decimal)Math.Ceiling(ticket.TotalTimeParked.TotalHours) * ticket.Rate;
 }

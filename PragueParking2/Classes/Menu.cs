@@ -16,7 +16,7 @@ using Spectre.Console.Rendering;
 namespace PragueParking2.Classes;
 
 
-  internal enum MenuMode
+internal enum MenuMode
 {
     MainMenu,
     VehicleTypeSelection,
@@ -427,14 +427,15 @@ internal class Menu(Core core)
                                 if (Core.ParkingGarage.CheckOut(vehicle))
                                 {
 
-                            Core.Log.AddEntry(new WorkOrder("Collect", vehicle.Type, vehicle.Registration, spaceId));
-                            var minutesParked = Math.Ceiling(vehicle.Ticket!.TotalTimeParked.TotalMinutes);
-                            var rate = vehicle.Ticket!.Rate;
-                            var totalPrice = minutesParked > 10 ? (rate / 60.0M) * (decimal)minutesParked : 0.0M;
-                            Core.Log.AddEntry($"Total price: {totalPrice:F2}");
+                                    Core.Log.AddEntry(new WorkOrder("Collect", vehicle.Type, vehicle.Registration, spaceId));
+                                    if (Math.Ceiling(vehicle.Ticket!.TotalTimeParked.TotalMinutes) <= Core.Config.FreeMinutes)
+                                    {
+                                        AddLog(
+                                            $"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
 
+                                    }
                                     AddLog(
-                                        $"Retrieved {vehicle.Registration} from space #{spaceId}. Total price: {totalPrice:F2}");
+                                        $"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOut:yyyy-MM-dd HH:mm} Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
                                 }
                                 else
                                 {
@@ -736,9 +737,9 @@ internal class Menu(Core core)
         {
             infoText = "";
         }
-        else 
+        else
         {
-            if 
+            if
                 (
                  _currentScreen == "Parking" &&
                  _mode == MenuMode.VehicleTypeSelection
@@ -895,10 +896,10 @@ internal class Menu(Core core)
                     "\n[grey]ESC = Back[/]";
             }
         }
-  
-            panelContent =
-                new Markup(infoText);
-        
+
+        panelContent =
+            new Markup(infoText);
+
         var interactivePanel =
         new Panel(panelContent)
                  .Header(_currentScreen)
@@ -940,7 +941,7 @@ internal class Menu(Core core)
 
         AnsiConsole.Write(mainLayout);
     }
-    
+
     //List Table 
     private void DrawListView()
     {
@@ -975,5 +976,5 @@ internal class Menu(Core core)
         AnsiConsole.MarkupLine(
             "\n[grey]ESC = Back[/]");
     }
-    
+
 }

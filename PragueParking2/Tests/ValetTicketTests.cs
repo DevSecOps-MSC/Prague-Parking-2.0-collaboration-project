@@ -91,7 +91,11 @@ public class ValetTicketTests
                 var vehicle = new Car(testRegistration, carSize);
 
                 var expectedTimeInMinutes = 74;
-                var ticket = new ValetTicket(vehicle, config.Rates[vehicle.Type], DateTime.Now - TimeSpan.FromMinutes(expectedTimeInMinutes));
+                var ticket = new ValetTicket(
+                    vehicle,
+                    config.Rates[vehicle.Type],
+                    DateTime.Now - TimeSpan.FromMinutes(expectedTimeInMinutes)
+                );
 
                 var expectedTotalParkedTime = TimeSpan.FromMinutes(expectedTimeInMinutes);
 
@@ -100,7 +104,7 @@ public class ValetTicketTests
         ));
 
         SimpleTest.AddNewTest(
-            new Test("Valet Ticket: Valet Ticket can calculate final Total Time Parked", () =>
+            new Test("Valet Ticket: Valet Ticket can calculate final Total Time Parked in minutes", () =>
             {
                 var vehicle = new Car(testRegistration, carSize);
 

@@ -693,6 +693,24 @@ public class ParkingGarageTests
             }
         ));
 
+        SimpleTest.AddNewTest(
+            new Test("Parking Garage: A Parking Garage can calculate Total Price to pay based on Parking duration", () =>
+            {
+                var capacity = 10;
+                var busCapable = 5;
+                var carSize = 4;
+                var rate = 20.0M;
+                var timeInMinutes = 74;
+                var startedHours = Math.Ceiling(74.0 / 60.0);
+                var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var car = new Car("Foo", carSize);
+                parkingGarage.CheckIn(car, rate);
+                car.Ticket!.CheckOut(DateTime.Now + TimeSpan.FromMinutes(timeInMinutes));
+
+                return parkingGarage.GetTotalToPay(car.Ticket) == (decimal)startedHours * rate;
+            }
+        ));
+
 
 
     }

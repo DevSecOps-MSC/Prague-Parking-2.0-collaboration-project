@@ -228,8 +228,8 @@ public static class ParkingSpaceTests
         SimpleTest.AddNewTest(
             new Test("Parking Space: It is possible to see if a Parking Space Contains a Bus", () =>
             {
-                var capacity = 10;
-                var busCapable = 5;
+                var capacity = 20;
+                var busCapable = 10;
                 var carSize = 4;
                 var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
                 var bus = new Bus("BUS", carSize * 4);

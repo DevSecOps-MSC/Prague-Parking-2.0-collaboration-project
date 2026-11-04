@@ -226,7 +226,6 @@ public class ParkingGarageTests
                 var parkingGarage = new ParkingGarage(10, size);
                 parkingGarage.Park(vehicleOne, 10);
                 var spaceId = 2;
-
                 try
                 {
                     parkingGarage.Park(vehicleTwo, spaceId);
@@ -639,7 +638,7 @@ public class ParkingGarageTests
             {
                 var size = 4;
                 IVehicle vehicle = new Bus("foo", size);
-                var parkingGarage = new ParkingGarage(10, size);
+                var parkingGarage = new ParkingGarage(20, size, 10);
                 parkingGarage.CheckIn(vehicle, config.Rates[vehicle.Type]);
 
                 return vehicle.Ticket is not null;
@@ -671,18 +670,22 @@ public class ParkingGarageTests
                 var busCapable = 5;
                 var carSize = 4;
                 var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
+                var car = new Car("CAR", carSize);
+                parkingGarage.CheckIn(car, config.Rates[car.Type]);
+                parkingGarage.Park(car, 1);
                 var bus = new Bus("BUS", carSize * 4);
                 parkingGarage.CheckIn(bus, config.Rates[bus.Type]);
 
-                return parkingGarage.Park(bus);
+                return parkingGarage.Park(bus)
+                    && bus.Ticket!.ParkingSpaceId == 2;
             }
         ));
 
         SimpleTest.AddNewTest(
             new Test("Parking Garage: It is possible to Collect a Bus", () =>
             {
-                var capacity = 10;
-                var busCapable = 5;
+                var capacity = 20;
+                var busCapable = 10;
                 var carSize = 4;
                 var parkingGarage = new ParkingGarage(capacity, carSize, busCapable);
                 var bus = new Bus("BUS", carSize * 4);

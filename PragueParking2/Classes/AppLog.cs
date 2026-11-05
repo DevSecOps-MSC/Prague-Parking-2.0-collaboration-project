@@ -5,13 +5,13 @@ namespace PragueParking2.Classes;
 
 internal class AppLog
 {
-    private List<ILogEntry> _logEntries = [];
+    private List<AppLogEntry> _logEntries = [];
 
     internal int Count => _logEntries.Count;
     internal bool IsEmpty => Count == 0;
-    internal List<ILogEntry> AllEntries => _logEntries;
-    internal ILogEntry First => _logEntries.First();
-    internal ILogEntry Last => _logEntries.Last();
+    internal List<AppLogEntry> AllEntries => _logEntries;
+    internal AppLogEntry First => _logEntries.First();
+    internal AppLogEntry Last => _logEntries.Last();
     internal int GetNextId => IsEmpty ? 0 : Count;
 
     internal int AddEntry(string content)

@@ -1,5 +1,6 @@
 using System;
 using FileHandlerLibrary;
+using PragueParking2.Interfaces;
 
 namespace PragueParking2.Classes;
 
@@ -56,4 +57,18 @@ internal class Core(FileHandler fileHandler, AppConfiguration config, ParkingGar
         ParkingGarage = Admin.LoadParkingGarageData(FileHandler, Config, Log);
     }
 
+    internal void AddLogEntry(string logEntry)
+    {
+        Log.AddEntry(logEntry);
+    }
+
+    internal void AddLogEntry(WorkOrder logEntry)
+    {
+        Log.AddEntry(logEntry);
+    }
+
+    internal void AddWorkOrderLogEntry(string verb, IVehicle vehicle, int? parkingSpaceId = null)
+    {
+        Log.AddEntry(new WorkOrder(verb, vehicle.Type, vehicle.Registration, parkingSpaceId ?? vehicle.Ticket!.ParkingSpaceId));
+    }
 }

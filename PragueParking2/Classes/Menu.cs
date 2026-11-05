@@ -391,9 +391,14 @@ internal class Menu(Core core)
                                     _ => throw new Exception("Unsupported vehicle type")
                                 };
 
-                            Core.ParkingGarage.CheckIn(
-                                vehicle,
-                                Core.Config.Rates[vehicle.Type]);
+                            if (Core.ParkingGarage.CheckIn(vehicle, Core.Config.Rates[vehicle.Type]))
+                            {
+                                Core.AddLogEntry($"Vehicle check-in: {vehicle.Type} | {vehicle.Registration}");
+                            }
+                            else
+                            {
+                                Core.AddLogEntry($"Vehicle check-in failed! ({vehicle.Type} | {vehicle.Registration})");
+                            }
 
                             if (vehicle.Type == VehicleType.Bus)
                                 Core.ParkingGarage.Park((Bus)vehicle);
@@ -402,7 +407,7 @@ internal class Menu(Core core)
                                     vehicle,
                                     vehicle.Ticket!.ParkingSpaceId);
 
-                            Core.Log.AddEntry(new WorkOrder("Park", vehicle.Type, vehicle.Registration, vehicle.Ticket!.ParkingSpaceId));
+                            Core.AddWorkOrderLogEntry("Park", vehicle);
 
                             AddLog(
                                 $"Parked {vehicle.Registration} in space #{vehicle.Ticket!.ParkingSpaceId}");
@@ -427,15 +432,20 @@ internal class Menu(Core core)
                                 if (Core.ParkingGarage.CheckOut(vehicle))
                                 {
 
-                                    Core.Log.AddEntry(new WorkOrder("Collect", vehicle.Type, vehicle.Registration, spaceId));
+                                    Core.AddWorkOrderLogEntry("Collect", vehicle);
                                     if (Math.Ceiling(vehicle.Ticket!.TotalTimeParked.TotalMinutes) <= Core.Config.FreeMinutes)
                                     {
                                         AddLog(
                                             $"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
-
+                                        Core.AddLogEntry($"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
                                     }
-                                    AddLog(
-                                        $"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOut:yyyy-MM-dd HH:mm} Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
+                                    else
+                                    {
+                                        int totalHours = vehicle.Ticket.TotalHoursParked;
+                                        AddLog(
+                                            $"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
+                                        Core.AddLogEntry($"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
+                                    }
                                 }
                                 else
                                 {
@@ -551,14 +561,19 @@ internal class Menu(Core core)
                                 Core.ParkingGarage[foundSpaceId]
                                     .PickVehicle(_registration);
 
+                            int fromParkingSpaceId = int.Parse(_fromParkingSpace);
+                            int toParkingSpaceId = int.Parse(_toParkingSpace);
                             if (Core.ParkingGarage.Move(
-                                vehicle, int.Parse(_fromParkingSpace), int.Parse(_toParkingSpace)))
+                                vehicle, fromParkingSpaceId, toParkingSpaceId))
                             {
                                 AddLog(
                                     $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                                Core.AddWorkOrderLogEntry("Collect", vehicle, fromParkingSpaceId);
+                                Core.AddWorkOrderLogEntry("Park", vehicle, toParkingSpaceId);
                             }
                             else
                             {
+                                Core.AddLogEntry($"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
                                 AddLog(
                                     $"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
                             }
@@ -957,7 +972,7 @@ internal class Menu(Core core)
         table.AddColumn("Registration");
         table.AddColumn("Space");
         table.AddColumn("Check In");
-        table.AddColumn("Price");
+        table.AddColumn("Rate");
 
         foreach (var space in Core.ParkingGarage.ParkingSpaces)
         {
@@ -966,8 +981,8 @@ internal class Menu(Core core)
                 table.AddRow(
                     vehicle.Registration,
                     space.Id.ToString(),
-                    vehicle.Type.ToString(),
-                    "N/A");
+                    $"{vehicle.Ticket!.TimeOfCheckInDisplay}",
+                    $"{vehicle.Ticket!.Rate:F2} / h");
             }
         }
         var panel =

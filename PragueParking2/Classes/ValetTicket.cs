@@ -18,6 +18,12 @@ public class ValetTicket
         }
     }
 
+    internal int TotalMinutesParked
+        => (int)Math.Ceiling(TotalTimeParked.TotalMinutes);
+
+    internal int TotalHoursParked
+        => (int)Math.Ceiling(TotalTimeParked.TotalHours);
+
     // public IVehicle Vehicle { get; }
     public decimal Rate { get; }
     public DateTime TimeOfCheckIn { get; }
@@ -44,4 +50,10 @@ public class ValetTicket
     {
         ParkingSpaceId = newSpaceId;
     }
+
+    internal string TimeOfCheckInDisplay
+        =>  $"{TimeOfCheckIn:yyyy-MM-dd HH:mm}";
+
+    internal string TimeOfCheckOutDisplay
+        =>  $"{TimeOfCheckOut:yyyy-MM-dd HH:mm}";
 }

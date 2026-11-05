@@ -5,6 +5,7 @@ internal class Program
     private static void Main(string[] args)
     {
         Console.Clear();
+        Console.CursorVisible = false;
 
         Core core = Admin.SetupApp(args);
         core.SaveConfiguration();
@@ -18,7 +19,7 @@ internal class Program
             "Move",
             "Search",
             "List",
-            "Admin",
+            // "Admin",
             "Exit"
         ];
 

@@ -979,7 +979,7 @@ internal class Menu(Core core)
             foreach (var vehicle in space.ParkedVehicles)
             {
                 table.AddRow(
-                    vehicle.Registration,
+                    $"{vehicle.Registration} ({vehicle.Type})",
                     space.Id.ToString(),
                     $"{vehicle.Ticket!.TimeOfCheckInDisplay}",
                     $"{vehicle.Ticket!.Rate:F2} / h");

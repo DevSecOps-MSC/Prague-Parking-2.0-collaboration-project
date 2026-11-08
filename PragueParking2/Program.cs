@@ -19,7 +19,7 @@ internal class Program
             "Move",
             "Search",
             "List",
-            // "Admin",
+            "Admin",
             "Exit"
         ];
 

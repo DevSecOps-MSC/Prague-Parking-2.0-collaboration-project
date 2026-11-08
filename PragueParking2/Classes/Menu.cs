@@ -138,6 +138,7 @@ internal class Menu(Core core)
                         if (_confirmYes)
                         {
                             Core.SaveGarageData();
+                            Core.SaveConfiguration();
                         }
                         else
                         {
@@ -176,6 +177,7 @@ internal class Menu(Core core)
 
                         if (_confirmYes)
                         {
+                            Core.LoadConfiguration();
                             Core.LoadGarageData();
                         }
                         else
@@ -391,14 +393,7 @@ internal class Menu(Core core)
                                     _ => throw new Exception("Unsupported vehicle type")
                                 };
 
-                            if (Core.ParkingGarage.CheckIn(vehicle, Core.Config.Rates[vehicle.Type]))
-                            {
-                                Core.AddLogEntry($"Vehicle check-in: {vehicle.Type} | {vehicle.Registration}");
-                            }
-                            else
-                            {
-                                Core.AddLogEntry($"Vehicle check-in failed! ({vehicle.Type} | {vehicle.Registration})");
-                            }
+                            Core.ParkingGarage.CheckIn(vehicle, Core.Config.Rates[vehicle.Type]);
 
                             if (vehicle.Type == VehicleType.Bus)
                                 Core.ParkingGarage.Park((Bus)vehicle);
@@ -407,7 +402,6 @@ internal class Menu(Core core)
                                     vehicle,
                                     vehicle.Ticket!.ParkingSpaceId);
 
-                            Core.AddWorkOrderLogEntry("Park", vehicle);
 
                             AddLog(
                                 $"Parked {vehicle.Registration} in space #{vehicle.Ticket!.ParkingSpaceId}");
@@ -432,19 +426,16 @@ internal class Menu(Core core)
                                 if (Core.ParkingGarage.CheckOut(vehicle))
                                 {
 
-                                    Core.AddWorkOrderLogEntry("Collect", vehicle);
                                     if (Math.Ceiling(vehicle.Ticket!.TotalTimeParked.TotalMinutes) <= Core.Config.FreeMinutes)
                                     {
                                         AddLog(
                                             $"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
-                                        Core.AddLogEntry($"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
                                     }
                                     else
                                     {
                                         int totalHours = vehicle.Ticket.TotalHoursParked;
                                         AddLog(
                                             $"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
-                                        Core.AddLogEntry($"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
                                     }
                                 }
                                 else
@@ -568,12 +559,9 @@ internal class Menu(Core core)
                             {
                                 AddLog(
                                     $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
-                                Core.AddWorkOrderLogEntry("Collect", vehicle, fromParkingSpaceId);
-                                Core.AddWorkOrderLogEntry("Park", vehicle, toParkingSpaceId);
                             }
                             else
                             {
-                                Core.AddLogEntry($"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
                                 AddLog(
                                     $"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
                             }
@@ -945,10 +933,10 @@ internal class Menu(Core core)
                     .SplitColumns(
                         new Layout("Menu").Size(25),
                         new Layout("Map"))
-                    .Size(20),
+                    .Size(25),
 
                 new Layout("Bottom")
-                    .Size(9)
+                    .Size(15)
                     .SplitColumns(
                         new Layout("Info").Size(55),
                         new Layout("Log"))

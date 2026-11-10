@@ -112,8 +112,6 @@ public class ValetTicketTests
                 var now = DateTime.Now;
                 var ticket = new ValetTicket(vehicle, config.Rates[vehicle.Type], now);
                 ticket.CheckOut(now + TimeSpan.FromMinutes(expectedTimeInMinutes));
-System.Console.WriteLine(ticket.TotalMinutesParked);
-System.Console.WriteLine(expectedTimeInMinutes);
                 return ticket.TotalMinutesParked == expectedTimeInMinutes;
             }
         ));

@@ -71,6 +71,12 @@ internal class Core(FileHandler fileHandler, AppConfiguration config, ParkingGar
         Log.AddEntry(logEntry);
     }
 
+    internal void AddLogEntry(string verb, IVehicle vehicle)
+    {
+        WorkOrder logEntry = new(verb, vehicle.Type, vehicle.Registration, vehicle.Ticket!.ParkingSpaceId);
+        Log.AddEntry(logEntry);
+    }
+
     internal void AddWorkOrderLogEntry(string verb, IVehicle vehicle, int? parkingSpaceId = null)
     {
         Log.AddEntry(new WorkOrder(verb, vehicle.Type, vehicle.Registration, parkingSpaceId ?? vehicle.Ticket!.ParkingSpaceId));

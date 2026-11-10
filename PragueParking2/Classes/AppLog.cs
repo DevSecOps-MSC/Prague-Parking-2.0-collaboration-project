@@ -1,5 +1,6 @@
 using System.Text.Json;
 using PragueParking2.Interfaces;
+using Spectre.Console;
 
 namespace PragueParking2.Classes;
 
@@ -27,7 +28,7 @@ internal class AppLog
         _logEntries.Add(new AppLogEntry(id, DateTime.Now, content));
         return id;
     }
-
+    
     internal string ToJson()
     {
         List<string> jsonList = [];
@@ -66,7 +67,19 @@ internal class AppLog
     {
         foreach (var entry in AllEntries)
         {
-            Console.WriteLine($"{entry.CreatedAt}: {entry.Content}");
+            AnsiConsole.Write(new Markup(entry.ToMarkupString() + "\n"));
         }
+    }
+
+    internal string[] TakeLast(int count)
+    {
+        string[] entries = new string[count];
+
+        foreach (var (entry, i) in _logEntries.TakeLast(count).Select((v, i) => (v, i)))
+        {
+            entries[i] = entry.ToMarkupString();
+        }
+
+        return entries;
     }
 }

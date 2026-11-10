@@ -86,7 +86,6 @@ internal static class Admin
     {
         if (fileHandler.FileExists(AppConstants.ConfigFile))
         {
-            log.AddEntry("Configuration file found. Proceeding with attempt to load it.");
             try
             {
                 var config = AppConfiguration.FromFile(fileHandler, AppConstants.ConfigFile);
@@ -110,7 +109,6 @@ internal static class Admin
     {
         if (fileHandler.FileExists(AppConstants.DataFile))
         {
-            log.AddEntry("Parking garage data file found. Proceeding with attempt to load it.");
             try
             {
                 var garage = ParkingGarage.FromFile(fileHandler, AppConstants.DataFile);

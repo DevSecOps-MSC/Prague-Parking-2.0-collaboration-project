@@ -66,7 +66,7 @@ internal class Menu(Core core)
 [
     "Save",
     "Load",
-    "Config"
+    // "Config"
 ];
     // Config data
     private readonly List<string> _configItems =
@@ -403,12 +403,14 @@ internal class Menu(Core core)
                                     vehicle.Ticket!.ParkingSpaceId);
 
 
-                            AddLog(
-                                $"Parked {vehicle.Registration} in space #{vehicle.Ticket!.ParkingSpaceId}");
+                            // AddLog($"Parked {vehicle.Registration} in space #{vehicle.Ticket!.ParkingSpaceId}");
+                            Core.AddLogEntry("Park", vehicle);
+                            Core.SaveGarageData();
                         }
                         catch (Exception ex)
                         {
-                            AddLog(ex.Message);
+                            // AddLog(ex.Message);
+                            Core.AddLogEntry(ex.Message);
                         }
                     }
                     if (_mode == MenuMode.RetrieveRegistration)
@@ -425,34 +427,41 @@ internal class Menu(Core core)
 
                                 if (Core.ParkingGarage.CheckOut(vehicle))
                                 {
+                                    Core.AddLogEntry("Collect", vehicle);
 
                                     if (Math.Ceiling(vehicle.Ticket!.TotalTimeParked.TotalMinutes) <= Core.Config.FreeMinutes)
                                     {
-                                        AddLog(
-                                            $"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
+                                        Core.AddLogEntry($"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
+                                        // AddLog(
+                                        //     $"Retrieved {vehicle.Registration} from space #{spaceId}. Total duration is less than {Core.Config.FreeMinutes} minutes. No charge.");
                                     }
                                     else
                                     {
                                         int totalHours = vehicle.Ticket.TotalHoursParked;
-                                        AddLog(
-                                            $"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
+                                        Core.AddLogEntry($"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
+                                        // AddLog(
+                                        //     $"Retrieved {vehicle.Registration} from space #{spaceId}. Checkout time: {vehicle.Ticket!.TimeOfCheckOutDisplay} ({totalHours} {(totalHours == 1 ? "hour" : "hours")}) | Total price: {Core.ParkingGarage.GetTotalToPay(vehicle.Ticket):F2}");
                                     }
+                                    Core.SaveGarageData();
                                 }
                                 else
                                 {
-                                    AddLog(
-                                        $"Failed to retrieve {vehicle.Registration}");
+                                    Core.AddLogEntry($"Failed to retrieve {vehicle.Registration}");
+                                    // AddLog(
+                                    //     $"Failed to retrieve {vehicle.Registration}");
                                 }
                             }
                             else
                             {
-                                AddLog(
-                                    $"Vehicle {_registration} not found");
+                                Core.AddLogEntry($"Vehicle {_registration} not found");
+                                // AddLog(
+                                //     $"Vehicle {_registration} not found");
                             }
                         }
                         catch (Exception ex)
                         {
-                            AddLog(ex.Message);
+                            Core.AddLogEntry(ex.Message);
+                            // AddLog(ex.Message);
                         }
                     }
                     if (_mode == MenuMode.SearchRegistration)
@@ -461,13 +470,15 @@ internal class Menu(Core core)
                             _registration,
                             out int spaceId))
                         {
-                            AddLog(
-                                $"Found {_registration} in space #{spaceId}");
+                            Core.AddLogEntry($"Found {_registration} in space #{spaceId}");
+                            // AddLog(
+                            //     $"Found {_registration} in space #{spaceId}");
                         }
                         else
                         {
-                            AddLog(
-                                $"Vehicle {_registration} not found");
+                            Core.AddLogEntry($"Vehicle {_registration} not found");
+                            // AddLog(
+                            //     $"Vehicle {_registration} not found");
                         }
                     }
                     if (_mode == MenuMode.MoveRegistration)
@@ -557,27 +568,33 @@ internal class Menu(Core core)
                             if (Core.ParkingGarage.Move(
                                 vehicle, fromParkingSpaceId, toParkingSpaceId))
                             {
-                                AddLog(
-                                    $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                                Core.AddLogEntry(new WorkOrder("Collect", vehicle.Type, vehicle.Registration, fromParkingSpaceId));
+                                Core.AddLogEntry(new WorkOrder("Park", vehicle.Type, vehicle.Registration, toParkingSpaceId));
+                                // AddLog(
+                                //     $"Moved {vehicle.Registration} from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                                Core.SaveGarageData();
                             }
                             else
                             {
-                                AddLog(
-                                    $"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                                Core.AddLogEntry($"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
+                                // AddLog(
+                                //     $"{vehicle.Registration} could not be moved from space #{_fromParkingSpace} to space #{_toParkingSpace}");
                             }
 
                         }
                         else
                         {
-                            AddLog(
-                                $"Vehicle {_registration} not found");
+                            Core.AddLogEntry($"Vehicle {_registration} not found");
+                            // AddLog(
+                            //     $"Vehicle {_registration} not found");
                         }
 
                         ResetToHome();
                     }
                     catch (Exception ex)
                     {
-                        AddLog(ex.Message);
+                        Core.AddLogEntry(ex.Message);
+                        // AddLog(ex.Message);
                     }
                 }
                 else if (keyInfo.Key == ConsoleKey.Escape)
@@ -914,7 +931,9 @@ internal class Menu(Core core)
                 .Border(BoxBorder.Rounded)
                 .Expand();
 
-        string logText = string.Join("\n", _logEntries);
+
+        // string logText = string.Join("\n", _logEntries);
+        string logText = string.Join("\n", Core.Log.TakeLast(8));
 
         var logPanel =
             new Panel(logText)
@@ -932,15 +951,14 @@ internal class Menu(Core core)
                 new Layout("Top")
                     .SplitColumns(
                         new Layout("Menu").Size(25),
-                        new Layout("Map"))
-                    .Size(25),
-
+                        new Layout("Map")
+                    ).Size(25),
                 new Layout("Bottom")
                     .Size(15)
                     .SplitColumns(
                         new Layout("Info").Size(55),
-                        new Layout("Log"))
-            );
+                        new Layout("Log")
+                ));
 
         mainLayout["Menu"].Update(menuPanel);
         mainLayout["Map"].Update(mapPanel);
